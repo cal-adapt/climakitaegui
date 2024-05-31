@@ -1,3 +1,4 @@
+#climakitae==0.2.0
 xarray==2022.6.0
 dask==2022.9.1
 cartopy==0.21.0
