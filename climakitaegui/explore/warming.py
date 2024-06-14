@@ -26,7 +26,8 @@ class WarmingLevelsWithGUI(WarmingLevels):
     def __init__(self, **params):
         # Set default values
         super().__init__(**params)
-
+        self.wl_params = WarmingLevelDataParametersWithPanes()
+        
     def calculate(self):
         super().calculate()
         self.wl_viz = WarmingLevelVisualize(
