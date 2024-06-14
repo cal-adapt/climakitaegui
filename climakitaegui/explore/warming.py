@@ -1,11 +1,13 @@
+import param
 import panel as pn
+import xarray as xr
+import numpy as np
 import hvplot.xarray
 import hvplot.pandas
 import holoviews as hv
 from holoviews import opts
 import matplotlib.pyplot as plt
 from scipy.stats import pearson3
-from climakitaegui.core.data_interface import _selections_param_to_panel
 from climakitae.core.data_view import compute_vmin_vmax
 from climakitae.core.paths import (
     ssp119_file,
@@ -15,9 +17,10 @@ from climakitae.core.paths import (
     ssp585_file,
     hist_file,
 )
-from climakitae.util.utils import area_average
-from climakitae.explore.warming import WarmingLevels
+from climakitae.util.utils import (read_csv_file, area_average)
+from climakitae.explore.warming import (WarmingLevels, _select_one_gwl)
 from climakitae.explore.threshold_tools import (_get_distr_func, _get_fitted_distr)
+from climakitaegui.core.data_interface import _selections_param_to_panel
 
 class WarmingLevelsWithGUI(WarmingLevels):
     def calculate(self):
@@ -441,9 +444,9 @@ def fit_models_and_plots(new_data, trad_data, dist_name):
     plt.figure(figsize=(10, 5))
 
     # Get and fit distribution for new method data and traditional method data
-    func = threshold_tools._get_distr_func(dist_name)
-    new_fitted_dist = threshold_tools._get_fitted_distr(new_data, dist_name, func)
-    trad_fitted_dist = threshold_tools._get_fitted_distr(trad_data, dist_name, func)
+    func = _get_distr_func(dist_name)
+    new_fitted_dist = _get_fitted_distr(new_data, dist_name, func)
+    trad_fitted_dist = _get_fitted_distr(trad_data, dist_name, func)
 
     # Get params from distribution
     new_params = new_fitted_dist[0].values()
