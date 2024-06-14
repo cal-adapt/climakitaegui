@@ -29,7 +29,7 @@ class WarmingLevelsWithGUI(WarmingLevels):
         self.wl_params = WarmingLevelDataParametersWithPanes()
 
     def calculate(self):
-        super().calculate(self)
+        super().calculate()
         self.wl_viz = WarmingLevelVisualize(
             gwl_snapshots=self.gwl_snapshots,
             wl_params=self.wl_params,
