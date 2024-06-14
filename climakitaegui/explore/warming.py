@@ -2,28 +2,129 @@ import panel as pn
 import hvplot.xarray
 import hvplot.pandas
 import holoviews as hv
-from holoviews import opts
 import matplotlib.pyplot as plt
+import param
+from holoviews import opts
 from scipy.stats import pearson3
-from climakitae.core.data_interface import _selections_param_to_panel
+from climakitaegui.core.data_interface import DataParametersWithPanes, _selections_param_to_panel
 from climakitae.core.data_view import compute_vmin_vmax
-from climakitae.util.utils import area_average
 from climakitae.explore.warming import WarmingLevels
 from climakitae.explore.threshold_tools import (_get_distr_func, _get_fitted_distr)
+from climakitae.util.colormap import read_ae_colormap
+from climakitae.util.utils import (
+    read_csv_file,
+    area_average,
+)
+from climakitae.core.paths import (
+    gwl_1981_2010_file,
+    gwl_1850_1900_file,
+    ssp119_file,
+    ssp126_file,
+    ssp245_file,
+    ssp370_file,
+    ssp585_file,
+    hist_file,
+)
 
-class WarmingLevelsWithGUI(WarmingLevels):
+
+def _get_cmap(wl_params):
+    """Set colormap depending on variable"""
+    if (
+        wl_params.variable == "Air Temperature at 2m"
+        or wl_params.variable == "Dew point temperature"
+    ):
+        cmap_name = "ae_orange"
+    else:
+        cmap_name = "ae_diverging"
+
+    # Read colormap hex
+    cmap = read_ae_colormap(cmap=cmap_name, cmap_hex=True)
+    return cmap
+
+
+def _select_one_gwl(one_gwl, snapshots):
+    """
+    This needs to happen in two places. You have to drop the sims
+    which are nan because they don't reach that warming level, else the
+    plotting functions and cross-sim statistics will get confused.
+    But it's important that you drop it from a copy, or it may modify the
+    original data.
+    """
+    all_plot_data = snapshots.sel(warming_level=one_gwl).copy()
+    all_plot_data = all_plot_data.dropna("all_sims", how="all")
+    return all_plot_data
+
+
+class WLMixin():
+    window = param.Integer(
+        default=15,
+        bounds=(5, 25),
+        doc="Years around Global Warming Level (+/-) \n (e.g. 15 means a 30yr window)",
+    )
+
+    anom = param.Selector(
+        default="Yes",
+        objects=["Yes"],
+        doc="Return an anomaly \n(difference from historical reference period)?",
+    )
+
+    def __init__(self, *args, **params):
+        super().__init__(*args, **params)
+        self.downscaling_method = "Dynamical"
+        self.scenario_historical = ["Historical Climate"]
+        self.area_average = "No"
+        self.resolution = "45 km"
+        self.scenario_ssp = [
+            "SSP 3-7.0 -- Business as Usual",
+            "SSP 2-4.5 -- Middle of the Road",
+            "SSP 5-8.5 -- Burn it All",
+        ]
+        self.time_slice = (1980, 2100)
+        self.timescale = "monthly"
+        self.variable = "Air Temperature at 2m"
+
+        # Location defaults
+        self.area_subset = "states"
+        self.cached_area = ["CA"]
+
+    @param.depends("downscaling_method", watch=True)
+    def _anom_allowed(self):
+        """
+        Require 'anomaly' for non-bias-corrected data.
+        """
+        if self.downscaling_method == "Dynamical":
+            self.param["anom"].objects = ["Yes"]
+            self.anom = "Yes"
+        else:
+            self.param["anom"].objects = ["Yes", "No"]
+            self.anom = "Yes"
+
+
+class WarmingLevelChoose(WLMixin, DataParametersWithPanes):
+
+    def __init__(self, **params):
+        WLMixin.__init__(self, **params)
+        DataParametersWithPanes.__init__(self, **params)
+        print("Initializing WarmingLevelChoose")
+    
+class WarmingLevelsWithGUI():
+    
+    def __init__(self, **params):
+        self.wl_params = WarmingLevelChoose()
+    
     def calculate(self):
-        super().calculate(self)
         self.wl_viz = WarmingLevelVisualize(
             gwl_snapshots=self.gwl_snapshots,
             wl_params=self.wl_params,
             cmap=self.cmap,
             warming_levels=self.warming_levels,
         )
+        self.cmap = _get_cmap(self.wl_params)
         self.wl_viz.compute_stamps()
 
     def choose_data(self):
         return warming_levels_select(self.wl_params)
+    
     def visualize(self):
         if self.wl_viz:
             return warming_levels_visualize(self.wl_viz)
