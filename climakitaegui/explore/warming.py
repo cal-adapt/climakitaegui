@@ -4,13 +4,15 @@ import hvplot.pandas
 import holoviews as hv
 from holoviews import opts
 import matplotlib.pyplot as plt
+from scipy.stats import pearson3
 from climakitae.core.data_interface import (
     DataParametersWithPanes,
     _selections_param_to_panel,
 )
 from climakitae.core.data_view import compute_vmin_vmax
+from climakitae.util.utils import area_average
 from climakitae.explore.warming import WarmingLevels
-
+from climakitae.explore.threshold_tools import (_get_distr_func, _get_fitted_distr)
 
 class WarmingLevelsWithGUI(WarmingLevels):
     def choose_data(self):
