@@ -5,8 +5,16 @@ import holoviews as hv
 from holoviews import opts
 import matplotlib.pyplot as plt
 from scipy.stats import pearson3
-from climakitae.core.data_interface import _selections_param_to_panel
+from climakitaegui.core.data_interface import _selections_param_to_panel
 from climakitae.core.data_view import compute_vmin_vmax
+from climakitae.core.paths import (
+    ssp119_file,
+    ssp126_file,
+    ssp245_file,
+    ssp370_file,
+    ssp585_file,
+    hist_file,
+)
 from climakitae.util.utils import area_average
 from climakitae.explore.warming import WarmingLevels
 from climakitae.explore.threshold_tools import (_get_distr_func, _get_fitted_distr)
