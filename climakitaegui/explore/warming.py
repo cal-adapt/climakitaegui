@@ -48,8 +48,8 @@ class WarmingLevelsWithGUI(WarmingLevels):
 
 
 class WarmingLevelDataParametersWithPanes(WarmingLevelDataParameters, DataParametersWithPanes):
-    def __init__(self, *args, **params):
-        super().__init__(*args, **params)
+    def __init__(self, **params):
+        super().__init__(**params)
 
 
 def warming_levels_select(self):
