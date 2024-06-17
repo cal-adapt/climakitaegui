@@ -18,7 +18,7 @@ from climakitae.core.paths import (
     hist_file,
 )
 from climakitae.util.utils import (read_csv_file, area_average)
-from climakitae.explore.warming import (WarmingLevels, WarmingLevelParamMixin, _select_one_gwl)
+from climakitae.explore.warming import (WarmingLevels, WarmingLevelDataParameters, _select_one_gwl)
 from climakitae.explore.threshold_tools import (_get_distr_func, _get_fitted_distr)
 from climakitaegui.core.data_interface import (DataParametersWithPanes, _selections_param_to_panel)
 
@@ -47,25 +47,9 @@ class WarmingLevelsWithGUI(WarmingLevels):
             print("Please run 'calculate' first.")
 
 
-class WarmingLevelDataParametersWithPanes(DataParametersWithPanes, WarmingLevelParamMixin):
+class WarmingLevelDataParametersWithPanes(WarmingLevelDataParameters, DataParametersWithPanes):
     def __init__(self, *args, **params):
         super().__init__(*args, **params)
-        self.downscaling_method = "Dynamical"
-        self.scenario_historical = ["Historical Climate"]
-        self.area_average = "No"
-        self.resolution = "45 km"
-        self.scenario_ssp = [
-            "SSP 3-7.0 -- Business as Usual",
-            "SSP 2-4.5 -- Middle of the Road",
-            "SSP 5-8.5 -- Burn it All",
-        ]
-        self.time_slice = (1980, 2100)
-        self.timescale = "monthly"
-        self.variable = "Air Temperature at 2m"
-
-        # Location defaults
-        self.area_subset = "states"
-        self.cached_area = ["CA"]
 
 
 def warming_levels_select(self):
