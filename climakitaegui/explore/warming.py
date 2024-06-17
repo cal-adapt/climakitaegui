@@ -18,7 +18,7 @@ from climakitae.core.paths import (
     hist_file,
 )
 from climakitae.util.utils import (read_csv_file, area_average)
-from climakitae.explore.warming import (WarmingLevels, _select_one_gwl)
+from climakitae.explore.warming import (WarmingLevels, WarmingLevelParamMixin, _select_one_gwl)
 from climakitae.explore.threshold_tools import (_get_distr_func, _get_fitted_distr)
 from climakitaegui.core.data_interface import (DataParametersWithPanes, _selections_param_to_panel)
 
@@ -47,19 +47,7 @@ class WarmingLevelsWithGUI(WarmingLevels):
             print("Please run 'calculate' first.")
 
 
-class WarmingLevelDataParametersWithPanes(DataParametersWithPanes):
-    window = param.Integer(
-        default=15,
-        bounds=(5, 25),
-        doc="Years around Global Warming Level (+/-) \n (e.g. 15 means a 30yr window)",
-    )
-
-    anom = param.Selector(
-        default="Yes",
-        objects=["Yes"],
-        doc="Return an anomaly \n(difference from historical reference period)?",
-    )
-
+class WarmingLevelDataParametersWithPanes(DataParametersWithPanes, WarmingLevelParamMixin):
     def __init__(self, *args, **params):
         super().__init__(*args, **params)
         self.downscaling_method = "Dynamical"
@@ -78,18 +66,6 @@ class WarmingLevelDataParametersWithPanes(DataParametersWithPanes):
         # Location defaults
         self.area_subset = "states"
         self.cached_area = ["CA"]
-
-    @param.depends("downscaling_method", watch=True)
-    def _anom_allowed(self):
-        """
-        Require 'anomaly' for non-bias-corrected data.
-        """
-        if self.downscaling_method == "Dynamical":
-            self.param["anom"].objects = ["Yes"]
-            self.anom = "Yes"
-        else:
-            self.param["anom"].objects = ["Yes", "No"]
-            self.anom = "Yes"
 
 
 def warming_levels_select(self):
