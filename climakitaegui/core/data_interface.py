@@ -12,6 +12,34 @@ from climakitae.core.data_interface import (
 )
 
 
+def _add_res_to_ax(
+    poly, ax, rotation, xy, label, color="black", crs=ccrs.PlateCarree()
+):
+    """Add resolution line and label to axis
+
+    Parameters
+    ----------
+    poly: geometry to plot
+    ax: matplotlib axis
+    color: matplotlib color
+    rotation: int
+    xy: tuple
+    label: str
+    crs: projection
+
+    """
+    ax.add_geometries(
+        [poly], crs=ccrs.PlateCarree(), edgecolor=color, facecolor="white"
+    )
+    ax.annotate(
+        label,
+        xy=xy,
+        rotation=rotation,
+        color="black",
+        xycoords=crs._as_mpl_transform(ax),
+    )
+
+
 def _map_view(selections, stations_gdf):
     """View the current location selections on a map
     Updates dynamically
