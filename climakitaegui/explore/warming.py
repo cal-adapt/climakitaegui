@@ -17,10 +17,18 @@ from climakitae.core.paths import (
     ssp585_file,
     hist_file,
 )
-from climakitae.util.utils import (read_csv_file, area_average)
-from climakitae.explore.warming import (WarmingLevels, WarmingLevelDataParameters, _select_one_gwl)
-from climakitae.explore.threshold_tools import (_get_distr_func, _get_fitted_distr)
-from climakitaegui.core.data_interface import (DataParametersWithPanes, _selections_param_to_panel)
+from climakitae.util.utils import read_csv_file, area_average
+from climakitae.explore.warming import (
+    WarmingLevels,
+    WarmingLevelDataParameters,
+    _select_one_gwl,
+)
+from climakitae.explore.threshold_tools import _get_distr_func, _get_fitted_distr
+from climakitaegui.core.data_interface import (
+    DataParametersWithPanes,
+    _selections_param_to_panel,
+)
+
 
 class WarmingLevelsWithGUI(WarmingLevels):
     def __init__(self, **params):
@@ -40,6 +48,7 @@ class WarmingLevelsWithGUI(WarmingLevels):
 
     def choose_data(self):
         return warming_levels_select(self.wl_params)
+
     def visualize(self):
         if self.wl_viz:
             return warming_levels_visualize(self.wl_viz)
@@ -47,7 +56,9 @@ class WarmingLevelsWithGUI(WarmingLevels):
             print("Please run 'calculate' first.")
 
 
-class WarmingLevelDataParametersWithPanes(WarmingLevelDataParameters, DataParametersWithPanes):
+class WarmingLevelDataParametersWithPanes(
+    WarmingLevelDataParameters, DataParametersWithPanes
+):
     def __init__(self, **params):
         super().__init__(**params)
 
@@ -123,7 +134,6 @@ def warming_levels_select(self):
         title="Choose Data to Explore at Global Warming Levels",
         collapsible=False,
     )
-
 
 
 def GCM_PostageStamps_MAIN_compute(wl_viz):
@@ -510,6 +520,7 @@ def fit_models_and_plots(new_data, trad_data, dist_name):
     plt.show()
 
     return new_params, trad_params
+
 
 class WarmingLevelVisualize(param.Parameterized):
     """Create Warming Levels panel GUI"""

@@ -5,10 +5,7 @@ import matplotlib.ticker as ticker
 import cartopy.feature as cfeature
 from shapely.geometry import box, Polygon
 import cartopy.crs as ccrs
-from climakitae.core.data_interface import (
-    _get_subarea,
-    DataParameters
-)
+from climakitae.core.data_interface import _get_subarea, DataParameters
 
 
 def _add_res_to_ax(
