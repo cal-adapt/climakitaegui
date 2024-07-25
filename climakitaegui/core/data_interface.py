@@ -7,8 +7,7 @@ from shapely.geometry import box, Polygon
 import cartopy.crs as ccrs
 from climakitae.core.data_interface import (
     _get_subarea,
-    _add_res_to_ax,
-    DataParameters,
+    DataParameters
 )
 
 
