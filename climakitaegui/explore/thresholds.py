@@ -20,6 +20,7 @@ param.parameterized.docstring_describe_params = False
 # Docstring signatures are also hard to read and therefore removed
 param.parameterized.docstring_signature = False
 
+
 class ThresholdParameters(DataParametersWithPanes):
     """An object that holds the data options parameters for theexplore.thresholds panel."""
 

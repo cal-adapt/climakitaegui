@@ -6,6 +6,7 @@ import panel as pn
 import cartopy.crs as ccrs
 from climakitae.util.colormap import read_ae_colormap
 
+
 def plot_exceedance_count(exceedance_count):
     """Create panel column object with embedded plots
 
@@ -31,6 +32,7 @@ def plot_exceedance_count(exceedance_count):
         legend="right",
     )
     return pn.Column(plot_obj)
+
 
 def get_geospatial_plot(
     ds,
