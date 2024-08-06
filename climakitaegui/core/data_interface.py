@@ -5,11 +5,34 @@ import matplotlib.ticker as ticker
 import cartopy.feature as cfeature
 from shapely.geometry import box, Polygon
 import cartopy.crs as ccrs
-from climakitae.core.data_interface import (
-    _get_subarea,
-    _add_res_to_ax,
-    DataParameters,
-)
+from climakitae.core.data_interface import _get_subarea, DataParameters
+
+
+def _add_res_to_ax(
+    poly, ax, rotation, xy, label, color="black", crs=ccrs.PlateCarree()
+):
+    """Add resolution line and label to axis
+
+    Parameters
+    ----------
+    poly: geometry to plot
+    ax: matplotlib axis
+    color: matplotlib color
+    rotation: int
+    xy: tuple
+    label: str
+    crs: projection
+    """
+    ax.add_geometries(
+        [poly], crs=ccrs.PlateCarree(), edgecolor=color, facecolor="white"
+    )
+    ax.annotate(
+        label,
+        xy=xy,
+        rotation=rotation,
+        color="black",
+        xycoords=crs._as_mpl_transform(ax),
+    )
 
 
 def _map_view(selections, stations_gdf):
@@ -18,11 +41,14 @@ def _map_view(selections, stations_gdf):
 
     Parameters
     ----------
-    selections: DataSelector
+    selections: DataParameters
         User data selections
     stations_gpd: gpd.DataFrame
         DataFrame with station coordinates
 
+    Returns
+    -------
+    mpl_pane: pn.Pane
     """
 
     _wrf_bb = {
@@ -312,14 +338,18 @@ class DataParametersWithPanes(DataParameters):
 
 class Select(DataParametersWithPanes):
     def show(self):
-        # Show panel visualually
+        # Show panel visually
         select_panel = _display_select(self)
         return select_panel
 
 
 def _selections_param_to_panel(self):
-    """For the _DataSelector object, get parameters and parameter
+    """For the Select object, get parameters and parameter
     descriptions formatted as panel widgets
+
+    Returns
+    -------
+    dict
     """
     area_subset = pn.widgets.Select.from_param(
         self.param.area_subset, name="Subset the data by..."
@@ -424,10 +454,14 @@ def _selections_param_to_panel(self):
 
 def _display_select(self):
     """
-    Called by 'select' at the beginning of the workflow, to capture user
+    Called by Select at the beginning of the workflow, to capture user
     selections. Displays panel of widgets from which to make selections.
-    Modifies 'selections' object, which is used by retrieve() to build an
+    Modifies DataParameters object, which is used by retrieve() to build an
     appropriate xarray Dataset.
+
+    Returns
+    -------
+    pn.Card
     """
     # Get formatted panel widgets for each parameter
     widgets = _selections_param_to_panel(self)
