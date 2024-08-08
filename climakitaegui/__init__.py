@@ -1,5 +1,4 @@
 from climakitaegui.core.data_interface import Select
-from climakitae.core.data_load import load
 from climakitae.core.data_view import view
 
 try:
@@ -20,7 +19,6 @@ __all__ = (
     # Classes
     "Select",
     # Methods
-    "load",
     "view",
     # Constants
     "__version__",
