@@ -1,7 +1,6 @@
 from climakitaegui.core.data_interface import Select
 from climakitae.core.data_load import load
 from climakitae.core.data_view import view
-from climakitae.core.data_export import export
 
 try:
     from importlib.metadata import version as _version
@@ -23,7 +22,6 @@ __all__ = (
     # Methods
     "load",
     "view",
-    "export",
     # Constants
     "__version__",
 )
