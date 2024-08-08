@@ -1,4 +1,4 @@
-# Workflow file for continuous integration of climakitaegui
+# Workflow file for continuous integration
 # Conda environment is caches to avoid long wait times for CI
 # Based on code from: https://github.com/epassaro/cache-conda-envs/blob/main/.github/workflows/ci.yml
 # Based on code from: https://github.com/marketplace/actions/setup-miniconda
