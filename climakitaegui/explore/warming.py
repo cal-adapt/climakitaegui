@@ -8,7 +8,11 @@ import holoviews as hv
 from holoviews import opts
 import matplotlib.pyplot as plt
 from scipy.stats import pearson3
-from climakitae.core.data_view import compute_vmin_vmax
+from climakitae.core.data_interface import (
+    DataParametersWithPanes,
+    _selections_param_to_panel,
+)
+from climakitae.core.data_load import load
 from climakitae.core.paths import (
     ssp119_file,
     ssp126_file,
@@ -17,50 +21,79 @@ from climakitae.core.paths import (
     ssp585_file,
     hist_file,
 )
-from climakitae.util.utils import read_csv_file, area_average
-from climakitae.explore.warming import (
-    WarmingLevels,
-    WarmingLevelDataParameters,
-    _select_one_gwl,
-)
 from climakitae.explore.threshold_tools import _get_distr_func, _get_fitted_distr
-from climakitaegui.core.data_interface import (
-    DataParametersWithPanes,
-    _selections_param_to_panel,
-)
+from climakitae.explore.warming import WarmingLevels as BaseWarmingLevels
+from climakitae.explore.warming import WarmingLevelChoose as BaseWarmingLevelChoose
+from climakitae.util.colormap import read_ae_colormap
+from climakitae.util.utils import read_csv_file, area_average
 
 
-class WarmingLevelsWithGUI(WarmingLevels):
+class WarmingLevels(BaseWarmingLevels):
     def __init__(self, **params):
-        # Set default values
         super().__init__(**params)
-        self.wl_params = WarmingLevelDataParametersWithPanes()
-
-    def calculate(self):
-        super().calculate()
-        self.wl_viz = WarmingLevelVisualize(
-            gwl_snapshots=self.gwl_snapshots,
-            wl_params=self.wl_params,
-            cmap=self.cmap,
-            warming_levels=self.warming_levels,
-        )
-        self.wl_viz.compute_stamps()
+        self.wl_params = WarmingLevelChoose()
 
     def choose_data(self):
         return warming_levels_select(self.wl_params)
 
     def visualize(self):
-        if self.wl_viz:
-            return warming_levels_visualize(self.wl_viz)
-        else:
-            print("Please run 'calculate' first.")
+        def _get_cmap(wl_params):
+            """Set colormap depending on variable"""
+            if (
+                wl_params.variable == "Air Temperature at 2m"
+                or wl_params.variable == "Dew point temperature"
+                or wl_params.variable == "Maximum air temperature at 2m"
+            ):
+                cmap_name = "ae_orange"
+            else:
+                cmap_name = "ae_diverging"
+
+            # Read colormap hex
+            cmap = read_ae_colormap(cmap=cmap_name, cmap_hex=True)
+            return cmap
+
+        self.cmap = _get_cmap(self.wl_params)
+        print("Loading in GWL snapshots...")
+        self.gwl_snapshots = load(self.gwl_snapshots, progress_bar=True)
+        self.wl_viz = WarmingLevelVisualize(
+            gwl_snapshots=self.gwl_snapshots,
+            wl_params=self.wl_params,
+            cmap=self.cmap,
+            warming_levels=self.wl_params.warming_levels,
+        )
+        self.wl_viz.compute_stamps()
+        return warming_levels_visualize(self.wl_viz)
 
 
-class WarmingLevelDataParametersWithPanes(
-    WarmingLevelDataParameters, DataParametersWithPanes
-):
+class WarmingLevelChoose(BaseWarmingLevelChoose, DataParametersWithPanes):
     def __init__(self, **params):
         super().__init__(**params)
+
+
+def _select_one_gwl(one_gwl, snapshots):
+    """
+    This needs to happen in two places. You have to drop the sims
+    which are nan because they don't reach that warming level, else the
+    plotting functions and cross-sim statistics will get confused.
+    But it's important that you drop it from a copy, or it may modify the
+    original data.
+    """
+    all_plot_data = snapshots.sel(warming_level=one_gwl).copy()
+    all_plot_data = all_plot_data.dropna("all_sims", how="all")
+    return all_plot_data
+
+
+def _check_single_spatial_dims(da):
+    """
+    This checks needs to happen to determine whether or not the plots in postage stamps should be image plots or bar plots, depending on whether or not one of the spatial dimensions is <= a length of 1.
+    """
+    if set(["lat", "lon"]).issubset(set(da.dims)):
+        if len(da.lat) <= 1 or len(da.lon) <= 1:
+            return True
+    elif set(["x", "y"]).issubset(set(da.dims)):
+        if len(da.x) <= 1 or len(da.y) <= 1:
+            return True
+    return False
 
 
 def warming_levels_select(self):
@@ -134,392 +167,6 @@ def warming_levels_select(self):
         title="Choose Data to Explore at Global Warming Levels",
         collapsible=False,
     )
-
-
-def GCM_PostageStamps_MAIN_compute(wl_viz):
-    """
-    Compute helper for main postage stamps.
-    Returns dictionary of warming levels to stats visuals.
-    """
-    # Get data to plot
-    warm_level_dict = {}
-    for warmlevel in wl_viz.warming_levels:  ### TODO: Can parallize this for-loop
-        all_plot_data = _select_one_gwl(warmlevel, wl_viz.gwl_snapshots)
-        if all_plot_data.all_sims.size != 0:
-            if wl_viz.wl_params.variable == "Relative humidity":
-                all_plot_data = all_plot_data * 100
-
-            # Set up plotting arguments
-            width = 210
-            height = 110
-            clabel = (
-                wl_viz.wl_params.variable
-                + " ("
-                + wl_viz.gwl_snapshots.attrs["units"]
-                + ")"
-            )
-            vmin = wl_viz.mins.sel(warming_level=warmlevel).values.item()
-            vmax = wl_viz.maxs.sel(warming_level=warmlevel).values.item()
-            if (vmin < 0) and (vmax > 0):
-                sopt = True
-            else:
-                sopt = None
-
-            # now prepare the plot object:
-            all_plots = all_plot_data.hvplot.image(
-                by="all_sims",
-                subplots=True,
-                colorbar=False,
-                clim=(vmin, vmax),
-                clabel=clabel,
-                cmap=wl_viz.cmap,
-                symmetric=sopt,
-                width=width,
-                height=height,
-                xaxis=False,
-                yaxis=False,
-                title="",
-            ).cols(4)
-
-            try:
-                all_plots.opts(
-                    title=wl_viz.wl_params.variable
-                    + ": for "
-                    + str(warmlevel)
-                    + "°C Warming by Simulation"
-                )  # Add title
-            except:
-                all_plots.opts(title=str(warmlevel) + "°C")  # Add shorter title
-
-            all_plots.opts(toolbar="below")  # Set toolbar location
-            all_plots.opts(hv.opts.Layout(merge_tools=True))  # Merge toolbar
-            warm_level_dict[warmlevel] = all_plots.cols(1)
-
-        # This means that there does not exist any simulations that reach this degree of warming (WRF models).
-        else:
-            # Pass in a dummy visualization for now to stay consistent with viz data structures
-            warm_level_dict[warmlevel] = pn.pane.Markdown(
-                "**No simulations reach this degree of warming.**"
-            )  # all_plot_data.hvplot()
-
-    return warm_level_dict
-    # return all_plots
-    # else:
-    #     return None
-
-
-def GCM_PostageStamps_STATS_compute(wl_viz):
-    """
-    Compute helper for stats postage stamps.
-    Returns dictionary of warming levels to stats visuals.
-    """
-    # Get data to plot
-    # one_warming_level = str(float(wl_viz.warmlevel))
-    warm_level_dict = {}
-    for warmlevel in wl_viz.warming_levels:
-        all_plot_data = _select_one_gwl(warmlevel, wl_viz.gwl_snapshots)
-        if all_plot_data.all_sims.size != 0:
-            if wl_viz.wl_params.variable == "Relative humidity":
-                all_plot_data = all_plot_data * 100
-
-            # compute stats
-            def get_name(simulation, my_func_name):
-                method, GCM, run, scenario = simulation.split("_")
-                return (
-                    my_func_name
-                    + ": \n"
-                    + method
-                    + " "
-                    + GCM
-                    + " "
-                    + run
-                    + "\n"
-                    + scenario.split("+")[1]
-                )
-
-            def arg_median(data):
-                """
-                Returns the simulation closest to the median.
-                """
-                return data.loc[
-                    data == data.quantile(0.5, "all_sims", method="nearest")
-                ].all_sims.values.item()
-
-            def find_sim(all_plot_data, area_avgs, stat_funcs, my_func):
-                if my_func == "Median":
-                    one_sim = all_plot_data.sel(all_sims=stat_funcs[my_func](area_avgs))
-                else:
-                    which_sim = area_avgs.reduce(stat_funcs[my_func], dim="all_sims")
-                    one_sim = all_plot_data.isel(all_sims=which_sim.values)
-                one_sim.all_sims.values = get_name(
-                    one_sim.all_sims.values.item(),
-                    my_func,
-                )
-                return one_sim
-
-            area_avgs = area_average(all_plot_data)
-            stat_funcs = {
-                "Minimum": np.argmin,
-                "Maximum": np.argmax,
-                "Median": arg_median,
-            }
-            stats = xr.concat(
-                [
-                    find_sim(all_plot_data, area_avgs, stat_funcs, one_func)
-                    for one_func in stat_funcs
-                ],
-                dim="all_sims",
-            )
-            stats.name = "Cross-simulation Statistics"
-
-            # Set up plotting arguments
-            width = 410
-            height = 210
-            clabel = (
-                wl_viz.wl_params.variable
-                + " ("
-                + wl_viz.gwl_snapshots.attrs["units"]
-                + ")"
-            )
-            vmin = wl_viz.mins.sel(warming_level=warmlevel).values.item()
-            vmax = wl_viz.maxs.sel(warming_level=warmlevel).values.item()
-            if (vmin < 0) and (vmax > 0):
-                sopt = True
-            else:
-                sopt = None
-
-            # Make plots
-            plot_list = []
-            for stat in stats:
-                plot_list.append(
-                    stat.squeeze()
-                    .drop(["warming_level"])
-                    .hvplot.image(
-                        clabel=clabel,
-                        cmap=wl_viz.cmap,
-                        clim=(vmin, vmax),
-                        symmetric=sopt,
-                        width=width,
-                        height=height,
-                        xaxis=False,
-                        yaxis=False,
-                        title=stat.all_sims.values.item(),  # dim has been overwritten with nicer title
-                    )
-                )
-            all_plots = plot_list[0] + plot_list[1] + plot_list[2]
-
-            all_plots.opts(
-                title=wl_viz.wl_params.variable
-                + ": for "
-                + str(warmlevel)
-                + "°C Warming Across Models"
-            )  # Add title
-            warm_level_dict[warmlevel] = all_plots.cols(1)
-
-        # This means that there does not exist any simulations that reach this degree of warming (WRF models).
-        else:
-            # Pass in a dummy visualization for now to stay consistent with viz data structures
-            warm_level_dict[warmlevel] = pn.pane.Markdown(
-                "**No simulations reach this degree of warming.**"
-            )  # all_plot_data.hvplot()
-
-    return warm_level_dict
-
-
-def warming_levels_visualize(wl_viz):
-    # Create panel doodad!
-
-    GMT_plot = pn.Card(
-        pn.Column(
-            (
-                "Shading around selected global emissions scenario shows the 90% interval"
-                " across different simulations. Dotted line indicates when the multi-model"
-                " ensemble reaches the selected warming level, while solid vertical lines"
-                " indicate when the earliest and latest simulations of that scenario reach"
-                " the warming level. Figure and data are reproduced from the"
-                " [IPCC AR6 Summary for Policymakers Fig 8]"
-                "(https://www.ipcc.ch/report/ar6/wg1/figures/summary-for-policymakers/figure-spm-8/)."
-            ),
-            pn.widgets.Select.from_param(wl_viz.param.ssp, name="Scenario", width=250),
-            wl_viz.GMT_context_plot,
-        ),
-        title="When do different scenarios reach the warming level?",
-        collapsible=False,
-        width=600,
-        height=515,
-    )
-
-    postage_stamps_MAIN = pn.Column(
-        pn.widgets.StaticText(
-            value=(
-                "Panels show the 30-year average centered on the year that each "
-                "GCM run (each panel) reaches the specified warming level. "
-                "If you selected 'Yes' to return an anomaly, you will see the difference "
-                "from average over the 1981-2010 historical reference period."
-            ),
-            width=800,
-        ),
-        pn.Row(
-            wl_viz.GCM_PostageStamps_MAIN,
-            pn.Column(
-                pn.widgets.StaticText(value="<br><br><br>", width=150),
-                pn.widgets.StaticText(
-                    value=(
-                        "<b>Tip</b>: There's a toolbar below the maps."
-                        " Try clicking the magnifying glass to zoom in on a"
-                        " particular region. You can also click the save button"
-                        " to save a copy of the figure to your computer."
-                    ),
-                    width=150,
-                    style={
-                        "border": "1.2px red solid",
-                        "padding": "5px",
-                        "border-radius": "4px",
-                        "font-size": "13px",
-                    },
-                ),
-            ),
-        ),
-    )
-
-    postage_stamps_STATS = pn.Column(
-        pn.widgets.StaticText(
-            value=(
-                "Panels show the median, minimum, or maximum conditions"
-                " across all models. These statistics are computed from the data"
-                " in the first panel."
-            ),
-            width=800,
-        ),
-        wl_viz.GCM_PostageStamps_STATS,
-    )
-
-    map_tabs = pn.Card(
-        pn.Row(
-            pn.widgets.StaticText(name="", value="Warming level (°C)"),
-            pn.widgets.RadioButtonGroup.from_param(wl_viz.param.warmlevel, name=""),
-            width=230,
-        ),
-        pn.Tabs(
-            ("Maps of individual simulations", postage_stamps_MAIN),
-            (
-                "Maps of cross-model statistics: median/max/min",
-                postage_stamps_STATS,
-            ),
-        ),
-        title="Regional response at selected warming level",
-        width=850,
-        height=600,
-        collapsible=False,
-    )
-
-    warming_panel = pn.Column(GMT_plot, map_tabs)
-    return warming_panel
-
-
-def _make_hvplot(data, clabel, clim, cmap, sopt, title, width=225, height=210):
-    """Make single map"""
-    if len(data.x) > 1 and len(data.y) > 1:
-        # If data has more than one grid cell, make a pretty map
-        _plot = data.hvplot.image(
-            x="x",
-            y="y",
-            grid=True,
-            width=width,
-            height=height,
-            xaxis=None,
-            yaxis=None,
-            clabel=clabel,
-            clim=clim,
-            cmap=cmap,
-            symmetric=sopt,
-            title=title,
-        )
-    else:
-        # Make a scatter plot if it's just one grid cell
-        _plot = data.hvplot.scatter(
-            x="x",
-            y="y",
-            hover_cols=data.name,
-            grid=True,
-            width=width,
-            height=height,
-            xaxis=None,
-            yaxis=None,
-            clabel=clabel,
-            clim=clim,
-            cmap=cmap,
-            symmetric=sopt,
-            title=title,
-            s=150,  # Size of marker
-        )
-    return _plot
-
-
-def fit_models_and_plots(new_data, trad_data, dist_name):
-    """
-    Given a xr.DataArray and a distribution name, fit the distribution to the data, and generate
-    a plot denoting a histogram of the data and the fitted distribution to the data.
-    """
-    plt.figure(figsize=(10, 5))
-
-    # Get and fit distribution for new method data and traditional method data
-    func = _get_distr_func(dist_name)
-    new_fitted_dist = _get_fitted_distr(new_data, dist_name, func)
-    trad_fitted_dist = _get_fitted_distr(trad_data, dist_name, func)
-
-    # Get params from distribution
-    new_params = new_fitted_dist[0].values()
-    trad_params = trad_fitted_dist[0].values()
-
-    # Create histogram for new method data and traditional method data
-    counts, bins = np.histogram(new_data)
-    plt.hist(
-        bins[:-1],
-        5,
-        weights=counts / sum(counts),
-        label="New GWL counts",
-        lw=3,
-        fc=(1, 0, 0, 0.5),
-    )
-
-    counts, bins = np.histogram(trad_data)
-    plt.hist(
-        bins[:-1],
-        5,
-        weights=counts / sum(counts),
-        label="Traditional counts",
-        lw=3,
-        fc=(0, 0, 1, 0.5),
-    )
-
-    # Plotting pearson3 PDFs
-    skew, loc, scale = new_params
-    x = np.linspace(func.ppf(0.01, skew), func.ppf(0.99, skew), 5000)
-    plt.plot(x, func.pdf(x, skew), "r-", lw=2, alpha=0.6, label="pearson3 curve new")
-    new_left, new_right = pearson3.interval(0.95, skew, loc, scale)
-
-    skew, loc, scale = trad_params
-    x = np.linspace(func.ppf(0.01, skew), func.ppf(0.99, skew), 5000)
-    plt.plot(x, func.pdf(x, skew), "b-", lw=2, alpha=0.6, label="pearson3 curve trad.")
-    trad_left, trad_right = pearson3.interval(0.95, skew, loc, scale)
-
-    # Plotting confidence intervals
-    plt.axvline(new_left, color="r", linestyle="dashed", label="95% CI new")
-    plt.axvline(new_right, color="r", linestyle="dashed")
-    plt.axvline(trad_left, color="b", linestyle="dashed", label="95% CI trad.")
-    plt.axvline(trad_right, color="b", linestyle="dashed")
-
-    # Plotting rest of chart attributes
-    plt.xlabel("Log of Extreme Heat Days Count")
-    plt.ylabel("Probability Density")
-    plt.legend()
-    plt.title("Fitting Pearson3 Distributions to Log-Scaled Extreme Heat Days Counts")
-    plt.xlim(left=0.5, right=max(max(new_data), max(trad_data)))
-    plt.ylim(top=1)
-    plt.show()
-
-    return new_params, trad_params
 
 
 class WarmingLevelVisualize(param.Parameterized):
@@ -753,3 +400,418 @@ class WarmingLevelVisualize(param.Parameterized):
         )
         to_plot.opts(legend_position="bottom", fontsize=10)
         return to_plot
+
+
+def GCM_PostageStamps_MAIN_compute(wl_viz):
+    """
+    Compute helper for main postage stamps.
+    Returns dictionary of warming levels to stats visuals.
+    """
+    # Get data to plot
+    warm_level_dict = {}
+    for warmlevel in wl_viz.warming_levels:  ### TODO: Can parallize this for-loop
+        all_plot_data = _select_one_gwl(warmlevel, wl_viz.gwl_snapshots)
+        if all_plot_data.all_sims.size != 0:
+            if wl_viz.wl_params.variable == "Relative humidity":
+                all_plot_data = all_plot_data * 100
+
+            # Set up plotting arguments
+            width = 210
+            height = 110
+            units = wl_viz.gwl_snapshots.attrs["units"]
+            clabel = wl_viz.wl_params.variable + " (" + units + ")"
+            vmin = wl_viz.mins.sel(warming_level=warmlevel).values.item()
+            vmax = wl_viz.maxs.sel(warming_level=warmlevel).values.item()
+            if (vmin < 0) and (vmax > 0):
+                sopt = True
+            else:
+                sopt = None
+
+            # now prepare the plot object:
+            plot_image_kwargs = {
+                "by": "all_sims",
+                "subplots": True,
+                "colorbar": False,
+                "clim": (vmin, vmax),
+                "clabel": clabel,
+                "cmap": wl_viz.cmap,
+                "symmetric": sopt,
+                "width": width,
+                "height": height,
+                "xaxis": False,
+                "yaxis": False,
+                "title": "",
+            }
+
+            # Splitting up logic to plot images or bar for postage stamps depending on if there exist more/less than 2x2 gridcells
+            any_single_dims = _check_single_spatial_dims(all_plot_data)
+            if not any_single_dims:
+                all_plots = all_plot_data.hvplot.image(**plot_image_kwargs).cols(4)
+            else:
+                # Aggregate all data to just the `all_sims` dimension. This will average the data across all dimensions, which may not necessarily be desired for calculations with 'Max' variables, if you are for instance looking for a 'max of maxes'.
+                all_plot_data = all_plot_data.mean(
+                    dim=[dim for dim in all_plot_data.dims if dim != "all_sims"]
+                )
+
+                # Remove SSP descriptions
+                all_plot_data["all_sims"] = [
+                    sim_name.item().split("--")[0].strip()
+                    for sim_name in all_plot_data.all_sims
+                ]
+
+                if wl_viz.wl_params.downscaling_method == "Dynamical":
+                    # Creating barh plot since there's only max 8 WRF simulations, so each bar and label is still legible
+                    all_plots = all_plot_data.hvplot.barh(
+                        x="all_sims", xlabel="Simulation", ylabel=f"{units}"
+                    ).opts(multi_level=False, show_legend=False)
+
+                else:
+                    # Creating histogram since all simulations are too many to put on a bar plot
+                    all_plots = all_plot_data.hvplot.hist()
+
+            try:
+                all_plots.opts(
+                    title=wl_viz.wl_params.variable
+                    + " for "
+                    + str(warmlevel)
+                    + "°C Warming by Simulation"
+                )  # Add title
+            except:
+                all_plots.opts(title=str(warmlevel) + "°C")  # Add shorter title
+
+            all_plots.opts(toolbar="below")  # Set toolbar location
+            all_plots.opts(hv.opts.Layout(merge_tools=True))  # Merge toolbar
+
+            if not any_single_dims:
+                warm_level_dict[warmlevel] = all_plots.cols(1)
+            else:
+                warm_level_dict[warmlevel] = all_plots
+
+        # This means that there does not exist any simulations that reach this degree of warming (WRF models).
+        else:
+            # Pass in a dummy visualization for now to stay consistent with viz data structures
+            warm_level_dict[warmlevel] = pn.pane.Markdown(
+                "**No simulations reach this degree of warming.**"
+            )  # all_plot_data.hvplot()
+
+    return warm_level_dict
+    # return all_plots
+    # else:
+    #     return None
+
+
+def GCM_PostageStamps_STATS_compute(wl_viz):
+    """
+    Compute helper for stats postage stamps.
+    Returns dictionary of warming levels to stats visuals.
+    """
+    # Get data to plot
+    # one_warming_level = str(float(wl_viz.warmlevel))
+    warm_level_dict = {}
+    for warmlevel in wl_viz.warming_levels:
+        all_plot_data = _select_one_gwl(warmlevel, wl_viz.gwl_snapshots)
+        if all_plot_data.all_sims.size != 0:
+            if wl_viz.wl_params.variable == "Relative humidity":
+                all_plot_data = all_plot_data * 100
+
+            # compute stats
+            def get_name(simulation, my_func_name):
+                method, GCM, run, scenario = simulation.split("_")
+                return (
+                    my_func_name
+                    + ": \n"
+                    + method
+                    + " "
+                    + GCM
+                    + " "
+                    + run
+                    + "\n"
+                    + scenario.split("+")[1]
+                )
+
+            def arg_median(data):
+                """
+                Returns the simulation closest to the median.
+                """
+                return data.loc[
+                    data == data.quantile(0.5, "all_sims", method="nearest")
+                ].all_sims.values.item()
+
+            def find_sim(all_plot_data, area_avgs, stat_funcs, my_func):
+                if my_func == "Median":
+                    one_sim = all_plot_data.sel(all_sims=stat_funcs[my_func](area_avgs))
+                else:
+                    which_sim = area_avgs.reduce(stat_funcs[my_func], dim="all_sims")
+                    one_sim = all_plot_data.isel(all_sims=which_sim.values)
+                one_sim.all_sims.values = get_name(
+                    one_sim.all_sims.values.item(),
+                    my_func,
+                )
+                return one_sim
+
+            area_avgs = area_average(all_plot_data)
+            stat_funcs = {
+                "Minimum": np.argmin,
+                "Maximum": np.argmax,
+                "Median": arg_median,
+            }
+            stats = xr.concat(
+                [
+                    find_sim(all_plot_data, area_avgs, stat_funcs, one_func)
+                    for one_func in stat_funcs
+                ],
+                dim="all_sims",
+            )
+            stats.name = "Cross-simulation Statistics"
+
+            # Set up plotting arguments
+            width = 410
+            height = 210
+            units = wl_viz.gwl_snapshots.attrs["units"]
+            clabel = wl_viz.wl_params.variable + " (" + units + ")"
+            vmin = wl_viz.mins.sel(warming_level=warmlevel).values.item()
+            vmax = wl_viz.maxs.sel(warming_level=warmlevel).values.item()
+            if (vmin < 0) and (vmax > 0):
+                sopt = True
+            else:
+                sopt = None
+
+            # Make plots
+            any_single_dims = _check_single_spatial_dims(all_plot_data)
+            if any_single_dims:
+                only_sims = area_average(stats)
+                all_plots = only_sims.hvplot.bar(
+                    x="all_sims", xlabel="Simulation", ylabel=f"{units} of Warming"
+                ).opts(multi_level=False, show_legend=False)
+
+            else:
+                plot_list = []
+                for stat in stats:
+                    plot = stat.drop(["warming_level"]).hvplot.image(
+                        clabel=clabel,
+                        cmap=wl_viz.cmap,
+                        clim=(vmin, vmax),
+                        symmetric=sopt,
+                        width=width,
+                        height=height,
+                        xaxis=False,
+                        yaxis=False,
+                        title=stat.all_sims.values.item(),  # dim has been overwritten with nicer title
+                    )
+                    plot_list.append(plot)
+                all_plots = plot_list[0] + plot_list[1] + plot_list[2]
+
+            all_plots.opts(
+                title=wl_viz.wl_params.variable
+                + " for "
+                + str(warmlevel)
+                + "°C Warming Across Models"
+            )  # Add title
+            if not any_single_dims:
+                warm_level_dict[warmlevel] = all_plots.cols(1)
+            else:
+                warm_level_dict[warmlevel] = all_plots
+        # This means that there does not exist any simulations that reach this degree of warming (WRF models).
+        else:
+            # Pass in a dummy visualization for now to stay consistent with viz data structures
+            warm_level_dict[warmlevel] = pn.pane.Markdown(
+                "**No simulations reach this degree of warming.**"
+            )  # all_plot_data.hvplot()
+
+    return warm_level_dict
+
+
+def warming_levels_visualize(wl_viz):
+    # Create panel doodad!
+
+    GMT_plot = pn.Card(
+        pn.Column(
+            (
+                "Shading around selected global emissions scenario shows the 90% interval"
+                " across different simulations. Dotted line indicates when the multi-model"
+                " ensemble reaches the selected warming level, while solid vertical lines"
+                " indicate when the earliest and latest simulations of that scenario reach"
+                " the warming level. Figure and data are reproduced from the"
+                " [IPCC AR6 Summary for Policymakers Fig 8]"
+                "(https://www.ipcc.ch/report/ar6/wg1/figures/summary-for-policymakers/figure-spm-8/)."
+            ),
+            pn.widgets.Select.from_param(wl_viz.param.ssp, name="Scenario", width=250),
+            wl_viz.GMT_context_plot,
+        ),
+        title="When do different scenarios reach the warming level?",
+        collapsible=False,
+        width=600,
+        height=515,
+    )
+
+    postage_stamps_MAIN = pn.Column(
+        pn.widgets.StaticText(
+            value=(
+                "Panels show the 30-year average centered on the year that each "
+                "GCM run (each panel) reaches the specified warming level. "
+                "If you selected 'Yes' to return an anomaly, you will see the difference "
+                "from average over the 1981-2010 historical reference period."
+            ),
+            width=800,
+        ),
+        pn.Row(
+            wl_viz.GCM_PostageStamps_MAIN,
+            pn.Column(
+                pn.widgets.StaticText(value="<br><br><br>", width=150),
+                pn.widgets.StaticText(
+                    value=(
+                        "<b>Tip</b>: There's a toolbar below the maps."
+                        " Try clicking the magnifying glass to zoom in on a"
+                        " particular region. You can also click the save button"
+                        " to save a copy of the figure to your computer."
+                    ),
+                    width=150,
+                    style={
+                        "border": "1.2px red solid",
+                        "padding": "5px",
+                        "border-radius": "4px",
+                        "font-size": "13px",
+                    },
+                ),
+            ),
+        ),
+    )
+
+    postage_stamps_STATS = pn.Column(
+        pn.widgets.StaticText(
+            value=(
+                "Panels show the median, minimum, or maximum conditions"
+                " across all models. These statistics are computed from the data"
+                " in the first panel."
+            ),
+            width=800,
+        ),
+        wl_viz.GCM_PostageStamps_STATS,
+    )
+
+    map_tabs = pn.Card(
+        pn.Row(
+            pn.widgets.StaticText(name="", value="Warming level (°C)"),
+            pn.widgets.RadioButtonGroup.from_param(wl_viz.param.warmlevel, name=""),
+            width=230,
+        ),
+        pn.Tabs(
+            ("Maps of individual simulations", postage_stamps_MAIN),
+            (
+                "Maps of cross-model statistics: median/max/min",
+                postage_stamps_STATS,
+            ),
+        ),
+        title="Regional response at selected warming level",
+        width=850,
+        height=600,
+        collapsible=False,
+    )
+
+    warming_panel = pn.Column(GMT_plot, map_tabs)
+    return warming_panel
+
+
+def _make_hvplot(data, clabel, clim, cmap, sopt, title, width=225, height=210):
+    """Make single map"""
+    if len(data.x) > 1 and len(data.y) > 1:
+        # If data has more than one grid cell, make a pretty map
+        _plot = data.hvplot.image(
+            x="x",
+            y="y",
+            grid=True,
+            width=width,
+            height=height,
+            xaxis=None,
+            yaxis=None,
+            clabel=clabel,
+            clim=clim,
+            cmap=cmap,
+            symmetric=sopt,
+            title=title,
+        )
+    else:
+        # Make a scatter plot if it's just one grid cell
+        _plot = data.hvplot.scatter(
+            x="x",
+            y="y",
+            hover_cols=data.name,
+            grid=True,
+            width=width,
+            height=height,
+            xaxis=None,
+            yaxis=None,
+            clabel=clabel,
+            clim=clim,
+            cmap=cmap,
+            symmetric=sopt,
+            title=title,
+            s=150,  # Size of marker
+        )
+    return _plot
+
+
+def fit_models_and_plots(new_data, trad_data, dist_name):
+    """
+    Given a xr.DataArray and a distribution name, fit the distribution to the data, and generate
+    a plot denoting a histogram of the data and the fitted distribution to the data.
+    """
+    plt.figure(figsize=(10, 5))
+
+    # Get and fit distribution for new method data and traditional method data
+    func = _get_distr_func(dist_name)
+    new_fitted_dist = _get_fitted_distr(new_data, dist_name, func)
+    trad_fitted_dist = _get_fitted_distr(trad_data, dist_name, func)
+
+    # Get params from distribution
+    new_params = new_fitted_dist[0].values()
+    trad_params = trad_fitted_dist[0].values()
+
+    # Create histogram for new method data and traditional method data
+    counts, bins = np.histogram(new_data)
+    plt.hist(
+        bins[:-1],
+        5,
+        weights=counts / sum(counts),
+        label="New GWL counts",
+        lw=3,
+        fc=(1, 0, 0, 0.5),
+    )
+
+    counts, bins = np.histogram(trad_data)
+    plt.hist(
+        bins[:-1],
+        5,
+        weights=counts / sum(counts),
+        label="Traditional counts",
+        lw=3,
+        fc=(0, 0, 1, 0.5),
+    )
+
+    # Plotting pearson3 PDFs
+    skew, loc, scale = new_params
+    x = np.linspace(func.ppf(0.01, skew), func.ppf(0.99, skew), 5000)
+    plt.plot(x, func.pdf(x, skew), "r-", lw=2, alpha=0.6, label="pearson3 curve new")
+    new_left, new_right = pearson3.interval(0.95, skew, loc, scale)
+
+    skew, loc, scale = trad_params
+    x = np.linspace(func.ppf(0.01, skew), func.ppf(0.99, skew), 5000)
+    plt.plot(x, func.pdf(x, skew), "b-", lw=2, alpha=0.6, label="pearson3 curve trad.")
+    trad_left, trad_right = pearson3.interval(0.95, skew, loc, scale)
+
+    # Plotting confidence intervals
+    plt.axvline(new_left, color="r", linestyle="dashed", label="95% CI new")
+    plt.axvline(new_right, color="r", linestyle="dashed")
+    plt.axvline(trad_left, color="b", linestyle="dashed", label="95% CI trad.")
+    plt.axvline(trad_right, color="b", linestyle="dashed")
+
+    # Plotting rest of chart attributes
+    plt.xlabel("Log of Extreme Heat Days Count")
+    plt.ylabel("Probability Density")
+    plt.legend()
+    plt.title("Fitting Pearson3 Distributions to Log-Scaled Extreme Heat Days Counts")
+    plt.xlim(left=0.5, right=max(max(new_data), max(trad_data)))
+    plt.ylim(top=1)
+    plt.show()
+
+    return new_params, trad_params
