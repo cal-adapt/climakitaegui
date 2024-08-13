@@ -8,7 +8,7 @@ import holoviews as hv
 from holoviews import opts
 import matplotlib.pyplot as plt
 from scipy.stats import pearson3
-from climakitae.core.data_interface import (
+from climakitaegui.core.data_interface import (
     DataParametersWithPanes,
     _selections_param_to_panel,
 )
