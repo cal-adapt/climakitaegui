@@ -4,10 +4,10 @@ import panel as pn
 import param
 
 from climakitaegui.core.data_interface import DataParametersWithPanes
+from climakitaegui.explore.threshold_tools import plot_exceedance_count
 from climakitae.explore.thresholds import get_threshold_data
 from climakitae.explore.threshold_tools import (
     get_exceedance_count,
-    plot_exceedance_count,
     exceedance_plot_title,
     exceedance_plot_subtitle,
 )
