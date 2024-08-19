@@ -1,5 +1,5 @@
 from climakitaegui.core.data_interface import Select
-from climakitae.core.data_view import view
+from climakitaegui.core.data_view import view
 
 try:
     from importlib.metadata import version as _version
