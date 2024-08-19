@@ -1,4 +1,5 @@
 import param
+import pandas as pd
 import panel as pn
 import hvplot.xarray
 from climakitae.explore.timeseries import TimeSeriesParameters, TimeSeries
