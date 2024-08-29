@@ -1,4 +1,4 @@
-#climakitae==0.2.0
+#climakitae==1.0.0 change after merging climakitae and before merging this
 -e git+https://github.com/cal-adapt/climakitae.git@cksplit2a#egg=climakitae
 geoviews==1.9.5
 holoviews==1.15.0
