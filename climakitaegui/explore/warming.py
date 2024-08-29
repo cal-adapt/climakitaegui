@@ -8,7 +8,7 @@ import holoviews as hv
 from holoviews import opts
 import matplotlib.pyplot as plt
 from scipy.stats import pearson3
-from climakitae.core.data_interface import VariableDescriptions
+from climakitae.core.data_interface import DataInterface
 from climakitae.core.data_load import load
 from climakitae.core.paths import (
     ssp119_file,
@@ -289,7 +289,7 @@ class WarmingLevelVisualize(param.Parameterized):
         self.maxs = self.gwl_snapshots.max(some_dims).compute()
 
         # Need the DataInterface class to get the variable descriptions table
-        self.variable_descriptions = VariableDescriptions()
+        self.variable_descriptions = DataInterface().variable_descriptions
 
     def compute_stamps(self):
         self.main_stamps = GCM_PostageStamps_MAIN_compute(self)
