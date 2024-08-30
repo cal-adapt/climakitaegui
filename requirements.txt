@@ -5,3 +5,4 @@ holoviews==1.15.0
 hvplot==0.8.1
 matplotlib==3.6.0
 panel==0.13.1
+ipython==8.5.0
