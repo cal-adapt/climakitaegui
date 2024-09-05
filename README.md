@@ -1,6 +1,6 @@
 Climakitaegui
 =============
-A python toolkit for adding graphical user interface and visualization tools to the [Climakitae python package](https://github.com/cal-adapt/climakitae). It does not working standalone - climakitae needs to be installed as well.
+A python toolkit for adding graphical user interface and visualization tools to the [Climakitae python package](https://github.com/cal-adapt/climakitae). It does not work standalone - climakitae needs to be installed as well.
 
 **Note:** This package is in active development and should be considered a work in progress. 
 
