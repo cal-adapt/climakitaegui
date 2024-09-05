@@ -6,7 +6,7 @@ from climakitaegui.explore.thresholds import (
     ThresholdParameters,
     thresholds_visualize,
 )
-from climakitaegui.explore.warming import WarmingLevelsWithGUI
+from climakitaegui.explore.warming import WarmingLevels
 
 
 class AverageMetYear(AverageMetYearParameters):
@@ -35,4 +35,4 @@ def thresholds(option=1):
 
 
 def warming_levels():
-    return WarmingLevelsWithGUI()
+    return WarmingLevels()

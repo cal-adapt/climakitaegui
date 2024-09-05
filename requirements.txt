@@ -1,7 +1,8 @@
-#climakitae==0.2.0
+#climakitae==1.0.0 change after merging climakitae and before merging this
 -e git+https://github.com/cal-adapt/climakitae.git@cksplit2a#egg=climakitae
 geoviews==1.9.5
 holoviews==1.15.0
 hvplot==0.8.1
 matplotlib==3.6.0
 panel==0.13.1
+ipython==8.5.0

@@ -99,6 +99,18 @@ def get_geospatial_plot(
     else:
         variable_name = data_variable.replace("_", " ").replace("'", "")
 
+    def _rename_distr_abbrev(distr):
+        """Makes abbreviated distribution name human-readable"""
+        distr_abbrev = ["gev", "gumbel", "weibull", "pearson3", "genpareto"]
+        distr_readable = [
+            "GEV",
+            "Gumbel",
+            "Weibull",
+            "Pearson Type III",
+            "Generalized Pareto",
+        ]
+        return distr_readable[distr_abbrev.index(distr)]
+
     distr_name = _rename_distr_abbrev(ds.attrs["distribution"])
 
     borders = gv.Path(gv.feature.states.geoms(scale="50m", as_element=False)).opts(

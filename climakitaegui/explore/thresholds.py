@@ -4,15 +4,14 @@ import panel as pn
 import param
 
 from climakitaegui.core.data_interface import DataParametersWithPanes
+from climakitaegui.explore.threshold_tools import plot_exceedance_count
 from climakitae.explore.thresholds import get_threshold_data
-from climakitae.util.unit_conversions import convert_units
-
-from climakitaegui.explore.threshold_tools import (
+from climakitae.explore.threshold_tools import (
     get_exceedance_count,
-    plot_exceedance_count,
     exceedance_plot_title,
     exceedance_plot_subtitle,
 )
+from climakitae.util.unit_conversions import convert_units
 
 # Remove param's parameter descriptions from docstring because
 # ANSI escape sequences in them complicate their rendering

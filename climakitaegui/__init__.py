@@ -1,4 +1,5 @@
 from climakitaegui.core.data_interface import Select
+from climakitaegui.core.data_view import view
 
 try:
     from importlib.metadata import version as _version
@@ -17,4 +18,8 @@ except Exception:
 __all__ = (
     # Classes
     "Select",
+    # Methods
+    "view",
+    # Constants
+    "__version__",
 )
