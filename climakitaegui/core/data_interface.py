@@ -369,14 +369,14 @@ def _selections_param_to_panel(self):
         name="Data type",
     )
     data_type = pn.widgets.RadioBoxGroup.from_param(
-        self.param.data_type, inline=True, name=""
+        self.param.data_type, inline=False, name=""
     )
     data_warning = pn.widgets.StaticText.from_param(
         self.param._data_warning, name="", style={"color": "red"}
     )
     downscaling_method_text = pn.widgets.StaticText(value="", name="Downscaling method")
     downscaling_method = pn.widgets.RadioBoxGroup.from_param(
-        self.param.downscaling_method, inline=True
+        self.param.downscaling_method, inline=False
     )
     historical_selection_text = pn.widgets.StaticText(
         value="<br>Estimates of recent historical climatic conditions",
@@ -400,6 +400,13 @@ def _selections_param_to_panel(self):
     resolution = pn.widgets.RadioBoxGroup.from_param(
         self.param.resolution, inline=False
     )
+    retrieval_method = pn.widgets.RadioBoxGroup.from_param(
+        self.param.retrieval_method, inline=False, name=""
+    )
+    retrieval_method_text = pn.widgets.StaticText(
+        value="",
+        name="Retrieval Method",
+    )
     timescale_text = pn.widgets.StaticText(value="", name="Timescale")
     timescale = pn.widgets.RadioBoxGroup.from_param(
         self.param.timescale, name="", inline=False
@@ -414,6 +421,13 @@ def _selections_param_to_panel(self):
     )
     variable_type = pn.widgets.RadioBoxGroup.from_param(
         self.param.variable_type, inline=True, name=""
+    )
+    warming_level = pn.widgets.CheckBoxGroup.from_param(
+        self.param.warming_level, inline=True, name=""
+    )
+    warming_level_text = pn.widgets.StaticText(
+        value="",
+        name="Warming Level (°C)",
     )
 
     widgets_dict = {
@@ -431,22 +445,26 @@ def _selections_param_to_panel(self):
         "station_data_info": station_data_info,
         "ssp_selection": ssp_selection,
         "resolution": resolution,
+        "retrieval_method": retrieval_method,
         "timescale": timescale,
         "time_slice": time_slice,
         "units": units,
         "variable": variable,
         "variable_description": variable_description,
         "variable_type": variable_type,
+        "warming_level": warming_level,
     }
     text_dict = {
         "area_average_text": area_average_text,
         "downscaling_method_text": downscaling_method_text,
         "historical_selection_text": historical_selection_text,
         "resolution_text": resolution_text,
+        "retrieval_method_text": retrieval_method_text,
         "ssp_selection_text": ssp_selection_text,
         "units_text": units_text,
         "timescale_text": timescale_text,
         "variable_text": variable_text,
+        "warming_level_text": warming_level_text,
     }
 
     return widgets_dict | text_dict
@@ -467,6 +485,8 @@ def _display_select(self):
     widgets = _selections_param_to_panel(self)
 
     data_choices = pn.Column(
+        widgets["warming_level_text"],
+        widgets["warming_level"],
         widgets["variable_text"],
         widgets["variable_type"],
         widgets["variable"],
@@ -527,12 +547,15 @@ def _display_select(self):
             pn.Column(
                 widgets["data_type_text"],
                 widgets["data_type"],
-                width=150,
+                width=125,
+            ),
+            pn.Column(
+                widgets["retrieval_method_text"], widgets["retrieval_method"], width=125
             ),
             pn.Column(
                 widgets["downscaling_method_text"],
                 widgets["downscaling_method"],
-                width=325,
+                width=125,
             ),
             pn.Column(
                 widgets["data_warning"],
