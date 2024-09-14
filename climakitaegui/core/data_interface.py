@@ -213,6 +213,7 @@ class DataParametersWithPanes(DataParameters):
         "scenario_ssp",
         "scenario_historical",
         "downscaling_method",
+        "retrieval_method",
         watch=False,
     )
     def scenario_view(self):
@@ -220,104 +221,120 @@ class DataParametersWithPanes(DataParameters):
         Displays a timeline to help the user visualize the time ranges
         available, and the subset of time slice selected.
         """
-        # Set time range of historical data
-        if self.downscaling_method == "Statistical":
-            historical_climate_range = self.historical_climate_range_loca
-        elif self.downscaling_method == "Dynamical+Statistical":
-            historical_climate_range = self.historical_climate_range_wrf_and_loca
-        else:
-            historical_climate_range = self.historical_climate_range_wrf
-        historical_central_year = sum(historical_climate_range) / 2
-        historical_x_width = historical_central_year - historical_climate_range[0]
 
         fig0 = Figure(figsize=(2, 2))
-        ax = fig0.add_subplot(111)
-        ax.spines["right"].set_color("none")
-        ax.spines["left"].set_color("none")
-        ax.yaxis.set_major_locator(ticker.NullLocator())
-        ax.spines["top"].set_color("none")
-        ax.xaxis.set_ticks_position("bottom")
-        ax.set_xlim(1950, 2100)
-        ax.set_ylim(0, 1)
-        ax.tick_params(labelsize=11)
-        ax.xaxis.set_major_locator(ticker.AutoLocator())
-        ax.xaxis.set_minor_locator(ticker.AutoMinorLocator())
-        mpl_pane = pn.pane.Matplotlib(fig0, dpi=1000)
 
-        y_offset = 0.15
-        if (self.scenario_ssp is not None) and (self.scenario_historical is not None):
-            for scen in self.scenario_ssp + self.scenario_historical:
-                if ["SSP" in one for one in self.scenario_ssp]:
-                    if scen in [
-                        "Historical Climate",
-                        "Historical Reconstruction",
-                    ]:
-                        continue
+        if (
+            self.scenario_historical == ["n/a"]
+            or self.scenario_ssp == ["n/a"]
+            or self.retrieval_method == "Warming Level"
+        ):
+            mpl_pane = pn.pane.Matplotlib(fig0, dpi=1000)
 
-                if scen == "Historical Reconstruction":
-                    color = "darkblue"
-                    if "Historical Climate" in self.scenario_historical:
+        else:
+            # Set time range of historical data
+            if self.downscaling_method == "Statistical":
+                historical_climate_range = self.historical_climate_range_loca
+            elif self.downscaling_method == "Dynamical+Statistical":
+                historical_climate_range = self.historical_climate_range_wrf_and_loca
+            else:
+                historical_climate_range = self.historical_climate_range_wrf
+            historical_central_year = sum(historical_climate_range) / 2
+            historical_x_width = historical_central_year - historical_climate_range[0]
+
+            ax = fig0.add_subplot(111)
+            ax.spines["right"].set_color("none")
+            ax.spines["left"].set_color("none")
+            ax.yaxis.set_major_locator(ticker.NullLocator())
+            ax.spines["top"].set_color("none")
+            ax.xaxis.set_ticks_position("bottom")
+            ax.set_xlim(1950, 2100)
+            ax.set_ylim(0, 1)
+            ax.tick_params(labelsize=11)
+            ax.xaxis.set_major_locator(ticker.AutoLocator())
+            ax.xaxis.set_minor_locator(ticker.AutoMinorLocator())
+            mpl_pane = pn.pane.Matplotlib(fig0, dpi=1000)
+
+            y_offset = 0.15
+            if (self.scenario_ssp is not None) and (
+                self.scenario_historical is not None
+            ):
+                for scen in self.scenario_ssp + self.scenario_historical:
+                    if ["SSP" in one for one in self.scenario_ssp]:
+                        if scen in [
+                            "Historical Climate",
+                            "Historical Reconstruction",
+                        ]:
+                            continue
+
+                    if scen == "Historical Reconstruction":
+                        color = "darkblue"
+                        if "Historical Climate" in self.scenario_historical:
+                            center = historical_central_year
+                            x_width = historical_x_width
+                            ax.annotate(
+                                "Reconstruction",
+                                xy=(1967 - 6, y_offset + 0.06),
+                                fontsize=9,
+                            )
+                        else:
+                            center = 1986  # 1950-2022
+                            x_width = 36
+                            ax.annotate(
+                                "Reconstruction",
+                                xy=(1955 - 6, y_offset + 0.06),
+                                fontsize=9,
+                            )
+
+                    elif scen == "Historical Climate":
+                        color = "c"
                         center = historical_central_year
                         x_width = historical_x_width
-                        ax.annotate(
-                            "Reconstruction", xy=(1967 - 6, y_offset + 0.06), fontsize=9
-                        )
-                    else:
-                        center = 1986  # 1950-2022
-                        x_width = 36
-                        ax.annotate(
-                            "Reconstruction", xy=(1955 - 6, y_offset + 0.06), fontsize=9
-                        )
-
-                elif scen == "Historical Climate":
-                    color = "c"
-                    center = historical_central_year
-                    x_width = historical_x_width
-                    ax.annotate(
-                        "Historical",
-                        xy=(historical_climate_range[0] - 6, y_offset + 0.06),
-                        fontsize=9,
-                    )
-
-                elif "SSP" in scen:
-                    center = 2057.5  # 2015-2100
-                    x_width = 42.5
-                    scenario_label = scen[:10]
-                    if "2-4.5" in scen:
-                        color = "#f69320"
-                    elif "3-7.0" in scen:
-                        color = "#df0000"
-                    elif "5-8.5" in scen:
-                        color = "#980002"
-                    if "Historical Climate" in self.scenario_historical:
-                        ax.errorbar(
-                            x=historical_central_year,
-                            y=y_offset,
-                            xerr=historical_x_width,
-                            linewidth=8,
-                            color="c",
-                        )
                         ax.annotate(
                             "Historical",
                             xy=(historical_climate_range[0] - 6, y_offset + 0.06),
                             fontsize=9,
                         )
 
-                    ax.annotate(scen[:10], xy=(2035, y_offset + 0.06), fontsize=9)
+                    elif "SSP" in scen:
+                        center = 2057.5  # 2015-2100
+                        x_width = 42.5
+                        scenario_label = scen[:10]
+                        if "2-4.5" in scen:
+                            color = "#f69320"
+                        elif "3-7.0" in scen:
+                            color = "#df0000"
+                        elif "5-8.5" in scen:
+                            color = "#980002"
+                        if "Historical Climate" in self.scenario_historical:
+                            ax.errorbar(
+                                x=historical_central_year,
+                                y=y_offset,
+                                xerr=historical_x_width,
+                                linewidth=8,
+                                color="c",
+                            )
+                            ax.annotate(
+                                "Historical",
+                                xy=(historical_climate_range[0] - 6, y_offset + 0.06),
+                                fontsize=9,
+                            )
 
-                ax.errorbar(
-                    x=center, y=y_offset, xerr=x_width, linewidth=8, color=color
-                )
+                        ax.annotate(scen[:10], xy=(2035, y_offset + 0.06), fontsize=9)
 
-                y_offset += 0.28
+                    ax.errorbar(
+                        x=center, y=y_offset, xerr=x_width, linewidth=8, color=color
+                    )
 
-        ax.fill_betweenx(
-            [0, 1],
-            self.time_slice[0],
-            self.time_slice[1],
-            alpha=0.8,
-            facecolor="lightgrey",
-        )
+                    y_offset += 0.28
+
+            ax.fill_betweenx(
+                [0, 1],
+                self.time_slice[0],
+                self.time_slice[1],
+                alpha=0.8,
+                facecolor="lightgrey",
+            )
         return mpl_pane
 
     @param.depends(
@@ -366,7 +383,7 @@ def _selections_param_to_panel(self):
     )
     data_type_text = pn.widgets.StaticText(
         value="",
-        name="Data type",
+        name="Data Type",
     )
     data_type = pn.widgets.RadioBoxGroup.from_param(
         self.param.data_type, inline=False, name=""
@@ -374,7 +391,7 @@ def _selections_param_to_panel(self):
     data_warning = pn.widgets.StaticText.from_param(
         self.param._data_warning, name="", style={"color": "red"}
     )
-    downscaling_method_text = pn.widgets.StaticText(value="", name="Downscaling method")
+    downscaling_method_text = pn.widgets.StaticText(value="", name="Downscaling Method")
     downscaling_method = pn.widgets.RadioBoxGroup.from_param(
         self.param.downscaling_method, inline=False
     )
