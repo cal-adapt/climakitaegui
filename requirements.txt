@@ -1,5 +1,5 @@
-#climakitae==1.0.1 change after pypi update
--e git+https://github.com/cal-adapt/climakitae.git@1.0.1#egg=climakitae
+#-e git+https://github.com/cal-adapt/climakitae.git@1.0.1#egg=climakitae
+climakitae==1.0.1
 geoviews==1.9.5
 holoviews==1.15.0
 hvplot==0.8.1
