@@ -512,6 +512,8 @@ def _display_select(self):
     # Get formatted panel widgets for each parameter
     widgets = _selections_param_to_panel(self)
 
+    # These are top-level choices
+    # This is the first thing the user will see in the panel
     top_level_choices = pn.Column(
         pn.Row(
             pn.Column(
@@ -530,6 +532,26 @@ def _display_select(self):
         ),
     )
 
+    # Choices for variable, unit, timescale, and resolution
+    variable_stuff = pn.Row(
+        pn.Column(
+            widgets["variable_text"],
+            widgets["variable_type"],
+            widgets["variable"],
+            widgets["variable_description"],
+            width=250,
+        ),
+        pn.Column(
+            pn.Row(
+                pn.Column(widgets["units_text"], widgets["units"], width=100),
+                pn.Column(widgets["timescale_text"], widgets["timescale"], width=100),
+                pn.Column(widgets["resolution_text"], widgets["resolution"], width=100),
+            ),
+            pn.Column(widgets["station_data_info"], width=340),
+        ),
+    )
+
+    # Options for a warming level approach
     warming_level_approach = pn.Column(
         pn.widgets.StaticText(
             value='Options only valid if retrievel method is set to "Warming Level"',
@@ -544,6 +566,7 @@ def _display_select(self):
         ),
     )
 
+    # Options for a time-based approach
     time_approach = pn.Column(
         pn.widgets.StaticText(
             value='Options only valid if retrievel method is set to "Time"',
@@ -563,24 +586,7 @@ def _display_select(self):
         ),
     )
 
-    variable_stuff = pn.Row(
-        pn.Column(
-            widgets["variable_text"],
-            widgets["variable_type"],
-            widgets["variable"],
-            widgets["variable_description"],
-            width=250,
-        ),
-        pn.Column(
-            pn.Row(
-                pn.Column(widgets["units_text"], widgets["units"], width=100),
-                pn.Column(widgets["timescale_text"], widgets["timescale"], width=100),
-                pn.Column(widgets["resolution_text"], widgets["resolution"], width=100),
-            ),
-            pn.Column(widgets["station_data_info"], width=340),
-        ),
-    )
-
+    # Location options
     col_1_location = pn.Column(
         self.map_view,
         widgets["area_subset"],
@@ -603,6 +609,8 @@ def _display_select(self):
         pn.widgets.CheckBoxGroup.from_param(self.param.station, name=""),
         width=270,
     )
+
+    # Combine panel elements to create the card for the location options
     loc_card = pn.Card(
         pn.Row(col_1_location, col_2_location),
         title="Location Options for the Selected Data",
@@ -610,6 +618,7 @@ def _display_select(self):
         width=560,
     )
 
+    # Combine panel elements to create the card for the data options
     data_card = pn.Card(
         top_level_choices,
         pn.layout.Divider(margin=(-10, 0, 0, 0)),
@@ -623,6 +632,7 @@ def _display_select(self):
         width=595,
     )
 
+    # Combine both cards for the complete panel object
     card = pn.Row(data_card, loc_card)
 
     return card
