@@ -435,7 +435,7 @@ def _selections_param_to_panel(self):
     units_text = pn.widgets.StaticText(name="Variable Units", value="")
     units = pn.widgets.RadioBoxGroup.from_param(self.param.units, inline=False)
     variable = pn.widgets.Select.from_param(self.param.variable, name="")
-    variable_text = pn.widgets.StaticText(name="Variable", value="")
+    variable_text = pn.widgets.StaticText(name="Variable Type", value="")
     variable_description = pn.widgets.StaticText.from_param(
         self.param.extended_description, name=""
     )
@@ -517,19 +517,15 @@ def _display_select(self):
             pn.Column(
                 widgets["data_type_text"],
                 widgets["data_type"],
-                width=100,
+                width=155,
             ),
             pn.Column(
-                widgets["retrieval_method_text"], widgets["retrieval_method"], width=125
+                widgets["retrieval_method_text"], widgets["retrieval_method"], width=175
             ),
             pn.Column(
                 widgets["downscaling_method_text"],
                 widgets["downscaling_method"],
-                width=125,
-            ),
-            pn.Column(
-                widgets["data_warning"],
-                width=400,
+                width=175,
             ),
         ),
     )
@@ -540,11 +536,10 @@ def _display_select(self):
             name="WARMING LEVELS APPROACH",
         ),
         pn.Row(
-            pn.Column(widgets["wl_window_text"], widgets["wl_window"], width=310),
+            pn.Column(widgets["wl_window_text"], widgets["wl_window"], width=300),
             pn.Column(
                 widgets["warming_level_text"],
                 widgets["warming_level"],
-                width=300,
             ),
         ),
     )
@@ -556,15 +551,15 @@ def _display_select(self):
         ),
         pn.Row(
             pn.Column(
-                pn.Column(widgets["time_slice_text"], widgets["time_slice"], width=310),
-                pn.Column(
-                    widgets["historical_selection_text"],
-                    widgets["historical_selection"],
-                    widgets["ssp_selection_text"],
-                    widgets["ssp_selection"],
-                ),
+                widgets["time_slice_text"],
+                widgets["time_slice"],
+                widgets["historical_selection_text"],
+                widgets["historical_selection"],
+                widgets["ssp_selection_text"],
+                widgets["ssp_selection"],
+                width=300,
             ),
-            self.scenario_view,
+            pn.Column(self.scenario_view, widgets["data_warning"], width=250),
         ),
     )
 
@@ -574,19 +569,48 @@ def _display_select(self):
             widgets["variable_type"],
             widgets["variable"],
             widgets["variable_description"],
-            width=275,
+            width=250,
         ),
-        pn.Column(widgets["units_text"], widgets["units"], width=100),
         pn.Column(
-            widgets["timescale_text"],
-            widgets["timescale"],
-            width=100,
+            pn.Row(
+                pn.Column(widgets["units_text"], widgets["units"], width=100),
+                pn.Column(widgets["timescale_text"], widgets["timescale"], width=100),
+                pn.Column(widgets["resolution_text"], widgets["resolution"], width=100),
+            ),
+            pn.Column(widgets["station_data_info"], width=340),
         ),
-        pn.Column(widgets["resolution_text"], widgets["resolution"], width=100),
-        pn.Column(widgets["station_data_info"], width=150),
     )
 
-    card = pn.Card(
+    col_1_location = pn.Column(
+        self.map_view,
+        widgets["area_subset"],
+        widgets["cached_area"],
+        widgets["latitude"],
+        widgets["longitude"],
+        widgets["area_average_text"],
+        widgets["area_average"],
+        pn.Spacer(
+            height=85
+        ),  # Need to add empty space to make card larger to fit all the stations
+        width=220,
+    )
+    col_2_location = pn.Column(
+        pn.Spacer(height=10),
+        pn.widgets.StaticText(
+            value="",
+            name="Weather station",
+        ),
+        pn.widgets.CheckBoxGroup.from_param(self.param.station, name=""),
+        width=270,
+    )
+    loc_card = pn.Card(
+        pn.Row(col_1_location, col_2_location),
+        title="Location Options for the Selected Data",
+        collapsible=False,
+        width=560,
+    )
+
+    data_card = pn.Card(
         top_level_choices,
         pn.layout.Divider(margin=(-10, 0, 0, 0)),
         variable_stuff,
@@ -594,98 +618,11 @@ def _display_select(self):
         warming_level_approach,
         pn.layout.Divider(margin=(-10, 0, 0, 0)),
         time_approach,
-        # pn.layout.Divider(margin=(-10, 0, 0, 0)),
-        title="Choose Data Available with the Cal-Adapt Analytics Engine",
+        title="Data Options in the Cal-Adapt Analytics Engine",
         collapsible=False,
+        width=595,
     )
 
+    card = pn.Row(data_card, loc_card)
+
     return card
-
-
-#     data_choices = pn.Column(
-#         widgets["warming_level_text"],
-#         widgets["warming_level"],
-#         widgets["variable_text"],
-#         widgets["variable_type"],
-#         widgets["variable"],
-#         widgets["variable_description"],
-#         pn.Row(
-#             pn.Column(
-#                 widgets["historical_selection_text"],
-#                 widgets["historical_selection"],
-#                 widgets["ssp_selection_text"],
-#                 widgets["ssp_selection"],
-#                 pn.Column(
-#                     self.scenario_view,
-#                     widgets["time_slice"],
-#                     width=220,
-#                 ),
-#                 width=250,
-#             ),
-#             pn.Column(
-#                 widgets["units_text"],
-#                 widgets["units"],
-#                 widgets["timescale_text"],
-#                 widgets["timescale"],
-#                 widgets["resolution_text"],
-#                 widgets["resolution"],
-#                 widgets["station_data_info"],
-#                 width=150,
-#             ),
-#         ),
-#         width=380,
-#     )
-
-#     col_1_location = pn.Column(
-#         self.map_view,
-#         widgets["area_subset"],
-#         widgets["cached_area"],
-#         widgets["latitude"],
-#         widgets["longitude"],
-#         widgets["area_average_text"],
-#         widgets["area_average"],
-#         width=220,
-#     )
-#     col_2_location = pn.Column(
-#         pn.Spacer(height=10),
-#         pn.widgets.StaticText(
-#             value="",
-#             name="Weather station",
-#         ),
-#         pn.widgets.CheckBoxGroup.from_param(self.param.station, name=""),
-#         width=270,
-#     )
-#     loc_choices = pn.Row(col_1_location, col_2_location)
-
-#     everything_else = pn.Row(data_choices, pn.layout.HSpacer(width=10), loc_choices)
-
-#     # Panel overall structure:
-#     all_things = pn.Column(
-#         pn.Row(
-#             pn.Column(
-#                 widgets["data_type_text"],
-#                 widgets["data_type"],
-#                 width=125,
-#             ),
-#             pn.Column(
-#                 widgets["retrieval_method_text"], widgets["retrieval_method"], width=125
-#             ),
-#             pn.Column(
-#                 widgets["downscaling_method_text"],
-#                 widgets["downscaling_method"],
-#                 width=125,
-#             ),
-#             pn.Column(
-#                 widgets["data_warning"],
-#                 width=400,
-#             ),
-#         ),
-#         pn.Spacer(background="black", height=1),
-#         everything_else,
-#     )
-
-#     return pn.Card(
-#         all_things,
-#         title="Choose Data Available with the Cal-Adapt Analytics Engine",
-#         collapsible=False,
-#     )
