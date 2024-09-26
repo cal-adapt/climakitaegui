@@ -354,6 +354,11 @@ class DataParametersWithPanes(DataParameters):
 
 
 class Select(DataParametersWithPanes):
+    """Class for storing and displaying data retrieval parameters interactively.
+    DataParameters class can be used instead if you don't need to visually show
+    the parameters.
+    """
+
     def show(self):
         # Show panel visually
         select_panel = _display_select(self)
