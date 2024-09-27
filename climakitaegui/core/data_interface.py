@@ -552,5 +552,5 @@ def _display_select(self):
         all_things,
         title="Choose Data Available with the Cal-Adapt Analytics Engine",
         collapsible=False,
-        width=900
+        width=1000
     )
