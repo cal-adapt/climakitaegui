@@ -544,7 +544,7 @@ def _display_select(self):
                 width=400,
             ),
         ),
-        pn.Spacer(background="black", height=1),
+        pn.Spacer(styles={"background": "black"}, height=1),
         everything_else,
     )
 
