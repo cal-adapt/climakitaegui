@@ -357,7 +357,7 @@ def _selections_param_to_panel(self):
     dict
     """
     area_subset = pn.widgets.Select.from_param(
-        self.param.area_subset, name="Subset the data by...", width=100
+        self.param.area_subset, name="Subset the data by...", width=220
     )
     area_average_text = pn.widgets.StaticText(
         value="Compute an area average across grid cells within your selected region?",
@@ -367,7 +367,7 @@ def _selections_param_to_panel(self):
         self.param.area_average, inline=True
     )
     cached_area = pn.widgets.MultiSelect.from_param(
-        self.param.cached_area, name="Location selection"
+        self.param.cached_area, name="Location selection", width=220
     )
     data_type_text = pn.widgets.StaticText(
         value="",
