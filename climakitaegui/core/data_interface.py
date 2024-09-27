@@ -522,7 +522,7 @@ def _display_select(self):
         pn.widgets.CheckBoxGroup.from_param(self.param.station, name=""),
         width=270,
     )
-    loc_choices = pn.Row(col_1_location, col_2_location)
+    loc_choices = pn.Row(col_1_location, pn.Spacer(styles={"background": "black"}, width=10), col_2_location)
 
     everything_else = pn.Row(data_choices, loc_choices)
 
@@ -552,4 +552,5 @@ def _display_select(self):
         all_things,
         title="Choose Data Available with the Cal-Adapt Analytics Engine",
         collapsible=False,
+        width=900
     )
