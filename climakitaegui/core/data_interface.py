@@ -242,7 +242,7 @@ class DataParametersWithPanes(DataParameters):
         ax.tick_params(labelsize=11)
         ax.xaxis.set_major_locator(ticker.AutoLocator())
         ax.xaxis.set_minor_locator(ticker.AutoMinorLocator())
-        mpl_pane = pn.pane.Matplotlib(fig0, dpi=1000)
+        mpl_pane = pn.pane.Matplotlib(fig0, dpi=100)
 
         y_offset = 0.15
         if (self.scenario_ssp is not None) and (self.scenario_historical is not None):
