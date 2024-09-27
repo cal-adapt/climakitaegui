@@ -377,7 +377,7 @@ def _selections_param_to_panel(self):
         self.param.data_type, inline=True, name=""
     )
     data_warning = pn.widgets.StaticText.from_param(
-        self.param._data_warning, name="", style={"color": "red"}
+        self.param._data_warning, name="", styles={"color": "red"}
     )
     downscaling_method_text = pn.widgets.StaticText(value="", name="Downscaling method")
     downscaling_method = pn.widgets.RadioBoxGroup.from_param(
@@ -391,7 +391,7 @@ def _selections_param_to_panel(self):
         self.param.scenario_historical
     )
     station_data_info = pn.widgets.StaticText.from_param(
-        self.param._station_data_info, name="", style={"color": "red"}
+        self.param._station_data_info, name="", styles={"color": "red"}
     )
     ssp_selection_text = pn.widgets.StaticText(
         value="<br> Shared Socioeconomic Pathways (SSPs) represent different global emissions scenarios",
