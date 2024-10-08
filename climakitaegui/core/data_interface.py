@@ -454,8 +454,10 @@ def _selections_param_to_panel(self):
         value="",
         name="Warming Level (°C)",
     )
-    wl_window = pn.widgets.IntSlider.from_param(self.param.wl_window, name="")
-    wl_window_text = pn.widgets.StaticText(
+    warming_level_window = pn.widgets.IntSlider.from_param(
+        self.param.warming_level_window, name=""
+    )
+    warming_level_window_text = pn.widgets.StaticText(
         value="e.g. 15 means a 30yr window",
         name="Years around Global Warming Level (+/-)",
     )
@@ -483,7 +485,7 @@ def _selections_param_to_panel(self):
         "variable_description": variable_description,
         "variable_type": variable_type,
         "warming_level": warming_level,
-        "wl_window": wl_window,
+        "warming_level_window": warming_level_window,
     }
     text_dict = {
         "area_average_text": area_average_text,
@@ -497,7 +499,7 @@ def _selections_param_to_panel(self):
         "timescale_text": timescale_text,
         "variable_text": variable_text,
         "warming_level_text": warming_level_text,
-        "wl_window_text": wl_window_text,
+        "warming_level_window_text": warming_level_window_text,
     }
 
     return widgets_dict | text_dict
@@ -563,7 +565,11 @@ def _display_select(self):
             name="WARMING LEVELS APPROACH",
         ),
         pn.Row(
-            pn.Column(widgets["wl_window_text"], widgets["wl_window"], width=300),
+            pn.Column(
+                widgets["warming_level_window_text"],
+                widgets["warming_level_window"],
+                width=300,
+            ),
             pn.Column(
                 widgets["warming_level_text"],
                 widgets["warming_level"],
