@@ -213,7 +213,7 @@ class DataParametersWithPanes(DataParameters):
         "scenario_ssp",
         "scenario_historical",
         "downscaling_method",
-        "retrieval_method",
+        "approach",
         watch=False,
     )
     def scenario_view(self):
@@ -227,7 +227,7 @@ class DataParametersWithPanes(DataParameters):
         if (
             self.scenario_historical == ["n/a"]
             or self.scenario_ssp == ["n/a"]
-            or self.retrieval_method == "Warming Level"
+            or self.approach == "Warming Level"
         ):
             mpl_pane = pn.pane.Matplotlib(fig0, dpi=1000)
 
@@ -422,12 +422,12 @@ def _selections_param_to_panel(self):
     resolution = pn.widgets.RadioBoxGroup.from_param(
         self.param.resolution, inline=False
     )
-    retrieval_method = pn.widgets.RadioBoxGroup.from_param(
-        self.param.retrieval_method, inline=False, name=""
+    approach = pn.widgets.RadioBoxGroup.from_param(
+        self.param.approach, inline=False, name=""
     )
-    retrieval_method_text = pn.widgets.StaticText(
+    approach_text = pn.widgets.StaticText(
         value="",
-        name="Retrieval Method",
+        name="Approach",
     )
     timescale_text = pn.widgets.StaticText(value="", name="Timescale")
     timescale = pn.widgets.RadioBoxGroup.from_param(
@@ -477,7 +477,7 @@ def _selections_param_to_panel(self):
         "station_data_info": station_data_info,
         "ssp_selection": ssp_selection,
         "resolution": resolution,
-        "retrieval_method": retrieval_method,
+        "approach": approach,
         "timescale": timescale,
         "time_slice": time_slice,
         "units": units,
@@ -492,7 +492,7 @@ def _selections_param_to_panel(self):
         "downscaling_method_text": downscaling_method_text,
         "historical_selection_text": historical_selection_text,
         "resolution_text": resolution_text,
-        "retrieval_method_text": retrieval_method_text,
+        "approach_text": approach_text,
         "ssp_selection_text": ssp_selection_text,
         "units_text": units_text,
         "time_slice_text": time_slice_text,
@@ -528,9 +528,7 @@ def _display_select(self):
                 widgets["data_type"],
                 width=155,
             ),
-            pn.Column(
-                widgets["retrieval_method_text"], widgets["retrieval_method"], width=175
-            ),
+            pn.Column(widgets["approach_text"], widgets["approach"], width=175),
             pn.Column(
                 widgets["downscaling_method_text"],
                 widgets["downscaling_method"],
