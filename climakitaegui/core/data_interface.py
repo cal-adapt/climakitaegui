@@ -213,6 +213,7 @@ class DataParametersWithPanes(DataParameters):
         "scenario_ssp",
         "scenario_historical",
         "downscaling_method",
+        "approach",
         watch=False,
     )
     def scenario_view(self):
@@ -220,104 +221,120 @@ class DataParametersWithPanes(DataParameters):
         Displays a timeline to help the user visualize the time ranges
         available, and the subset of time slice selected.
         """
-        # Set time range of historical data
-        if self.downscaling_method == "Statistical":
-            historical_climate_range = self.historical_climate_range_loca
-        elif self.downscaling_method == "Dynamical+Statistical":
-            historical_climate_range = self.historical_climate_range_wrf_and_loca
-        else:
-            historical_climate_range = self.historical_climate_range_wrf
-        historical_central_year = sum(historical_climate_range) / 2
-        historical_x_width = historical_central_year - historical_climate_range[0]
 
         fig0 = Figure(figsize=(2, 2))
-        ax = fig0.add_subplot(111)
-        ax.spines["right"].set_color("none")
-        ax.spines["left"].set_color("none")
-        ax.yaxis.set_major_locator(ticker.NullLocator())
-        ax.spines["top"].set_color("none")
-        ax.xaxis.set_ticks_position("bottom")
-        ax.set_xlim(1950, 2100)
-        ax.set_ylim(0, 1)
-        ax.tick_params(labelsize=11)
-        ax.xaxis.set_major_locator(ticker.AutoLocator())
-        ax.xaxis.set_minor_locator(ticker.AutoMinorLocator())
-        mpl_pane = pn.pane.Matplotlib(fig0, dpi=1000)
 
-        y_offset = 0.15
-        if (self.scenario_ssp is not None) and (self.scenario_historical is not None):
-            for scen in self.scenario_ssp + self.scenario_historical:
-                if ["SSP" in one for one in self.scenario_ssp]:
-                    if scen in [
-                        "Historical Climate",
-                        "Historical Reconstruction",
-                    ]:
-                        continue
+        if (
+            self.scenario_historical == ["n/a"]
+            or self.scenario_ssp == ["n/a"]
+            or self.approach == "Warming Level"
+        ):
+            mpl_pane = pn.pane.Matplotlib(fig0, dpi=1000)
 
-                if scen == "Historical Reconstruction":
-                    color = "darkblue"
-                    if "Historical Climate" in self.scenario_historical:
+        else:
+            # Set time range of historical data
+            if self.downscaling_method == "Statistical":
+                historical_climate_range = self.historical_climate_range_loca
+            elif self.downscaling_method == "Dynamical+Statistical":
+                historical_climate_range = self.historical_climate_range_wrf_and_loca
+            else:
+                historical_climate_range = self.historical_climate_range_wrf
+            historical_central_year = sum(historical_climate_range) / 2
+            historical_x_width = historical_central_year - historical_climate_range[0]
+
+            ax = fig0.add_subplot(111)
+            ax.spines["right"].set_color("none")
+            ax.spines["left"].set_color("none")
+            ax.yaxis.set_major_locator(ticker.NullLocator())
+            ax.spines["top"].set_color("none")
+            ax.xaxis.set_ticks_position("bottom")
+            ax.set_xlim(1950, 2100)
+            ax.set_ylim(0, 1)
+            ax.tick_params(labelsize=11)
+            ax.xaxis.set_major_locator(ticker.AutoLocator())
+            ax.xaxis.set_minor_locator(ticker.AutoMinorLocator())
+            mpl_pane = pn.pane.Matplotlib(fig0, dpi=1000)
+
+            y_offset = 0.15
+            if (self.scenario_ssp is not None) and (
+                self.scenario_historical is not None
+            ):
+                for scen in self.scenario_ssp + self.scenario_historical:
+                    if ["SSP" in one for one in self.scenario_ssp]:
+                        if scen in [
+                            "Historical Climate",
+                            "Historical Reconstruction",
+                        ]:
+                            continue
+
+                    if scen == "Historical Reconstruction":
+                        color = "darkblue"
+                        if "Historical Climate" in self.scenario_historical:
+                            center = historical_central_year
+                            x_width = historical_x_width
+                            ax.annotate(
+                                "Reconstruction",
+                                xy=(1967 - 6, y_offset + 0.06),
+                                fontsize=9,
+                            )
+                        else:
+                            center = 1986  # 1950-2022
+                            x_width = 36
+                            ax.annotate(
+                                "Reconstruction",
+                                xy=(1955 - 6, y_offset + 0.06),
+                                fontsize=9,
+                            )
+
+                    elif scen == "Historical Climate":
+                        color = "c"
                         center = historical_central_year
                         x_width = historical_x_width
-                        ax.annotate(
-                            "Reconstruction", xy=(1967 - 6, y_offset + 0.06), fontsize=9
-                        )
-                    else:
-                        center = 1986  # 1950-2022
-                        x_width = 36
-                        ax.annotate(
-                            "Reconstruction", xy=(1955 - 6, y_offset + 0.06), fontsize=9
-                        )
-
-                elif scen == "Historical Climate":
-                    color = "c"
-                    center = historical_central_year
-                    x_width = historical_x_width
-                    ax.annotate(
-                        "Historical",
-                        xy=(historical_climate_range[0] - 6, y_offset + 0.06),
-                        fontsize=9,
-                    )
-
-                elif "SSP" in scen:
-                    center = 2057.5  # 2015-2100
-                    x_width = 42.5
-                    scenario_label = scen[:10]
-                    if "2-4.5" in scen:
-                        color = "#f69320"
-                    elif "3-7.0" in scen:
-                        color = "#df0000"
-                    elif "5-8.5" in scen:
-                        color = "#980002"
-                    if "Historical Climate" in self.scenario_historical:
-                        ax.errorbar(
-                            x=historical_central_year,
-                            y=y_offset,
-                            xerr=historical_x_width,
-                            linewidth=8,
-                            color="c",
-                        )
                         ax.annotate(
                             "Historical",
                             xy=(historical_climate_range[0] - 6, y_offset + 0.06),
                             fontsize=9,
                         )
 
-                    ax.annotate(scen[:10], xy=(2035, y_offset + 0.06), fontsize=9)
+                    elif "SSP" in scen:
+                        center = 2057.5  # 2015-2100
+                        x_width = 42.5
+                        scenario_label = scen[:10]
+                        if "2-4.5" in scen:
+                            color = "#f69320"
+                        elif "3-7.0" in scen:
+                            color = "#df0000"
+                        elif "5-8.5" in scen:
+                            color = "#980002"
+                        if "Historical Climate" in self.scenario_historical:
+                            ax.errorbar(
+                                x=historical_central_year,
+                                y=y_offset,
+                                xerr=historical_x_width,
+                                linewidth=8,
+                                color="c",
+                            )
+                            ax.annotate(
+                                "Historical",
+                                xy=(historical_climate_range[0] - 6, y_offset + 0.06),
+                                fontsize=9,
+                            )
 
-                ax.errorbar(
-                    x=center, y=y_offset, xerr=x_width, linewidth=8, color=color
-                )
+                        ax.annotate(scen[:10], xy=(2035, y_offset + 0.06), fontsize=9)
 
-                y_offset += 0.28
+                    ax.errorbar(
+                        x=center, y=y_offset, xerr=x_width, linewidth=8, color=color
+                    )
 
-        ax.fill_betweenx(
-            [0, 1],
-            self.time_slice[0],
-            self.time_slice[1],
-            alpha=0.8,
-            facecolor="lightgrey",
-        )
+                    y_offset += 0.28
+
+            ax.fill_betweenx(
+                [0, 1],
+                self.time_slice[0],
+                self.time_slice[1],
+                alpha=0.8,
+                facecolor="lightgrey",
+            )
         return mpl_pane
 
     @param.depends(
@@ -371,17 +388,17 @@ def _selections_param_to_panel(self):
     )
     data_type_text = pn.widgets.StaticText(
         value="",
-        name="Data type",
+        name="Data Type",
     )
     data_type = pn.widgets.RadioBoxGroup.from_param(
-        self.param.data_type, inline=True, name=""
+        self.param.data_type, inline=False, name=""
     )
     data_warning = pn.widgets.StaticText.from_param(
         self.param._data_warning, name="", style={"color": "red"}
     )
-    downscaling_method_text = pn.widgets.StaticText(value="", name="Downscaling method")
+    downscaling_method_text = pn.widgets.StaticText(value="", name="Downscaling Method")
     downscaling_method = pn.widgets.RadioBoxGroup.from_param(
-        self.param.downscaling_method, inline=True
+        self.param.downscaling_method, inline=False
     )
     historical_selection_text = pn.widgets.StaticText(
         value="<br>Estimates of recent historical climatic conditions",
@@ -405,20 +422,44 @@ def _selections_param_to_panel(self):
     resolution = pn.widgets.RadioBoxGroup.from_param(
         self.param.resolution, inline=False
     )
+    approach = pn.widgets.RadioBoxGroup.from_param(
+        self.param.approach, inline=False, name=""
+    )
+    approach_text = pn.widgets.StaticText(
+        value="",
+        name="Approach",
+    )
     timescale_text = pn.widgets.StaticText(value="", name="Timescale")
     timescale = pn.widgets.RadioBoxGroup.from_param(
         self.param.timescale, name="", inline=False
     )
     time_slice = pn.widgets.RangeSlider.from_param(self.param.time_slice, name="")
+    time_slice_text = pn.widgets.StaticText(
+        value="How do you want to time-slice the data?", name="Years"
+    )
     units_text = pn.widgets.StaticText(name="Variable Units", value="")
     units = pn.widgets.RadioBoxGroup.from_param(self.param.units, inline=False)
     variable = pn.widgets.Select.from_param(self.param.variable, name="")
-    variable_text = pn.widgets.StaticText(name="Variable", value="")
+    variable_text = pn.widgets.StaticText(name="Variable Type", value="")
     variable_description = pn.widgets.StaticText.from_param(
         self.param.extended_description, name=""
     )
     variable_type = pn.widgets.RadioBoxGroup.from_param(
         self.param.variable_type, inline=True, name=""
+    )
+    warming_level = pn.widgets.CheckBoxGroup.from_param(
+        self.param.warming_level, inline=True, name=""
+    )
+    warming_level_text = pn.widgets.StaticText(
+        value="",
+        name="Warming Level (°C)",
+    )
+    warming_level_window = pn.widgets.IntSlider.from_param(
+        self.param.warming_level_window, name=""
+    )
+    warming_level_window_text = pn.widgets.StaticText(
+        value="e.g. 15 means a 30yr window",
+        name="Years around Global Warming Level (+/-)",
     )
 
     widgets_dict = {
@@ -436,22 +477,29 @@ def _selections_param_to_panel(self):
         "station_data_info": station_data_info,
         "ssp_selection": ssp_selection,
         "resolution": resolution,
+        "approach": approach,
         "timescale": timescale,
         "time_slice": time_slice,
         "units": units,
         "variable": variable,
         "variable_description": variable_description,
         "variable_type": variable_type,
+        "warming_level": warming_level,
+        "warming_level_window": warming_level_window,
     }
     text_dict = {
         "area_average_text": area_average_text,
         "downscaling_method_text": downscaling_method_text,
         "historical_selection_text": historical_selection_text,
         "resolution_text": resolution_text,
+        "approach_text": approach_text,
         "ssp_selection_text": ssp_selection_text,
         "units_text": units_text,
+        "time_slice_text": time_slice_text,
         "timescale_text": timescale_text,
         "variable_text": variable_text,
+        "warming_level_text": warming_level_text,
+        "warming_level_window_text": warming_level_window_text,
     }
 
     return widgets_dict | text_dict
@@ -471,38 +519,83 @@ def _display_select(self):
     # Get formatted panel widgets for each parameter
     widgets = _selections_param_to_panel(self)
 
-    data_choices = pn.Column(
-        widgets["variable_text"],
-        widgets["variable_type"],
-        widgets["variable"],
-        widgets["variable_description"],
+    # These are top-level choices
+    # This is the first thing the user will see in the panel
+    top_level_choices = pn.Column(
         pn.Row(
             pn.Column(
+                widgets["data_type_text"],
+                widgets["data_type"],
+                width=155,
+            ),
+            pn.Column(widgets["approach_text"], widgets["approach"], width=175),
+            pn.Column(
+                widgets["downscaling_method_text"],
+                widgets["downscaling_method"],
+                width=175,
+            ),
+        ),
+    )
+
+    # Choices for variable, unit, timescale, and resolution
+    variable_stuff = pn.Row(
+        pn.Column(
+            widgets["variable_text"],
+            widgets["variable_type"],
+            widgets["variable"],
+            widgets["variable_description"],
+            width=250,
+        ),
+        pn.Column(
+            pn.Row(
+                pn.Column(widgets["units_text"], widgets["units"], width=100),
+                pn.Column(widgets["timescale_text"], widgets["timescale"], width=100),
+                pn.Column(widgets["resolution_text"], widgets["resolution"], width=100),
+            ),
+            pn.Column(widgets["station_data_info"], width=340),
+        ),
+    )
+
+    # Options for a warming level approach
+    warming_level_approach = pn.Column(
+        pn.widgets.StaticText(
+            value='Options only valid if retrievel method is set to "Warming Level"',
+            name="WARMING LEVELS APPROACH",
+        ),
+        pn.Row(
+            pn.Column(
+                widgets["warming_level_window_text"],
+                widgets["warming_level_window"],
+                width=300,
+            ),
+            pn.Column(
+                widgets["warming_level_text"],
+                widgets["warming_level"],
+            ),
+        ),
+    )
+
+    # Options for a time-based approach
+    time_approach = pn.Column(
+        pn.widgets.StaticText(
+            value='Options only valid if retrievel method is set to "Time"',
+            name="TIME-BASED APPROACH",
+        ),
+        pn.Row(
+            pn.Column(
+                widgets["time_slice_text"],
+                widgets["time_slice"],
                 widgets["historical_selection_text"],
                 widgets["historical_selection"],
                 widgets["ssp_selection_text"],
                 widgets["ssp_selection"],
-                pn.Column(
-                    self.scenario_view,
-                    widgets["time_slice"],
-                    width=220,
-                ),
-                width=250,
+                width=300,
             ),
-            pn.Column(
-                widgets["units_text"],
-                widgets["units"],
-                widgets["timescale_text"],
-                widgets["timescale"],
-                widgets["resolution_text"],
-                widgets["resolution"],
-                widgets["station_data_info"],
-                width=150,
-            ),
+            pn.Column(self.scenario_view, widgets["data_warning"], width=250),
         ),
-        width=380,
     )
 
+    # Location options
     col_1_location = pn.Column(
         self.map_view,
         widgets["area_subset"],
@@ -511,6 +604,9 @@ def _display_select(self):
         widgets["longitude"],
         widgets["area_average_text"],
         widgets["area_average"],
+        pn.Spacer(
+            height=85
+        ),  # Need to add empty space to make card larger to fit all the stations
         width=220,
     )
     col_2_location = pn.Column(
@@ -522,34 +618,30 @@ def _display_select(self):
         pn.widgets.CheckBoxGroup.from_param(self.param.station, name=""),
         width=270,
     )
-    loc_choices = pn.Row(col_1_location, col_2_location)
 
-    everything_else = pn.Row(data_choices, pn.layout.HSpacer(width=10), loc_choices)
-
-    # Panel overall structure:
-    all_things = pn.Column(
-        pn.Row(
-            pn.Column(
-                widgets["data_type_text"],
-                widgets["data_type"],
-                width=150,
-            ),
-            pn.Column(
-                widgets["downscaling_method_text"],
-                widgets["downscaling_method"],
-                width=325,
-            ),
-            pn.Column(
-                widgets["data_warning"],
-                width=400,
-            ),
-        ),
-        pn.Spacer(background="black", height=1),
-        everything_else,
-    )
-
-    return pn.Card(
-        all_things,
-        title="Choose Data Available with the Cal-Adapt Analytics Engine",
+    # Combine panel elements to create the card for the location options
+    loc_card = pn.Card(
+        pn.Row(col_1_location, col_2_location),
+        title="Location Options for the Selected Data",
         collapsible=False,
+        width=560,
     )
+
+    # Combine panel elements to create the card for the data options
+    data_card = pn.Card(
+        top_level_choices,
+        pn.layout.Divider(margin=(-10, 0, 0, 0)),
+        variable_stuff,
+        pn.layout.Divider(margin=(-10, 0, 0, 0)),
+        warming_level_approach,
+        pn.layout.Divider(margin=(-10, 0, 0, 0)),
+        time_approach,
+        title="Data Options in the Cal-Adapt Analytics Engine",
+        collapsible=False,
+        width=595,
+    )
+
+    # Combine both cards for the complete panel object
+    card = pn.Row(data_card, loc_card)
+
+    return card
