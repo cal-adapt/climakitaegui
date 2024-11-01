@@ -433,7 +433,7 @@ def _selections_param_to_panel(self):
     timescale = pn.widgets.RadioBoxGroup.from_param(
         self.param.timescale, name="", inline=False
     )
-    time_slice = pn.widgets.RangeSlider.from_param(self.param.time_slice, name="", width=300)
+    time_slice = pn.widgets.RangeSlider.from_param(self.param.time_slice, name="", width=250)
     time_slice_text = pn.widgets.StaticText(
         value="How do you want to time-slice the data?", name="Years"
     )
@@ -455,7 +455,7 @@ def _selections_param_to_panel(self):
         name="Warming Level (°C)",
     )
     warming_level_window = pn.widgets.IntSlider.from_param(
-        self.param.warming_level_window, name="", width=300
+        self.param.warming_level_window, name="", width=250
     )
     warming_level_window_text = pn.widgets.StaticText(
         value="e.g. 15 means a 30yr window",
@@ -607,7 +607,7 @@ def _display_select(self):
         pn.Spacer(
             height=85
         ),  # Need to add empty space to make card larger to fit all the stations
-        width=250,
+        width=300,
     )
     col_2_location = pn.Column(
         pn.Spacer(height=10),
@@ -616,7 +616,7 @@ def _display_select(self):
             name="Weather station",
         ),
         pn.widgets.CheckBoxGroup.from_param(self.param.station, name=""),
-        width=270,
+        width=260,
     )
 
     # Combine panel elements to create the card for the location options
