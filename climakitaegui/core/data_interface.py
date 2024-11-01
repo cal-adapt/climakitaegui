@@ -83,7 +83,7 @@ def _map_view(selections, stations_gdf):
     crs_proj4 = proj.proj4_init  # used below
     xy = ccrs.PlateCarree()
     ax = fig0.add_subplot(111, projection=proj)
-    mpl_pane = pn.pane.Matplotlib(fig0, dpi=72)
+    mpl_pane = pn.pane.Matplotlib(fig0)
 
     # Get geometry of selected location
     subarea_gpd = _get_subarea(
@@ -433,7 +433,7 @@ def _selections_param_to_panel(self):
     timescale = pn.widgets.RadioBoxGroup.from_param(
         self.param.timescale, name="", inline=False
     )
-    time_slice = pn.widgets.RangeSlider.from_param(self.param.time_slice, name="")
+    time_slice = pn.widgets.RangeSlider.from_param(self.param.time_slice, name="", width=300)
     time_slice_text = pn.widgets.StaticText(
         value="How do you want to time-slice the data?", name="Years"
     )
@@ -455,7 +455,7 @@ def _selections_param_to_panel(self):
         name="Warming Level (°C)",
     )
     warming_level_window = pn.widgets.IntSlider.from_param(
-        self.param.warming_level_window, name=""
+        self.param.warming_level_window, name="", width=300
     )
     warming_level_window_text = pn.widgets.StaticText(
         value="e.g. 15 means a 30yr window",
@@ -607,7 +607,7 @@ def _display_select(self):
         pn.Spacer(
             height=85
         ),  # Need to add empty space to make card larger to fit all the stations
-        width=220,
+        width=250,
     )
     col_2_location = pn.Column(
         pn.Spacer(height=10),
