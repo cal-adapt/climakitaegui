@@ -78,7 +78,7 @@ def _map_view(selections, stations_gdf):
         ),
     }
 
-    fig0 = Figure(figsize=(1.5, 1.5))
+    fig0 = Figure(figsize=(2.25, 2.25))
     proj = ccrs.Orthographic(-118, 40)
     crs_proj4 = proj.proj4_init  # used below
     xy = ccrs.PlateCarree()
@@ -222,14 +222,14 @@ class DataParametersWithPanes(DataParameters):
         available, and the subset of time slice selected.
         """
 
-        fig0 = Figure(figsize=(1.5, 1.5))
+        fig0 = Figure(figsize=(2, 2))
 
         if (
             self.scenario_historical == ["n/a"]
             or self.scenario_ssp == ["n/a"]
             or self.approach == "Warming Level"
         ):
-            mpl_pane = pn.pane.Matplotlib(fig0, dpi=72)
+            mpl_pane = pn.pane.Matplotlib(fig0)
 
         else:
             # Set time range of historical data
@@ -253,7 +253,7 @@ class DataParametersWithPanes(DataParameters):
             ax.tick_params(labelsize=11)
             ax.xaxis.set_major_locator(ticker.AutoLocator())
             ax.xaxis.set_minor_locator(ticker.AutoMinorLocator())
-            mpl_pane = pn.pane.Matplotlib(fig0, dpi=72)
+            mpl_pane = pn.pane.Matplotlib(fig0)
 
             y_offset = 0.15
             if (self.scenario_ssp is not None) and (
