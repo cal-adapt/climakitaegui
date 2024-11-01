@@ -253,7 +253,7 @@ class DataParametersWithPanes(DataParameters):
             ax.tick_params(labelsize=11)
             ax.xaxis.set_major_locator(ticker.AutoLocator())
             ax.xaxis.set_minor_locator(ticker.AutoMinorLocator())
-            mpl_pane = pn.pane.Matplotlib(fig0, dpi=1000)
+            mpl_pane = pn.pane.Matplotlib(fig0)
 
             y_offset = 0.15
             if (self.scenario_ssp is not None) and (
@@ -639,7 +639,8 @@ def _display_select(self):
         title="Data Options in the Cal-Adapt Analytics Engine",
         collapsible=False,
         width=595,
-        header_background='#ACACAC',
+        header_background='mediumgray',
+        background='lightgray',
     )
 
     # Combine both cards for the complete panel object
