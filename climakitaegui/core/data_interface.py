@@ -439,7 +439,7 @@ def _selections_param_to_panel(self):
     )
     units_text = pn.widgets.StaticText(name="Variable Units", value="")
     units = pn.widgets.RadioBoxGroup.from_param(self.param.units, inline=False)
-    variable = pn.widgets.Select.from_param(self.param.variable, name="", width=200)
+    variable = pn.widgets.Select.from_param(self.param.variable, name="", width=225)
     variable_text = pn.widgets.StaticText(name="Variable Type", value="")
     variable_description = pn.widgets.StaticText.from_param(
         self.param.extended_description, name=""
