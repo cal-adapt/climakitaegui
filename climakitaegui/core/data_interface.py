@@ -639,8 +639,7 @@ def _display_select(self):
         title="Data Options in the Cal-Adapt Analytics Engine",
         collapsible=False,
         width=595,
-        header_background='mediumgray',
-        background='lightgray',
+        styles={'background': 'lightgray','header_background': 'mediumgray'},
     )
 
     # Combine both cards for the complete panel object
