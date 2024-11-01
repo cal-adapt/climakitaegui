@@ -589,7 +589,7 @@ def _display_select(self):
                 widgets["historical_selection"],
                 widgets["ssp_selection_text"],
                 widgets["ssp_selection"],
-                width=300,
+                width=275,
             ),
             pn.Column(self.scenario_view, widgets["data_warning"], width=250),
         ),
@@ -616,7 +616,7 @@ def _display_select(self):
             name="Weather station",
         ),
         pn.widgets.CheckBoxGroup.from_param(self.param.station, name=""),
-        width=260,
+        width=300,
     )
 
     # Combine panel elements to create the card for the location options
@@ -624,7 +624,7 @@ def _display_select(self):
         pn.Row(col_1_location, col_2_location),
         title="Location Options for the Selected Data",
         collapsible=False,
-        width=560,
+        width=600,
     )
 
     # Combine panel elements to create the card for the data options
