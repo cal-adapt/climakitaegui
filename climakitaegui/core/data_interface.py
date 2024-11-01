@@ -78,7 +78,7 @@ def _map_view(selections, stations_gdf):
         ),
     }
 
-    fig0 = Figure(figsize=(2.25, 2.25))
+    fig0 = Figure(figsize=(2, 2))
     proj = ccrs.Orthographic(-118, 40)
     crs_proj4 = proj.proj4_init  # used below
     xy = ccrs.PlateCarree()
@@ -229,7 +229,7 @@ class DataParametersWithPanes(DataParameters):
             or self.scenario_ssp == ["n/a"]
             or self.approach == "Warming Level"
         ):
-            mpl_pane = pn.pane.Matplotlib(fig0, dpi=1000)
+            mpl_pane = pn.pane.Matplotlib(fig0)
 
         else:
             # Set time range of historical data
@@ -639,6 +639,7 @@ def _display_select(self):
         title="Data Options in the Cal-Adapt Analytics Engine",
         collapsible=False,
         width=595,
+        header_background='#ACACAC',
     )
 
     # Combine both cards for the complete panel object
