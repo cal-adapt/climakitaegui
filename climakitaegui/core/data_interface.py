@@ -83,7 +83,7 @@ def _map_view(selections, stations_gdf):
     crs_proj4 = proj.proj4_init  # used below
     xy = ccrs.PlateCarree()
     ax = fig0.add_subplot(111, projection=proj)
-    mpl_pane = pn.pane.Matplotlib(fig0)
+    mpl_pane = pn.pane.Matplotlib(fig0, align='left')
 
     # Get geometry of selected location
     subarea_gpd = _get_subarea(
