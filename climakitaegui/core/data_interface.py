@@ -78,7 +78,7 @@ def _map_view(selections, stations_gdf):
         ),
     }
 
-    fig0 = Figure(figsize=(2, 2))
+    fig0 = Figure(figsize=(1.5, 1.5))
     proj = ccrs.Orthographic(-118, 40)
     crs_proj4 = proj.proj4_init  # used below
     xy = ccrs.PlateCarree()
@@ -222,7 +222,7 @@ class DataParametersWithPanes(DataParameters):
         available, and the subset of time slice selected.
         """
 
-        fig0 = Figure(figsize=(2, 2))
+        fig0 = Figure(figsize=(1.5, 1.5))
 
         if (
             self.scenario_historical == ["n/a"]
@@ -374,7 +374,7 @@ def _selections_param_to_panel(self):
     dict
     """
     area_subset = pn.widgets.Select.from_param(
-        self.param.area_subset, name="Subset the data by..."
+        self.param.area_subset, name="Subset the data by...", width=225
     )
     area_average_text = pn.widgets.StaticText(
         value="Compute an area average across grid cells within your selected region?",
@@ -384,7 +384,7 @@ def _selections_param_to_panel(self):
         self.param.area_average, inline=True
     )
     cached_area = pn.widgets.MultiSelect.from_param(
-        self.param.cached_area, name="Location selection"
+        self.param.cached_area, name="Location selection", width=225
     )
     data_type_text = pn.widgets.StaticText(
         value="",
@@ -394,7 +394,7 @@ def _selections_param_to_panel(self):
         self.param.data_type, inline=False, name=""
     )
     data_warning = pn.widgets.StaticText.from_param(
-        self.param._data_warning, name="", style={"color": "red"}
+        self.param._data_warning, name="", styles={"color": "red"}
     )
     downscaling_method_text = pn.widgets.StaticText(value="", name="Downscaling Method")
     downscaling_method = pn.widgets.RadioBoxGroup.from_param(
@@ -408,7 +408,7 @@ def _selections_param_to_panel(self):
         self.param.scenario_historical
     )
     station_data_info = pn.widgets.StaticText.from_param(
-        self.param._station_data_info, name="", style={"color": "red"}
+        self.param._station_data_info, name="", styles={"color": "red"}
     )
     ssp_selection_text = pn.widgets.StaticText(
         value="<br> Shared Socioeconomic Pathways (SSPs) represent different global emissions scenarios",
@@ -639,7 +639,7 @@ def _display_select(self):
         title="Data Options in the Cal-Adapt Analytics Engine",
         collapsible=False,
         width=595,
-        styles={'background': 'lightgray','header_background': 'mediumgray'},
+        styles={'header_background': 'lightgrey'},
     )
 
     # Combine both cards for the complete panel object
