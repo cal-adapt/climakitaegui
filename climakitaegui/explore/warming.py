@@ -226,9 +226,9 @@ def warming_levels_select(self):
                 width=120,
             ),
         ),
-        pn.Spacer(background="black", height=1),
+        pn.Spacer(styles={"background":"black"}, height=1),
         most_things,
-        pn.Spacer(background="black", height=1),
+        pn.Spacer(styles={"background":"black"}, height=1),
         gwl_specific,
     )
 
