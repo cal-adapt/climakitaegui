@@ -192,7 +192,7 @@ def warming_levels_select(self):
         widgets["cached_area"],
         widgets["latitude"],
         widgets["longitude"],
-        width=220,
+        width=300,
     )
 
     gwl_specific = pn.Row(
@@ -207,7 +207,7 @@ def warming_levels_select(self):
         pn.Column(
             pn.widgets.StaticText(value=self.param.anom.doc, name=""),
             pn.widgets.RadioBoxGroup.from_param(self.param.anom, name="", inline=True),
-            width=220,
+            width=300,
         ),
     )
 
@@ -223,7 +223,7 @@ def warming_levels_select(self):
             ),
             pn.Column(
                 widgets["data_warning"],
-                width=220,
+                width=300,
             ),
         ),
         most_things,
