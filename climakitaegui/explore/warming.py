@@ -183,7 +183,7 @@ def warming_levels_select(self):
         widgets["timescale"],
         widgets["resolution_text"],
         widgets["resolution"],
-        width=250,
+        width=325,
     )
 
     col_1_location = pn.Column(
@@ -192,7 +192,7 @@ def warming_levels_select(self):
         widgets["cached_area"],
         widgets["latitude"],
         widgets["longitude"],
-        width=300,
+        width=325,
     )
 
     gwl_specific = pn.Row(
@@ -202,12 +202,12 @@ def warming_levels_select(self):
                 name="",
             ),
             pn.widgets.IntSlider.from_param(self.param.window, name=""),
-            width=250,
+            width=325,
         ),
         pn.Column(
             pn.widgets.StaticText(value=self.param.anom.doc, name=""),
             pn.widgets.RadioBoxGroup.from_param(self.param.anom, name="", inline=True),
-            width=300,
+            width=325,
         ),
     )
 
@@ -219,11 +219,11 @@ def warming_levels_select(self):
             pn.Column(
                 widgets["downscaling_method_text"],
                 widgets["downscaling_method"],
-                width=250,
+                width=325,
             ),
             pn.Column(
                 widgets["data_warning"],
-                width=300,
+                width=325,
             ),
         ),
         most_things,
