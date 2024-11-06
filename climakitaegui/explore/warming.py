@@ -211,7 +211,7 @@ def warming_levels_select(self):
         ),
     )
 
-    most_things = pn.Row(data_choices, pn.layout.HSpacer(width=10), col_1_location)
+    most_things = pn.Row(data_choices, col_1_location)
 
     # Panel overall structure:
     all_things = pn.Column(
@@ -219,11 +219,11 @@ def warming_levels_select(self):
             pn.Column(
                 widgets["downscaling_method_text"],
                 widgets["downscaling_method"],
-                width=270,
+                width=250,
             ),
             pn.Column(
                 widgets["data_warning"],
-                width=120,
+                width=220,
             ),
         ),
         most_things,
