@@ -6,6 +6,7 @@ import hvplot.xarray
 import hvplot.pandas
 import holoviews as hv
 from holoviews import opts
+hv.extension('bokeh')
 import matplotlib.pyplot as plt
 from scipy.stats import pearson3
 from climakitae.core.data_interface import DataInterface
@@ -366,14 +367,14 @@ class WarmingLevelVisualize(param.Parameterized):
         cmip_t = np.arange(2015, 2101, 1)
 
         # Warming level connection lines & additional labeling
-        warmlevel_line = hv.HLine(self.warmlevel).options(
-            color="black", line_width=1.0
-        ) * hv.Text(
+        warmlevel_line = hv.HLine(self.warmlevel) * hv.Text(
             x=1964,
             y=self.warmlevel + 0.25,
             text=".    " + str(self.warmlevel) + "°C warming level",
-        ).options(
-            style=dict(text_font_size="8pt")
+        )
+        warmlevel_line.opts(
+            opts.HLine(color="black", line_width=1.0),
+            opts.Text(style=dict(text_font_size="8pt"))
         )
 
         # Create plot
