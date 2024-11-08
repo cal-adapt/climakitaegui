@@ -374,7 +374,7 @@ class WarmingLevelVisualize(param.Parameterized):
         )
         warmlevel_line.opts(
             opts.HLine(color="black", line_width=1.0),
-            opts.Text(style=dict(font_size="8pt"))
+            opts.Text(font_size="8pt")
         )
 
         # Create plot
