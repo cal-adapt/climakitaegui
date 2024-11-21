@@ -386,6 +386,13 @@ def _selections_param_to_panel(self):
     cached_area = pn.widgets.MultiSelect.from_param(
         self.param.cached_area, name="Location selection"
     )
+    delta_signal_text = pn.widgets.StaticText(
+        value="",
+        name="Compute delta signal?",
+    )
+    delta_signal = pn.widgets.RadioBoxGroup.from_param(
+        self.param.delta_signal, inline=False, name=""
+    )
     data_type_text = pn.widgets.StaticText(
         value="",
         name="Data Type",
@@ -466,8 +473,8 @@ def _selections_param_to_panel(self):
         "area_average": area_average,
         "area_subset": area_subset,
         "cached_area": cached_area,
+        "delta_signal": delta_signal,
         "data_type": data_type,
-        "data_type_text": data_type_text,
         "data_warning": data_warning,
         "downscaling_method": downscaling_method,
         "historical_selection": historical_selection,
@@ -491,10 +498,13 @@ def _selections_param_to_panel(self):
         "area_average_text": area_average_text,
         "downscaling_method_text": downscaling_method_text,
         "historical_selection_text": historical_selection_text,
+        "delta_signal_text": delta_signal_text,
         "resolution_text": resolution_text,
         "approach_text": approach_text,
         "ssp_selection_text": ssp_selection_text,
         "units_text": units_text,
+        "data_type_text": data_type_text,
+        "delta_signal_text": delta_signal_text,
         "time_slice_text": time_slice_text,
         "timescale_text": timescale_text,
         "variable_text": variable_text,
@@ -526,14 +536,15 @@ def _display_select(self):
             pn.Column(
                 widgets["data_type_text"],
                 widgets["data_type"],
-                width=155,
+                width=100,
             ),
-            pn.Column(widgets["approach_text"], widgets["approach"], width=175),
+            pn.Column(widgets["approach_text"], widgets["approach"], width=130),
             pn.Column(
                 widgets["downscaling_method_text"],
                 widgets["downscaling_method"],
-                width=175,
+                width=130,
             ),
+            pn.Column(widgets["delta_signal_text"], widgets["delta_signal"], width=130),
         ),
     )
 
