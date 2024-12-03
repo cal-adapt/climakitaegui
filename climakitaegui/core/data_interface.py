@@ -646,6 +646,7 @@ def _display_select(self):
             "header_background": "lightgrey",
             "border-radius": "5px",
             "border": "2px solid black",
+            "margin": "10px",
         },
     )
 
