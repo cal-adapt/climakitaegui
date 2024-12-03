@@ -628,6 +628,12 @@ def _display_select(self):
         title="Location Options for the Selected Data",
         collapsible=False,
         width=600,
+        styles={
+            "header_background": "lightgrey",
+            "border-radius": "5px",
+            "border": "2px solid black",
+            "margin": "10px",
+        },
     )
 
     # Combine panel elements to create the card for the data options
