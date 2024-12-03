@@ -433,7 +433,9 @@ def _selections_param_to_panel(self):
     timescale = pn.widgets.RadioBoxGroup.from_param(
         self.param.timescale, name="", inline=False
     )
-    time_slice = pn.widgets.RangeSlider.from_param(self.param.time_slice, name="", width=250)
+    time_slice = pn.widgets.RangeSlider.from_param(
+        self.param.time_slice, name="", width=250
+    )
     time_slice_text = pn.widgets.StaticText(
         value="How do you want to time-slice the data?", name="Years"
     )
@@ -640,7 +642,7 @@ def _display_select(self):
         title="Data Options in the Cal-Adapt Analytics Engine",
         collapsible=False,
         width=600,
-        styles={'header_background': 'lightgrey'},
+        styles={"header_background": "lightgrey", "border-radius": "5px"},
     )
 
     # Combine both cards for the complete panel object
