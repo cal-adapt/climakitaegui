@@ -222,7 +222,7 @@ class DataParametersWithPanes(DataParameters):
         available, and the subset of time slice selected.
         """
 
-        fig0 = Figure(figsize=(1.75, 1.75))
+        fig0 = Figure(figsize=(2, 2))
 
         if (
             self.scenario_historical == ["n/a"]
@@ -526,13 +526,13 @@ def _display_select(self):
             pn.Column(
                 widgets["data_type_text"],
                 widgets["data_type"],
-                width=155,
+                width=200,
             ),
-            pn.Column(widgets["approach_text"], widgets["approach"], width=175),
+            pn.Column(widgets["approach_text"], widgets["approach"], width=200),
             pn.Column(
                 widgets["downscaling_method_text"],
                 widgets["downscaling_method"],
-                width=175,
+                width=200,
             ),
         ),
     )
@@ -544,7 +544,7 @@ def _display_select(self):
             widgets["variable_type"],
             widgets["variable"],
             widgets["variable_description"],
-            width=250,
+            width=300,
         ),
         pn.Column(
             pn.Row(
@@ -552,7 +552,7 @@ def _display_select(self):
                 pn.Column(widgets["timescale_text"], widgets["timescale"], width=100),
                 pn.Column(widgets["resolution_text"], widgets["resolution"], width=100),
             ),
-            pn.Column(widgets["station_data_info"], width=340),
+            pn.Column(widgets["station_data_info"], width=300),
         ),
     )
 
@@ -571,6 +571,7 @@ def _display_select(self):
             pn.Column(
                 widgets["warming_level_text"],
                 widgets["warming_level"],
+                width=300,
             ),
         ),
     )
@@ -589,9 +590,9 @@ def _display_select(self):
                 widgets["historical_selection"],
                 widgets["ssp_selection_text"],
                 widgets["ssp_selection"],
-                width=275,
+                width=300,
             ),
-            pn.Column(self.scenario_view, widgets["data_warning"], width=250),
+            pn.Column(self.scenario_view, widgets["data_warning"], width=300),
         ),
     )
 
@@ -638,7 +639,7 @@ def _display_select(self):
         time_approach,
         title="Data Options in the Cal-Adapt Analytics Engine",
         collapsible=False,
-        width=595,
+        width=600,
         styles={'header_background': 'lightgrey'},
     )
 
