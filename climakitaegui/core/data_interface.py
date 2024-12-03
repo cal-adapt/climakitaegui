@@ -536,13 +536,13 @@ def _display_select(self):
             pn.Column(
                 widgets["data_type_text"],
                 widgets["data_type"],
-                width=100,
+                width=110,
             ),
-            pn.Column(widgets["approach_text"], widgets["approach"], width=130),
+            pn.Column(widgets["approach_text"], widgets["approach"], width=140),
             pn.Column(
                 widgets["downscaling_method_text"],
                 widgets["downscaling_method"],
-                width=130,
+                width=180,
             ),
             pn.Column(widgets["delta_signal_text"], widgets["delta_signal"], width=130),
         ),
