@@ -222,7 +222,7 @@ class DataParametersWithPanes(DataParameters):
         available, and the subset of time slice selected.
         """
 
-        fig0 = Figure(figsize=(2, 2))
+        fig0 = Figure(figsize=(1.75, 1.75))
 
         if (
             self.scenario_historical == ["n/a"]
