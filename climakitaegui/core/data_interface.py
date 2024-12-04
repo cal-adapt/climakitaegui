@@ -229,7 +229,7 @@ class DataParametersWithPanes(DataParameters):
             or self.scenario_ssp == ["n/a"]
             or self.approach == "Warming Level"
         ):
-            mpl_pane = pn.pane.Matplotlib(fig0)
+            mpl_pane = pn.pane.Matplotlib(fig0, dpi=120)
 
         else:
             # Set time range of historical data
@@ -253,7 +253,7 @@ class DataParametersWithPanes(DataParameters):
             ax.tick_params(labelsize=11)
             ax.xaxis.set_major_locator(ticker.AutoLocator())
             ax.xaxis.set_minor_locator(ticker.AutoMinorLocator())
-            mpl_pane = pn.pane.Matplotlib(fig0, dpi=100)
+            mpl_pane = pn.pane.Matplotlib(fig0, dpi=120)
 
             y_offset = 0.15
             if (self.scenario_ssp is not None) and (
