@@ -211,7 +211,7 @@ def warming_levels_select(self):
         ),
     )
 
-    most_things = pn.Row(data_choices, pn.layout.HSpacer(width=10), col_1_location)
+    most_things = pn.Row(data_choices, col_1_location)
 
     # Panel overall structure:
     all_things = pn.Column(
@@ -234,6 +234,13 @@ def warming_levels_select(self):
         all_things,
         title="Choose Data to Explore at Global Warming Levels",
         collapsible=False,
+        width=1000,
+        styles={
+            "header_background": "lightgrey",
+            "border-radius": "5px",
+            "border": "2px solid black",
+            "margin": "10px",
+        },
     )
 
 
