@@ -885,7 +885,7 @@ def warming_levels_visualize(wl_viz):
         collapsible=False,
     )
 
-    warming_panel = GMT_plot, map_tabs
+    warming_panel = pn.pane.Pane(pn.Column(GMT_plot, map_tabs))
     return warming_panel
 
 
