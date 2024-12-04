@@ -831,27 +831,7 @@ def warming_levels_visualize(wl_viz):
             ),
             width=800,
         ),
-        pn.Row(
-            wl_viz.GCM_PostageStamps_MAIN,
-            pn.Column(
-                pn.widgets.StaticText(value="<br><br><br>", width=150),
-                # pn.widgets.StaticText(
-                #     value=(
-                #         "<b>Tip</b>: There's a toolbar below the maps."
-                #         " Try clicking the magnifying glass to zoom in on a"
-                #         " particular region. You can also click the save button"
-                #         " to save a copy of the figure to your computer."
-                #     ),
-                #     width=150,
-                #     style={
-                #         "border": "1.2px red solid",
-                #         "padding": "5px",
-                #         "border-radius": "4px",
-                #         "font-size": "13px",
-                #     },
-                # ),
-            ),
-        ),
+        wl_viz.GCM_PostageStamps_MAIN,
     )
 
     postage_stamps_STATS = pn.Column(
