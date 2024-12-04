@@ -642,7 +642,7 @@ def GCM_PostageStamps_MAIN_compute(wl_viz):
                 )
 
             # Add to dictionary
-            warm_level_dict[warmlevel] = pn.Pane(wl_plot)
+            warm_level_dict[warmlevel] = pn.pane(wl_plot)
 
     return warm_level_dict
 
