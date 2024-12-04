@@ -872,15 +872,15 @@ def warming_levels_visualize(wl_viz):
             pn.widgets.RadioButtonGroup.from_param(wl_viz.param.warmlevel, name=""),
             width=230,
         ),
-        pn.Row(
-            pn.Tabs(
-                ("Maps of individual simulations", postage_stamps_MAIN),
-                (
-                    "Maps of cross-model statistics: median/max/min",
-                    postage_stamps_STATS,
-                ),
-            )
-        ),
+        #pn.Row(
+        #    pn.Tabs(
+        #        ("Maps of individual simulations", postage_stamps_MAIN),
+        #        (
+        #            "Maps of cross-model statistics: median/max/min",
+        #            postage_stamps_STATS,
+        #        ),
+        #    )
+        #),
         title="Regional response at selected warming level",
         width=850,
         height=850,
