@@ -378,9 +378,8 @@ class WarmingLevelVisualize(param.Parameterized):
         ) * hv.Text(
             x=1964,
             y=self.warmlevel + 0.25,
+            fontsize=8,
             text=".    " + str(self.warmlevel) + "°C warming level",
-        ).options(
-            style=dict(text_font_size="8pt")
         )
 
         # Create plot
