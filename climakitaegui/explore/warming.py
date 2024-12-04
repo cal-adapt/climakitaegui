@@ -234,7 +234,7 @@ def warming_levels_select(self):
         all_things,
         title="Choose Data to Explore at Global Warming Levels",
         collapsible=False,
-        width=1000,
+        width=500,
         styles={
             "header_background": "lightgrey",
             "border-radius": "5px",
