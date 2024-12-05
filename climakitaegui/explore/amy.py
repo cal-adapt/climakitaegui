@@ -509,28 +509,28 @@ def amy_visualize(self):
                 pn.widgets.StaticText(
                     name="", value="Average Meteorological Year Type"
                 ),
-                pn.widgets.RadioButtonGroup.from_param(self.param.amy_type, width=250),
+                pn.widgets.RadioButtonGroup.from_param(self.param.amy_type, width=225),
                 pn.widgets.Select.from_param(
-                    self.param.computation_method, name="Computation Options", width=250
+                    self.param.computation_method, name="Computation Options", width=225
                 ),
                 pn.widgets.StaticText.from_param(
                     self.param.tmy_computation_description, name=""
                 ),
                 pn.widgets.StaticText(name="", value="Warming level (°C)"),
-                pn.widgets.RadioButtonGroup.from_param(self.param.warmlevel, width=250),
+                pn.widgets.RadioButtonGroup.from_param(self.param.warmlevel, width=225),
                 pn.widgets.Select.from_param(
-                    self.param.variable, name="Data variable", width=250
+                    self.param.variable, name="Data variable", width=225
                 ),
                 pn.widgets.StaticText.from_param(
                     self.param.extended_description, name=""
                 ),
                 pn.widgets.StaticText(name="", value="Variable Units"),
-                pn.widgets.RadioButtonGroup.from_param(self.param.units, width=250),
+                pn.widgets.RadioButtonGroup.from_param(self.param.units, width=225),
                 pn.widgets.StaticText(name="", value="Model Resolution"),
                 pn.widgets.RadioButtonGroup.from_param(
-                    self.param.resolution, width=250
+                    self.param.resolution, width=225
                 ),
-                width=280,
+                width=250,
             ),
             pn.Column(
                 pn.widgets.Select.from_param(
