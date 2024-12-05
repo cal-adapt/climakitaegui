@@ -533,7 +533,9 @@ def amy_visualize(self):
                 width=280,
             ),
             pn.Column(
-                self.param.area_subset,
+                pn.widgets.Select.from_param(
+                    self.param.area_subset, name="Subset the data by...", width=225
+                ),
                 self.param.latitude,
                 self.param.longitude,
                 self.param.cached_area,
