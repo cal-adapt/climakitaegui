@@ -536,9 +536,11 @@ def amy_visualize(self):
                 pn.widgets.Select.from_param(
                     self.param.area_subset, name="Subset the data by...", width=225
                 ),
-                self.param.latitude,
-                self.param.longitude,
-                self.param.cached_area,
+                pn.widgets.RangeSlider.from_param(self.param.latitude, width=225),
+                pn.widgets.RangeSlider.from_param(self.param.longitude, width=225),
+                pn.widgets.MultiSelect.from_param(
+                    self.param.cached_area, name="Location selection", width=225
+                ),
                 self.map_view,
                 pn.widgets.Button.from_param(
                     self.param.reload_data,
