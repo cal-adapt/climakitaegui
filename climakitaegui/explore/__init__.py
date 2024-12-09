@@ -20,8 +20,12 @@ def amy():
     return AverageMetYear()
 
 
-class Thresholds(ThresholdParameters, option=1):
+class Thresholds(ThresholdParameters):
     """Display Thresholds panel."""
+
+    def __init__(self, option):
+
+        self.option = option
 
     def show(self):
         return thresholds_visualize(
