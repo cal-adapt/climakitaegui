@@ -20,7 +20,7 @@ def amy():
     return AverageMetYear()
 
 
-class Thresholds(ThresholdParameters):
+class Thresholds(ThresholdParameters, option=1):
     """Display Thresholds panel."""
 
     def show(self):
