@@ -241,7 +241,7 @@ def thresholds_visualize(self, option=1):
     data_options_card = pn.Card(
         pn.Row(
             pn.Column(
-                pn.widgets.Select.from_param(self.param.variable, name="Data variable"),
+                pn.widgets.Select.from_param(self.param.variable, name="Data variable", width=225),
                 pn.widgets.RadioButtonGroup.from_param(self.param.units),
                 pn.widgets.StaticText.from_param(
                     self.param.extended_description, name=""
@@ -252,16 +252,18 @@ def thresholds_visualize(self, option=1):
                     width=150,
                     height=30,
                 ),
-                width=230,
+                width=250,
             ),
             pn.Column(
-                self.param.area_subset,
+                pn.widgets.Select.from_param(self.param.area_subset, name="Subset the data by...", width=225),
                 self.param.latitude,
                 self.param.longitude,
-                self.param.cached_area,
-                width=230,
+                pn.widgets.MultiSelect.from_param(
+                    self.param.cached_area, name="Location selection", width=225
+                ),
+                width=250,
             ),
-            pn.Column(self.map_view, width=180),
+            pn.Column(self.map_view, width=200),
         ),
         title="Data Options",
         collapsible=False,
@@ -281,7 +283,12 @@ def thresholds_visualize(self, option=1):
     )
 
     description_box = pn.Card(
-        _thresholds_tool_description,
+        pn.Row(
+            pn.Column(
+                _thresholds_tool_description
+            ),
+            width=500,
+        ),
         title="About this tool",
         collapsible=False,
         # width = 400,
@@ -289,4 +296,4 @@ def thresholds_visualize(self, option=1):
     )
 
     plot_panel = _exceedance_visualize(self, option)  # display the holoviz panel
-    return pn.Column(pn.Row(data_options_card, description_box), plot_panel)
+    return pn.Column(pn.Row(data_options_card, description_box), pn.Row(plot_panel))
