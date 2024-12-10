@@ -25,30 +25,30 @@ class ThresholdParameters(DataParametersWithPanes):
 
     # Define the params (before __init__ so that we can access them during __init__)
     threshold_direction = param.Selector(
-        default="above", objects=["above", "below"], label="Direction"
+        default="above", objects=["above", "below"], label="Direction", width=50
     )
-    threshold_value = param.Number(default=0, label="")
-    duration1_length = param.Integer(default=1, bounds=(0, None), label="")
+    threshold_value = param.Number(default=0, label="", width=50)
+    duration1_length = param.Integer(default=1, bounds=(0, None), label="", width=50)
     duration1_type = param.Selector(
-        default="hour", objects=["year", "month", "day", "hour"], label=""
+        default="hour", objects=["year", "month", "day", "hour"], label="", width=50
     )
-    period_length = param.Integer(default=1, bounds=(0, None), label="")
+    period_length = param.Integer(default=1, bounds=(0, None), label="", width=50)
     period_type = param.Selector(
-        default="year", objects=["year", "month", "day"], label=""
+        default="year", objects=["year", "month", "day"], label="", width=50
     )
-    group_length = param.Integer(default=1, bounds=(0, None), label="")
+    group_length = param.Integer(default=1, bounds=(0, None), label="", width=50)
     group_type = param.Selector(
-        default="hour", objects=["year", "month", "day", "hour"], label=""
+        default="hour", objects=["year", "month", "day", "hour"], label="", width=50
     )
-    duration2_length = param.Integer(default=1, bounds=(0, None), label="")
+    duration2_length = param.Integer(default=1, bounds=(0, None), label="", width=50)
     duration2_type = param.Selector(
-        default="hour", objects=["year", "month", "day", "hour"], label=""
+        default="hour", objects=["year", "month", "day", "hour"], label="", width=50
     )
     smoothing = param.Selector(
-        default="None", objects=["None", "Running mean"], label="Smoothing"
+        default="None", objects=["None", "Running mean"], label="Smoothing", width=50
     )
     num_timesteps = param.Integer(
-        default=10, bounds=(0, None), label="Number of timesteps"
+        default=10, bounds=(0, None), label="Number of timesteps", width=50
     )
 
     def __init__(self, *args, **params):
@@ -241,7 +241,9 @@ def thresholds_visualize(self, option=1):
     data_options_card = pn.Card(
         pn.Row(
             pn.Column(
-                pn.widgets.Select.from_param(self.param.variable, name="Data variable", width=225),
+                pn.widgets.Select.from_param(
+                    self.param.variable, name="Data variable", width=225
+                ),
                 pn.widgets.RadioButtonGroup.from_param(self.param.units),
                 pn.widgets.StaticText.from_param(
                     self.param.extended_description, name=""
@@ -255,7 +257,9 @@ def thresholds_visualize(self, option=1):
                 width=250,
             ),
             pn.Column(
-                pn.widgets.Select.from_param(self.param.area_subset, name="Subset the data by...", width=225),
+                pn.widgets.Select.from_param(
+                    self.param.area_subset, name="Subset the data by...", width=225
+                ),
                 self.param.latitude,
                 self.param.longitude,
                 pn.widgets.MultiSelect.from_param(
@@ -263,11 +267,11 @@ def thresholds_visualize(self, option=1):
                 ),
                 width=250,
             ),
-            pn.Column(self.map_view, width=200),
+            pn.Column(self.map_view, width=300),
         ),
         title="Data Options",
         collapsible=False,
-        width=700,
+        width=800,
         height=_first_row_height,
     )
 
@@ -284,14 +288,12 @@ def thresholds_visualize(self, option=1):
 
     description_box = pn.Card(
         pn.Row(
-            pn.Column(
-                _thresholds_tool_description
-            ),
-            width=500,
+            pn.Column(_thresholds_tool_description),
+            width=375,
         ),
         title="About this tool",
         collapsible=False,
-        # width = 400,
+        width=400,
         height=_first_row_height,
     )
 

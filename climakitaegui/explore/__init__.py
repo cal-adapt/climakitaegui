@@ -22,6 +22,7 @@ def amy():
 
 class Thresholds(ThresholdParameters):
     """Display Thresholds panel."""
+
     option = 1
 
     def __init__(self, option):
