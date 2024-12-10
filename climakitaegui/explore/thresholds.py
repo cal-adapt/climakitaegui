@@ -25,30 +25,30 @@ class ThresholdParameters(DataParametersWithPanes):
 
     # Define the params (before __init__ so that we can access them during __init__)
     threshold_direction = param.Selector(
-        default="above", objects=["above", "below"], label="Direction", width=50
+        default="above", objects=["above", "below"], label="Direction"
     )
-    threshold_value = param.Number(default=0, label="", width=50)
-    duration1_length = param.Integer(default=1, bounds=(0, None), label="", width=50)
+    threshold_value = param.Number(default=0, label="")
+    duration1_length = param.Integer(default=1, bounds=(0, None), label="")
     duration1_type = param.Selector(
-        default="hour", objects=["year", "month", "day", "hour"], label="", width=50
+        default="hour", objects=["year", "month", "day", "hour"], label=""
     )
-    period_length = param.Integer(default=1, bounds=(0, None), label="", width=50)
+    period_length = param.Integer(default=1, bounds=(0, None), label="")
     period_type = param.Selector(
-        default="year", objects=["year", "month", "day"], label="", width=50
+        default="year", objects=["year", "month", "day"], label=""
     )
-    group_length = param.Integer(default=1, bounds=(0, None), label="", width=50)
+    group_length = param.Integer(default=1, bounds=(0, None), label="")
     group_type = param.Selector(
-        default="hour", objects=["year", "month", "day", "hour"], label="", width=50
+        default="hour", objects=["year", "month", "day", "hour"], label=""
     )
-    duration2_length = param.Integer(default=1, bounds=(0, None), label="", width=50)
+    duration2_length = param.Integer(default=1, bounds=(0, None), label="")
     duration2_type = param.Selector(
-        default="hour", objects=["year", "month", "day", "hour"], label="", width=50
+        default="hour", objects=["year", "month", "day", "hour"], label=""
     )
     smoothing = param.Selector(
-        default="None", objects=["None", "Running mean"], label="Smoothing", width=50
+        default="None", objects=["None", "Running mean"], label="Smoothing"
     )
     num_timesteps = param.Integer(
-        default=10, bounds=(0, None), label="Number of timesteps", width=50
+        default=10, bounds=(0, None), label="Number of timesteps"
     )
 
     def __init__(self, *args, **params):
@@ -194,7 +194,7 @@ def _exceedance_visualize(choices, option=1):
     options_card = pn.Card(
         # Threshold value and direction
         pn.Row(
-            choices.param.threshold_direction,
+            pn.widgets.Select.from_param(choices.param.threshold_direction, width=50),
             choices.param.threshold_value,
             width=_left_column_width,
         ),
