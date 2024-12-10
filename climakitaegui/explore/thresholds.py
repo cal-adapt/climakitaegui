@@ -194,8 +194,8 @@ def _exceedance_visualize(choices, option=1):
     options_card = pn.Card(
         # Threshold value and direction
         pn.Row(
-            pn.widgets.Select.from_param(choices.param.threshold_direction, width=50),
-            choices.param.threshold_value,
+            pn.widgets.Select.from_param(choices.param.threshold_direction, width=150),
+            pn.widgets.Number.from_param(choices.param.threshold_value, width=150),
             width=_left_column_width,
         ),
         # DURATION 1
@@ -236,7 +236,7 @@ def thresholds_visualize(self, option=1):
     """
     Function for constructing and displaying the explore.thresholds() panel.
     """
-    _first_row_height = 300
+    _first_row_height = 350
 
     data_options_card = pn.Card(
         pn.Row(
@@ -273,6 +273,12 @@ def thresholds_visualize(self, option=1):
         collapsible=False,
         width=800,
         height=_first_row_height,
+        styles={
+            "header_background": "lightgrey",
+            "border-radius": "5px",
+            "border": "2px solid black",
+            "margin": "10px",
+        },
     )
 
     _thresholds_tool_description = (
@@ -295,6 +301,12 @@ def thresholds_visualize(self, option=1):
         collapsible=False,
         width=400,
         height=_first_row_height,
+        styles={
+            "header_background": "lightgrey",
+            "border-radius": "5px",
+            "border": "2px solid black",
+            "margin": "10px",
+        },
     )
 
     plot_panel = _exceedance_visualize(self, option)  # display the holoviz panel
