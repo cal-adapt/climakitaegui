@@ -23,12 +23,11 @@ Basic Usage
 ```
 import climakitae as ck                           # Import the base climakitae package
 import climakitaegui as ckg                       # Import the climakitaegui package
-sel = ckg.Select().show()                         # Pull up selections GUI to make data settings
+selections = ckg.Select()                         # Initialize selections object
+selections.show()                                 # Pull up selections GUI to make data settings
 data = sel.retrieve()                             # Retrieve the data from the AWS catalog
 data = ck.load(data)                              # Read the data into memory
 ckg.view(data)                                    # Generate a basic visualization of the data
-from climakitaegui.explore import warming_levels  # Import warming levels code
-wl = warming_levels().show()                      # Explore Warming Levels GUI
 ```
 
 Links
