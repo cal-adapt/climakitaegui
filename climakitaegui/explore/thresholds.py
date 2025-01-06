@@ -161,14 +161,22 @@ class ThresholdParameters(DataParametersWithPanes):
         """A reactive row for duration2 options that updates if group is updated"""
         self.group_length = self.duration1_length
         self.group_type = self.duration1_type
-        return pn.Row(self.param.group_length, self.param.group_type, width=375)
+        return pn.Row(
+            pn.widgets.Integer.from_param(self.param.group_length, width=200),
+            pn.widgets.Select.from_param(self.param.group_type, width=100),
+            width=375,
+        )
 
     @param.depends("group_length", "group_type", watch=False)
     def duration2_row(self):
         """A reactive row for duration2 options that updates if group is updated"""
         self.duration2_length = self.group_length
         self.duration2_type = self.group_type
-        return pn.Row(self.param.duration2_length, self.param.duration2_type, width=375)
+        return pn.Row(
+            pn.widgets.Integer.from_param(self.param.duration2_length, width=200),
+            pn.widgets.Select.from_param(self.param.duration2_type, width=100),
+            width=375,
+        )
 
 
 def _exceedance_visualize(choices, option=1):
@@ -176,7 +184,6 @@ def _exceedance_visualize(choices, option=1):
     Uses holoviz 'panel' library to display the parameters and view defined for
     exploring exceedance.
     """
-    _left_column_width = 375
 
     if option == 1:
         plot_card = choices.view
@@ -196,18 +203,22 @@ def _exceedance_visualize(choices, option=1):
         pn.Row(
             pn.widgets.Select.from_param(choices.param.threshold_direction, width=150),
             pn.widgets.Number.from_param(choices.param.threshold_value, width=150),
-            width=_left_column_width,
+            width=375,
         ),
         # DURATION 1
         "I'm interested in extreme conditions that last for . . .",
-        pn.Row(choices.param.duration1_length, choices.param.duration1_type, width=375),
+        pn.Row(
+            pn.widgets.Integer.from_param(choices.param.duration1_length, width=200),
+            pn.widgets.Select.from_param(choices.param.duration1_type, width=100),
+            width=375,
+        ),
         pn.layout.Divider(margin=(-10, 0, -10, 0)),
         # PERIOD
         "Show me a timeseries of the number of occurences every . . .",
         pn.Row(
-            choices.param.period_length,
-            choices.param.period_type,
-            width=_left_column_width,
+            pn.widgets.Integer.from_param(choices.param.period_length, width=200),
+            pn.widgets.Select.from_param(choices.param.period_type, width=100),
+            width=375,
         ),
         "Examples: for an annual timeseries, select '1-year'. For a seasonal timeseries, select '3-month'.",
         pn.layout.Divider(margin=(-10, 0, -10, 0)),
@@ -224,7 +235,7 @@ def _exceedance_visualize(choices, option=1):
     exceedance_count_panel = pn.Column(
         pn.Spacer(width=15),
         pn.Row(
-            pn.Column(options_card, choices.smoothing_card, width=_left_column_width),
+            pn.Column(options_card, choices.smoothing_card, width=375),
             pn.Spacer(width=15),
             pn.Column(plot_card),
         ),
