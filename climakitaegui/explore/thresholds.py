@@ -230,6 +230,12 @@ def _exceedance_visualize(choices, option=1):
         choices.duration2_row,
         title="Threshold event options",
         collapsible=False,
+        styles={
+            "header_background": "lightgrey",
+            "border-radius": "5px",
+            "border": "2px solid black",
+            "margin": "10px",
+        },
     )
 
     exceedance_count_panel = pn.Column(
