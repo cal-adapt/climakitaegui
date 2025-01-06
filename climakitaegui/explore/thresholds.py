@@ -202,7 +202,7 @@ def _exceedance_visualize(choices, option=1):
         # Threshold value and direction
         pn.Row(
             pn.widgets.Select.from_param(choices.param.threshold_direction, width=150),
-            pn.widgets.FloatInput.from_param(choices.param.threshold_value, step=1e-1, width=150),
+            pn.widgets.IntInput.from_param(choices.param.threshold_value, step=1e-1, width=150),
             width=375,
         ),
         # DURATION 1
