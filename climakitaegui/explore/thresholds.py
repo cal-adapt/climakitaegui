@@ -162,7 +162,7 @@ class ThresholdParameters(DataParametersWithPanes):
         self.group_length = self.duration1_length
         self.group_type = self.duration1_type
         return pn.Row(
-            pn.widgets.Integer.from_param(self.param.group_length, width=200),
+            pn.widgets.IntInput.from_param(self.param.group_length, width=200),
             pn.widgets.Select.from_param(self.param.group_type, width=100),
             width=375,
         )
@@ -173,7 +173,7 @@ class ThresholdParameters(DataParametersWithPanes):
         self.duration2_length = self.group_length
         self.duration2_type = self.group_type
         return pn.Row(
-            pn.widgets.Integer.from_param(self.param.duration2_length, width=200),
+            pn.widgets.IntInput.from_param(self.param.duration2_length, width=200),
             pn.widgets.Select.from_param(self.param.duration2_type, width=100),
             width=375,
         )
@@ -208,7 +208,7 @@ def _exceedance_visualize(choices, option=1):
         # DURATION 1
         "I'm interested in extreme conditions that last for . . .",
         pn.Row(
-            pn.widgets.Integer.from_param(choices.param.duration1_length, width=200),
+            pn.widgets.IntInput.from_param(choices.param.duration1_length, width=200),
             pn.widgets.Select.from_param(choices.param.duration1_type, width=100),
             width=375,
         ),
@@ -216,7 +216,7 @@ def _exceedance_visualize(choices, option=1):
         # PERIOD
         "Show me a timeseries of the number of occurences every . . .",
         pn.Row(
-            pn.widgets.Integer.from_param(choices.param.period_length, width=200),
+            pn.widgets.IntInput.from_param(choices.param.period_length, width=200),
             pn.widgets.Select.from_param(choices.param.period_type, width=100),
             width=375,
         ),
