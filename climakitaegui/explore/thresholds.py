@@ -154,7 +154,17 @@ class ThresholdParameters(DataParametersWithPanes):
             )
         else:
             smooth_row = pn.Row(self.param.smoothing, width=375)
-        return pn.Card(smooth_row, title="Smoothing", collapsible=False)
+        return pn.Card(
+            smooth_row,
+            title="Smoothing",
+            collapsible=False,
+            styles={
+                "header_background": "lightgrey",
+                "border-radius": "5px",
+                "border": "2px solid black",
+                "margin": "10px",
+            },
+        )
 
     @param.depends("duration1_length", "duration1_type", watch=False)
     def group_row(self):
@@ -202,7 +212,9 @@ def _exceedance_visualize(choices, option=1):
         # Threshold value and direction
         pn.Row(
             pn.widgets.Select.from_param(choices.param.threshold_direction, width=150),
-            pn.widgets.FloatInput.from_param(choices.param.threshold_value, step=.1, width=150),
+            pn.widgets.FloatInput.from_param(
+                choices.param.threshold_value, step=0.1, width=150
+            ),
             width=375,
         ),
         # DURATION 1
