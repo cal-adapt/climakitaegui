@@ -40,7 +40,7 @@ def timeseries_visualize(choices):
                         pn.widgets.IntSlider.from_param(
                             choices.param.resample_window, width=200
                         ),
-                        pn.widgets.Selector.from_param(
+                        pn.widgets.Select.from_param(
                             choices.param.resample_period, width=200
                         ),
                         width=400,
