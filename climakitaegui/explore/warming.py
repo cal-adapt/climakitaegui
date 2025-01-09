@@ -818,6 +818,12 @@ def warming_levels_visualize(wl_viz):
         collapsible=False,
         width=600,
         height=515,
+        styles={
+            "header_background": "lightgrey",
+            "border-radius": "5px",
+            "border": "2px solid black",
+            "margin": "10px",
+        },
     )
 
     postage_stamps_MAIN = pn.Column(
@@ -863,6 +869,12 @@ def warming_levels_visualize(wl_viz):
         width=850,
         height=850,
         collapsible=False,
+        styles={
+            "header_background": "lightgrey",
+            "border-radius": "5px",
+            "border": "2px solid black",
+            "margin": "10px",
+        },
     )
 
     warming_panel = pn.Column(GMT_plot, map_tabs)
