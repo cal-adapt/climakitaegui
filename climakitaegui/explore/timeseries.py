@@ -19,21 +19,31 @@ def timeseries_visualize(choices):
                 pn.Column(
                     pn.widgets.StaticText(name="", value="Transformation Options"),
                     choices.param.anomaly,
-                    choices.param.reference_range,
+                    pn.widgets.DatetimeRangeSlider.from_param(
+                        choices.param.reference_range, width=200
+                    ),
                     choices.param.remove_seasonal_cycle,
                     choices.param.separate_seasons,
-                    choices.param.smoothing,
-                    choices.param.num_timesteps,
+                    pn.widgets.Select.from_param(choices.param.smoothing, width=200),
+                    pn.widgets.IntSlider.from_param(
+                        choices.param.num_timesteps, width=200
+                    ),
                     pn.Spacer(height=10),
                 ),
                 pn.Spacer(width=50),
                 pn.Column(
                     pn.widgets.CheckBoxGroup.from_param(choices.param.extremes),
-                    choices.param.percentile,
+                    pn.widgets.FloatSlider.from_param(
+                        choices.param.percentile, width=200
+                    ),
                     pn.Row(
-                        choices.param.resample_window,
-                        choices.param.resample_period,
-                        width=320,
+                        pn.widgets.IntSlider.from_param(
+                            choices.param.resample_window, width=200
+                        ),
+                        pn.widgets.IntSlider.from_param(
+                            choices.param.resample_period, width=200
+                        ),
+                        width=400,
                     ),
                     pn.widgets.StaticText(name="", value=smooth_text),
                     pn.widgets.StaticText(name="", value=resample_text),
