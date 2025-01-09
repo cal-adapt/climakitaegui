@@ -19,7 +19,7 @@ def timeseries_visualize(choices):
                 pn.Column(
                     pn.widgets.StaticText(name="", value="Transformation Options"),
                     choices.param.anomaly,
-                    pn.widgets.DatetimeRangeSlider.from_param(
+                    pn.widgets.DateRangeSlider.from_param(
                         choices.param.reference_range, width=200
                     ),
                     choices.param.remove_seasonal_cycle,
