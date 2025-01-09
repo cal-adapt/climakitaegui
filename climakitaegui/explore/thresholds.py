@@ -58,7 +58,7 @@ class ThresholdParameters(DataParametersWithPanes):
         self.append_historical = False
         self.area_average = "Yes"
         self.resolution = "45 km"
-        self.scenario_ssp = ["SSP 3-7.0 -- Business as Usual"]
+        self.scenario_ssp = ["SSP 3-7.0"]
         self.scenario_historical = []
         self.time_slice = (2020, 2100)
         self.timescale = "hourly"

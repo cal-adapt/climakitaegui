@@ -266,11 +266,11 @@ class WarmingLevelVisualize(param.Parameterized):
         default="All",
         objects=[
             "All",
-            "SSP 1-1.9 -- Very Low Emissions Scenario",
-            "SSP 1-2.6 -- Low Emissions Scenario",
-            "SSP 2-4.5 -- Middle of the Road",
-            "SSP 3-7.0 -- Business as Usual",
-            "SSP 5-8.5 -- Burn it All",
+            "SSP 1-1.9",
+            "SSP 1-2.6",
+            "SSP 2-4.5",
+            "SSP 3-7.0",
+            "SSP 5-8.5",
         ],
         doc="Shared Socioeconomic Pathway.",
     )
@@ -348,23 +348,23 @@ class WarmingLevelVisualize(param.Parameterized):
                 * self.ssp370_data.hvplot(y="Mean", color=c370, label="SSP3-7.0")
                 * self.ssp585_data.hvplot(y="Mean", color=c585, label="SSP5-8.5")
             )
-        elif self.ssp == "SSP 1-1.9 -- Very Low Emissions Scenario":
+        elif self.ssp == "SSP 1-1.9":
             ipcc_data = ipcc_data * self.ssp119_data.hvplot(
                 y="Mean", color=c119, label="SSP1-1.9"
             )
-        elif self.ssp == "SSP 1-2.6 -- Low Emissions Scenario":
+        elif self.ssp == "SSP 1-2.6":
             ipcc_data = ipcc_data * self.ssp126_data.hvplot(
                 y="Mean", color=c126, label="SSP1-2.6"
             )
-        elif self.ssp == "SSP 2-4.5 -- Middle of the Road":
+        elif self.ssp == "SSP 2-4.5":
             ipcc_data = ipcc_data * self.ssp245_data.hvplot(
                 y="Mean", color=c245, label="SSP2-4.5"
             )
-        elif self.ssp == "SSP 3-7.0 -- Business as Usual":
+        elif self.ssp == "SSP 3-7.0":
             ipcc_data = ipcc_data * self.ssp370_data.hvplot(
                 y="Mean", color=c370, label="SSP3-7.0"
             )
-        elif self.ssp == "SSP 5-8.5 -- Burn it All":
+        elif self.ssp == "SSP 5-8.5":
             ipcc_data = ipcc_data * self.ssp585_data.hvplot(
                 y="Mean", color=c585, label="SSP5-8.5"
             )
@@ -391,11 +391,11 @@ class WarmingLevelVisualize(param.Parameterized):
 
             # Add interval line and shading around selected SSP
             ssp_dict = {
-                "SSP 1-1.9 -- Very Low Emissions Scenario": (self.ssp119_data, c119),
-                "SSP 1-2.6 -- Low Emissions Scenario": (self.ssp126_data, c126),
-                "SSP 2-4.5 -- Middle of the Road": (self.ssp245_data, c245),
-                "SSP 3-7.0 -- Business as Usual": (self.ssp370_data, c370),
-                "SSP 5-8.5 -- Burn it All": (self.ssp585_data, c585),
+                "SSP 1-1.9": (self.ssp119_data, c119),
+                "SSP 1-2.6": (self.ssp126_data, c126),
+                "SSP 2-4.5": (self.ssp245_data, c245),
+                "SSP 3-7.0": (self.ssp370_data, c370),
+                "SSP 5-8.5": (self.ssp585_data, c585),
             }
 
             ssp_selected = ssp_dict[self.ssp][0]  # data selected

@@ -385,7 +385,7 @@ class AverageMetYearParameters(DataParametersWithPanes):
             self.time_slice = (1981, 2010)
 
         elif self.computation_method == "Warming Level Future":
-            self.scenario_ssp = ["SSP 3-7.0 -- Business as Usual"]
+            self.scenario_ssp = ["SSP 3-7.0"]
             self.scenario_historical = []
             self.time_slice = self.warming_year_average_range[self.warmlevel]
 
