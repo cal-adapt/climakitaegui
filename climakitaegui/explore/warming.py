@@ -234,8 +234,7 @@ def warming_levels_select(self):
         all_things,
         title="Choose Data to Explore at Global Warming Levels",
         collapsible=False,
-        width=850,
-        height=500,
+        width=600,
         styles={
             "header_background": "lightgrey",
             "border-radius": "5px",
@@ -817,8 +816,8 @@ def warming_levels_visualize(wl_viz):
         ),
         title="When do different scenarios reach the warming level?",
         collapsible=False,
-        width=600,
-        height=515,
+        width=850,
+        height=600,
         styles={
             "header_background": "lightgrey",
             "border-radius": "5px",
@@ -868,7 +867,7 @@ def warming_levels_visualize(wl_viz):
         ),
         title="Regional response at selected warming level",
         width=850,
-        height=500,
+        height=600,
         collapsible=False,
         styles={
             "header_background": "lightgrey",
