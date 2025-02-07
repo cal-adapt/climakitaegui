@@ -345,7 +345,7 @@ class DataParametersWithPanes(DataParameters):
         "area_subset",
         "cached_area",
         "data_type",
-        "station",
+        "stations",
         watch=False,
     )
     def map_view(self):
@@ -616,9 +616,9 @@ def _display_select(self):
         pn.Spacer(height=10),
         pn.widgets.StaticText(
             value="",
-            name="Weather station",
+            name="Stations",
         ),
-        pn.widgets.CheckBoxGroup.from_param(self.param.station, name=""),
+        pn.widgets.CheckBoxGroup.from_param(self.param.stations, name=""),
         width=300,
     )
 
