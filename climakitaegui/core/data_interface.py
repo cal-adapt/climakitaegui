@@ -83,7 +83,7 @@ def _map_view(selections, stations_gdf):
     crs_proj4 = proj.proj4_init  # used below
     xy = ccrs.PlateCarree()
     ax = fig0.add_subplot(111, projection=proj)
-    mpl_pane = pn.pane.Matplotlib(fig0, dpi=1000)
+    mpl_pane = pn.pane.Matplotlib(fig0, dpi=120)
 
     # Get geometry of selected location
     subarea_gpd = _get_subarea(
@@ -229,7 +229,7 @@ class DataParametersWithPanes(DataParameters):
             or self.scenario_ssp == ["n/a"]
             or self.approach == "Warming Level"
         ):
-            mpl_pane = pn.pane.Matplotlib(fig0, dpi=1000)
+            mpl_pane = pn.pane.Matplotlib(fig0, dpi=120)
 
         else:
             # Set time range of historical data
@@ -253,7 +253,7 @@ class DataParametersWithPanes(DataParameters):
             ax.tick_params(labelsize=11)
             ax.xaxis.set_major_locator(ticker.AutoLocator())
             ax.xaxis.set_minor_locator(ticker.AutoMinorLocator())
-            mpl_pane = pn.pane.Matplotlib(fig0, dpi=1000)
+            mpl_pane = pn.pane.Matplotlib(fig0, dpi=120)
 
             y_offset = 0.15
             if (self.scenario_ssp is not None) and (
@@ -374,7 +374,7 @@ def _selections_param_to_panel(self):
     dict
     """
     area_subset = pn.widgets.Select.from_param(
-        self.param.area_subset, name="Subset the data by..."
+        self.param.area_subset, name="Subset the data by...", width=225
     )
     area_average_text = pn.widgets.StaticText(
         value="Compute an area average across grid cells within your selected region?",
@@ -384,7 +384,7 @@ def _selections_param_to_panel(self):
         self.param.area_average, inline=True
     )
     cached_area = pn.widgets.MultiSelect.from_param(
-        self.param.cached_area, name="Location selection"
+        self.param.cached_area, name="Location selection", width=225
     )
     data_type_text = pn.widgets.StaticText(
         value="",
@@ -394,7 +394,7 @@ def _selections_param_to_panel(self):
         self.param.data_type, inline=False, name=""
     )
     data_warning = pn.widgets.StaticText.from_param(
-        self.param._data_warning, name="", style={"color": "red"}
+        self.param._data_warning, name="", styles={"color": "red"}
     )
     downscaling_method_text = pn.widgets.StaticText(value="", name="Downscaling Method")
     downscaling_method = pn.widgets.RadioBoxGroup.from_param(
@@ -408,7 +408,7 @@ def _selections_param_to_panel(self):
         self.param.scenario_historical
     )
     station_data_info = pn.widgets.StaticText.from_param(
-        self.param._station_data_info, name="", style={"color": "red"}
+        self.param._station_data_info, name="", styles={"color": "red"}
     )
     ssp_selection_text = pn.widgets.StaticText(
         value="<br> Shared Socioeconomic Pathways (SSPs) represent different global emissions scenarios",
@@ -433,13 +433,15 @@ def _selections_param_to_panel(self):
     timescale = pn.widgets.RadioBoxGroup.from_param(
         self.param.timescale, name="", inline=False
     )
-    time_slice = pn.widgets.RangeSlider.from_param(self.param.time_slice, name="")
+    time_slice = pn.widgets.RangeSlider.from_param(
+        self.param.time_slice, name="", width=250
+    )
     time_slice_text = pn.widgets.StaticText(
         value="How do you want to time-slice the data?", name="Years"
     )
     units_text = pn.widgets.StaticText(name="Variable Units", value="")
     units = pn.widgets.RadioBoxGroup.from_param(self.param.units, inline=False)
-    variable = pn.widgets.Select.from_param(self.param.variable, name="")
+    variable = pn.widgets.Select.from_param(self.param.variable, name="", width=225)
     variable_text = pn.widgets.StaticText(name="Variable Type", value="")
     variable_description = pn.widgets.StaticText.from_param(
         self.param.extended_description, name=""
@@ -455,7 +457,7 @@ def _selections_param_to_panel(self):
         name="Warming Level (°C)",
     )
     warming_level_window = pn.widgets.IntSlider.from_param(
-        self.param.warming_level_window, name=""
+        self.param.warming_level_window, name="", width=250
     )
     warming_level_window_text = pn.widgets.StaticText(
         value="e.g. 15 means a 30yr window",
@@ -526,13 +528,13 @@ def _display_select(self):
             pn.Column(
                 widgets["data_type_text"],
                 widgets["data_type"],
-                width=155,
+                width=200,
             ),
-            pn.Column(widgets["approach_text"], widgets["approach"], width=175),
+            pn.Column(widgets["approach_text"], widgets["approach"], width=200),
             pn.Column(
                 widgets["downscaling_method_text"],
                 widgets["downscaling_method"],
-                width=175,
+                width=200,
             ),
         ),
     )
@@ -544,7 +546,7 @@ def _display_select(self):
             widgets["variable_type"],
             widgets["variable"],
             widgets["variable_description"],
-            width=250,
+            width=300,
         ),
         pn.Column(
             pn.Row(
@@ -552,7 +554,7 @@ def _display_select(self):
                 pn.Column(widgets["timescale_text"], widgets["timescale"], width=100),
                 pn.Column(widgets["resolution_text"], widgets["resolution"], width=100),
             ),
-            pn.Column(widgets["station_data_info"], width=340),
+            pn.Column(widgets["station_data_info"], width=300),
         ),
     )
 
@@ -571,6 +573,7 @@ def _display_select(self):
             pn.Column(
                 widgets["warming_level_text"],
                 widgets["warming_level"],
+                width=300,
             ),
         ),
     )
@@ -591,7 +594,7 @@ def _display_select(self):
                 widgets["ssp_selection"],
                 width=300,
             ),
-            pn.Column(self.scenario_view, widgets["data_warning"], width=250),
+            pn.Column(self.scenario_view, widgets["data_warning"], width=300),
         ),
     )
 
@@ -607,7 +610,7 @@ def _display_select(self):
         pn.Spacer(
             height=85
         ),  # Need to add empty space to make card larger to fit all the stations
-        width=220,
+        width=300,
     )
     col_2_location = pn.Column(
         pn.Spacer(height=10),
@@ -616,7 +619,7 @@ def _display_select(self):
             name="Stations",
         ),
         pn.widgets.CheckBoxGroup.from_param(self.param.stations, name=""),
-        width=270,
+        width=300,
     )
 
     # Combine panel elements to create the card for the location options
@@ -624,7 +627,13 @@ def _display_select(self):
         pn.Row(col_1_location, col_2_location),
         title="Location Options for the Selected Data",
         collapsible=False,
-        width=560,
+        width=600,
+        styles={
+            "header_background": "lightgrey",
+            "border-radius": "5px",
+            "border": "2px solid black",
+            "margin": "10px",
+        },
     )
 
     # Combine panel elements to create the card for the data options
@@ -638,7 +647,13 @@ def _display_select(self):
         time_approach,
         title="Data Options in the Cal-Adapt Analytics Engine",
         collapsible=False,
-        width=595,
+        width=600,
+        styles={
+            "header_background": "lightgrey",
+            "border-radius": "5px",
+            "border": "2px solid black",
+            "margin": "10px",
+        },
     )
 
     # Combine both cards for the complete panel object

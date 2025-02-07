@@ -211,7 +211,7 @@ def warming_levels_select(self):
         ),
     )
 
-    most_things = pn.Row(data_choices, pn.layout.HSpacer(width=10), col_1_location)
+    most_things = pn.Row(data_choices, col_1_location)
 
     # Panel overall structure:
     all_things = pn.Column(
@@ -226,9 +226,7 @@ def warming_levels_select(self):
                 width=120,
             ),
         ),
-        pn.Spacer(background="black", height=1),
         most_things,
-        pn.Spacer(background="black", height=1),
         gwl_specific,
     )
 
@@ -236,6 +234,13 @@ def warming_levels_select(self):
         all_things,
         title="Choose Data to Explore at Global Warming Levels",
         collapsible=False,
+        width=600,
+        styles={
+            "header_background": "lightgrey",
+            "border-radius": "5px",
+            "border": "2px solid black",
+            "margin": "10px",
+        },
     )
 
 
@@ -368,14 +373,13 @@ class WarmingLevelVisualize(param.Parameterized):
         cmip_t = np.arange(2015, 2101, 1)
 
         # Warming level connection lines & additional labeling
-        warmlevel_line = hv.HLine(self.warmlevel).opts(
+        warmlevel_line = hv.HLine(self.warmlevel).options(
             color="black", line_width=1.0
         ) * hv.Text(
             x=1964,
             y=self.warmlevel + 0.25,
+            fontsize=8,
             text=".    " + str(self.warmlevel) + "°C warming level",
-        ).opts(
-            style=dict(text_font_size="8pt")
         )
 
         # Create plot
@@ -637,7 +641,7 @@ def GCM_PostageStamps_MAIN_compute(wl_viz):
                 )
 
             # Add to dictionary
-            warm_level_dict[warmlevel] = pn.Pane(wl_plot)
+            warm_level_dict[warmlevel] = pn.Row(wl_plot)
 
     return warm_level_dict
 
@@ -812,8 +816,14 @@ def warming_levels_visualize(wl_viz):
         ),
         title="When do different scenarios reach the warming level?",
         collapsible=False,
-        width=600,
-        height=515,
+        width=850,
+        height=600,
+        styles={
+            "header_background": "lightgrey",
+            "border-radius": "5px",
+            "border": "2px solid black",
+            "margin": "10px",
+        },
     )
 
     postage_stamps_MAIN = pn.Column(
@@ -827,27 +837,7 @@ def warming_levels_visualize(wl_viz):
             ),
             width=800,
         ),
-        pn.Row(
-            wl_viz.GCM_PostageStamps_MAIN,
-            pn.Column(
-                pn.widgets.StaticText(value="<br><br><br>", width=150),
-                # pn.widgets.StaticText(
-                #     value=(
-                #         "<b>Tip</b>: There's a toolbar below the maps."
-                #         " Try clicking the magnifying glass to zoom in on a"
-                #         " particular region. You can also click the save button"
-                #         " to save a copy of the figure to your computer."
-                #     ),
-                #     width=150,
-                #     style={
-                #         "border": "1.2px red solid",
-                #         "padding": "5px",
-                #         "border-radius": "4px",
-                #         "font-size": "13px",
-                #     },
-                # ),
-            ),
-        ),
+        wl_viz.GCM_PostageStamps_MAIN,
     )
 
     postage_stamps_STATS = pn.Column(
@@ -877,8 +867,14 @@ def warming_levels_visualize(wl_viz):
         ),
         title="Regional response at selected warming level",
         width=850,
-        height=850,
+        height=600,
         collapsible=False,
+        styles={
+            "header_background": "lightgrey",
+            "border-radius": "5px",
+            "border": "2px solid black",
+            "margin": "10px",
+        },
     )
 
     warming_panel = pn.Column(GMT_plot, map_tabs)

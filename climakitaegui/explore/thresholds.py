@@ -154,21 +154,39 @@ class ThresholdParameters(DataParametersWithPanes):
             )
         else:
             smooth_row = pn.Row(self.param.smoothing, width=375)
-        return pn.Card(smooth_row, title="Smoothing", collapsible=False)
+        return pn.Card(
+            smooth_row,
+            title="Smoothing",
+            collapsible=False,
+            styles={
+                "header_background": "lightgrey",
+                "border-radius": "5px",
+                "border": "2px solid black",
+                "margin": "10px",
+            },
+        )
 
     @param.depends("duration1_length", "duration1_type", watch=False)
     def group_row(self):
         """A reactive row for duration2 options that updates if group is updated"""
         self.group_length = self.duration1_length
         self.group_type = self.duration1_type
-        return pn.Row(self.param.group_length, self.param.group_type, width=375)
+        return pn.Row(
+            pn.widgets.IntInput.from_param(self.param.group_length, width=200),
+            pn.widgets.Select.from_param(self.param.group_type, width=100),
+            width=375,
+        )
 
     @param.depends("group_length", "group_type", watch=False)
     def duration2_row(self):
         """A reactive row for duration2 options that updates if group is updated"""
         self.duration2_length = self.group_length
         self.duration2_type = self.group_type
-        return pn.Row(self.param.duration2_length, self.param.duration2_type, width=375)
+        return pn.Row(
+            pn.widgets.IntInput.from_param(self.param.duration2_length, width=200),
+            pn.widgets.Select.from_param(self.param.duration2_type, width=100),
+            width=375,
+        )
 
 
 def _exceedance_visualize(choices, option=1):
@@ -176,7 +194,6 @@ def _exceedance_visualize(choices, option=1):
     Uses holoviz 'panel' library to display the parameters and view defined for
     exploring exceedance.
     """
-    _left_column_width = 375
 
     if option == 1:
         plot_card = choices.view
@@ -194,20 +211,26 @@ def _exceedance_visualize(choices, option=1):
     options_card = pn.Card(
         # Threshold value and direction
         pn.Row(
-            choices.param.threshold_direction,
-            choices.param.threshold_value,
-            width=_left_column_width,
+            pn.widgets.Select.from_param(choices.param.threshold_direction, width=150),
+            pn.widgets.FloatInput.from_param(
+                choices.param.threshold_value, step=0.1, width=150
+            ),
+            width=375,
         ),
         # DURATION 1
         "I'm interested in extreme conditions that last for . . .",
-        pn.Row(choices.param.duration1_length, choices.param.duration1_type, width=375),
+        pn.Row(
+            pn.widgets.IntInput.from_param(choices.param.duration1_length, width=200),
+            pn.widgets.Select.from_param(choices.param.duration1_type, width=100),
+            width=375,
+        ),
         pn.layout.Divider(margin=(-10, 0, -10, 0)),
         # PERIOD
         "Show me a timeseries of the number of occurences every . . .",
         pn.Row(
-            choices.param.period_length,
-            choices.param.period_type,
-            width=_left_column_width,
+            pn.widgets.IntInput.from_param(choices.param.period_length, width=200),
+            pn.widgets.Select.from_param(choices.param.period_type, width=100),
+            width=375,
         ),
         "Examples: for an annual timeseries, select '1-year'. For a seasonal timeseries, select '3-month'.",
         pn.layout.Divider(margin=(-10, 0, -10, 0)),
@@ -219,12 +242,18 @@ def _exceedance_visualize(choices, option=1):
         choices.duration2_row,
         title="Threshold event options",
         collapsible=False,
+        styles={
+            "header_background": "lightgrey",
+            "border-radius": "5px",
+            "border": "2px solid black",
+            "margin": "10px",
+        },
     )
 
     exceedance_count_panel = pn.Column(
         pn.Spacer(width=15),
         pn.Row(
-            pn.Column(options_card, choices.smoothing_card, width=_left_column_width),
+            pn.Column(options_card, choices.smoothing_card, width=375),
             pn.Spacer(width=15),
             pn.Column(plot_card),
         ),
@@ -236,12 +265,14 @@ def thresholds_visualize(self, option=1):
     """
     Function for constructing and displaying the explore.thresholds() panel.
     """
-    _first_row_height = 300
+    _first_row_height = 350
 
     data_options_card = pn.Card(
         pn.Row(
             pn.Column(
-                pn.widgets.Select.from_param(self.param.variable, name="Data variable"),
+                pn.widgets.Select.from_param(
+                    self.param.variable, name="Data variable", width=225
+                ),
                 pn.widgets.RadioButtonGroup.from_param(self.param.units),
                 pn.widgets.StaticText.from_param(
                     self.param.extended_description, name=""
@@ -252,21 +283,31 @@ def thresholds_visualize(self, option=1):
                     width=150,
                     height=30,
                 ),
-                width=230,
+                width=250,
             ),
             pn.Column(
-                self.param.area_subset,
+                pn.widgets.Select.from_param(
+                    self.param.area_subset, name="Subset the data by...", width=225
+                ),
                 self.param.latitude,
                 self.param.longitude,
-                self.param.cached_area,
-                width=230,
+                pn.widgets.MultiSelect.from_param(
+                    self.param.cached_area, name="Location selection", width=225
+                ),
+                width=250,
             ),
-            pn.Column(self.map_view, width=180),
+            pn.Column(self.map_view, width=300),
         ),
         title="Data Options",
         collapsible=False,
-        width=700,
+        width=800,
         height=_first_row_height,
+        styles={
+            "header_background": "lightgrey",
+            "border-radius": "5px",
+            "border": "2px solid black",
+            "margin": "10px",
+        },
     )
 
     _thresholds_tool_description = (
@@ -281,12 +322,21 @@ def thresholds_visualize(self, option=1):
     )
 
     description_box = pn.Card(
-        _thresholds_tool_description,
+        pn.Row(
+            pn.Column(_thresholds_tool_description),
+            width=375,
+        ),
         title="About this tool",
         collapsible=False,
-        # width = 400,
+        width=400,
         height=_first_row_height,
+        styles={
+            "header_background": "lightgrey",
+            "border-radius": "5px",
+            "border": "2px solid black",
+            "margin": "10px",
+        },
     )
 
     plot_panel = _exceedance_visualize(self, option)  # display the holoviz panel
-    return pn.Column(pn.Row(data_options_card, description_box), plot_panel)
+    return pn.Column(pn.Row(data_options_card, description_box), pn.Row(plot_panel))

@@ -23,6 +23,12 @@ def amy():
 class Thresholds(ThresholdParameters):
     """Display Thresholds panel."""
 
+    option = 1
+
+    def __init__(self, option):
+        super().__init__()
+        self.option = option
+
     def show(self):
         return thresholds_visualize(
             self,

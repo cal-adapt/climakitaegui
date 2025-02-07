@@ -509,30 +509,38 @@ def amy_visualize(self):
                 pn.widgets.StaticText(
                     name="", value="Average Meteorological Year Type"
                 ),
-                pn.widgets.RadioButtonGroup.from_param(self.param.amy_type),
+                pn.widgets.RadioButtonGroup.from_param(self.param.amy_type, width=225),
                 pn.widgets.Select.from_param(
-                    self.param.computation_method, name="Computation Options"
+                    self.param.computation_method, name="Computation Options", width=225
                 ),
                 pn.widgets.StaticText.from_param(
                     self.param.tmy_computation_description, name=""
                 ),
                 pn.widgets.StaticText(name="", value="Warming level (°C)"),
-                pn.widgets.RadioButtonGroup.from_param(self.param.warmlevel),
-                pn.widgets.Select.from_param(self.param.variable, name="Data variable"),
+                pn.widgets.RadioButtonGroup.from_param(self.param.warmlevel, width=225),
+                pn.widgets.Select.from_param(
+                    self.param.variable, name="Data variable", width=225
+                ),
                 pn.widgets.StaticText.from_param(
                     self.param.extended_description, name=""
                 ),
                 pn.widgets.StaticText(name="", value="Variable Units"),
-                pn.widgets.RadioButtonGroup.from_param(self.param.units),
+                pn.widgets.RadioButtonGroup.from_param(self.param.units, width=225),
                 pn.widgets.StaticText(name="", value="Model Resolution"),
-                pn.widgets.RadioButtonGroup.from_param(self.param.resolution),
-                width=280,
+                pn.widgets.RadioButtonGroup.from_param(
+                    self.param.resolution, width=225
+                ),
+                width=250,
             ),
             pn.Column(
-                self.param.area_subset,
-                self.param.latitude,
-                self.param.longitude,
-                self.param.cached_area,
+                pn.widgets.Select.from_param(
+                    self.param.area_subset, name="Subset the data by...", width=225
+                ),
+                pn.widgets.RangeSlider.from_param(self.param.latitude, width=225),
+                pn.widgets.RangeSlider.from_param(self.param.longitude, width=225),
+                pn.widgets.MultiSelect.from_param(
+                    self.param.cached_area, name="Location selection", width=225
+                ),
                 self.map_view,
                 pn.widgets.Button.from_param(
                     self.param.reload_data,
@@ -546,6 +554,12 @@ def amy_visualize(self):
         title=" How do you want to investigate AMY?",
         collapsible=False,
         width=550,
+        styles={
+            "header_background": "lightgrey",
+            "border-radius": "5px",
+            "border": "2px solid black",
+            "margin": "10px",
+        },
     )
 
     mthd_bx = pn.Column(
@@ -578,6 +592,12 @@ def amy_visualize(self):
         title=" Average Meteorological Year",
         width=725,
         collapsible=False,
+        styles={
+            "header_background": "lightgrey",
+            "border-radius": "5px",
+            "border": "2px solid black",
+            "margin": "10px",
+        },
     )
 
     tmy_panel = pn.Column(pn.Row(user_options, tmy_tabs))
