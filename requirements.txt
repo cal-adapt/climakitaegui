@@ -1,8 +1,16 @@
--e git+https://github.com/cal-adapt/climakitae.git@1.2.0#egg=climakitae
-#climakitae==1.2.0
+-e git+https://github.com/cal-adapt/climakitae.git@trim-setup#egg=climakitae
+#climakitae==1.2.1
+cartopy==0.24.0
 geoviews==1.13.0
 holoviews==1.20.0
 hvplot==0.11.1
-matplotlib==3.9.2
-panel==1.5.3
 ipython==8.17.2
+matplotlib==3.9.2
+numpy==2.0.2
+pandas==2.2.3
+panel==1.5.3
+param==2.1.1
+scipy==1.14.1
+seaborn==0.13.2
+shapely==2.0.6
+xarray==2024.10.0
