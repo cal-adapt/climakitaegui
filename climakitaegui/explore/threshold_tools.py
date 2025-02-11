@@ -1,10 +1,14 @@
 import geoviews as gv
-from holoviews import opts
+import geoviews.feature as gf
+#from holoviews import opts
+from geoviews import opts
 import hvplot.pandas
 import hvplot.xarray
 import panel as pn
-import cartopy.crs as ccrs
+#import cartopy.crs as ccrs
+from cartopy import crs as ccrs
 from climakitae.util.colormap import read_ae_colormap
+gv.extension('matplotlib', 'bokeh')
 
 
 def plot_exceedance_count(exceedance_count):
@@ -113,9 +117,9 @@ def get_geospatial_plot(
 
     distr_name = _rename_distr_abbrev(ds.attrs["distribution"])
 
-    borders = gv.Path(gv.feature.states.geoms(scale="50m", as_element=False)).opts(
+    borders = gv.Path(gf.states.geoms(scale="50m", as_element=False)).opts(
         color=border_color, line_width=line_width
-    ) * gv.feature.coastline.geoms(scale="50m").opts(
+    ) * gf.coastline.geoms(scale="50m").opts(
         color=border_color, line_width=line_width
     )
 
