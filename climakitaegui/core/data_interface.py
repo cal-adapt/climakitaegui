@@ -457,7 +457,7 @@ def _selections_param_to_panel(self):
         name="Warming Level (°C)",
     )
     warming_level_window = pn.widgets.IntSlider.from_param(
-        self.param.warming_level_window, name="", width=250
+        self.param.warming_level_window, name="", width=240
     )
     warming_level_window_text = pn.widgets.StaticText(
         value="e.g. 15 means a 30yr window",
@@ -478,7 +478,6 @@ def _selections_param_to_panel(self):
         "resolution": resolution,
         "station_data_info": station_data_info,
         "ssp_selection": ssp_selection,
-        "resolution": resolution,
         "approach": approach,
         "timescale": timescale,
         "time_slice": time_slice,
@@ -568,12 +567,12 @@ def _display_select(self):
             pn.Column(
                 widgets["warming_level_window_text"],
                 widgets["warming_level_window"],
-                width=300,
+                width=270,
             ),
             pn.Column(
                 widgets["warming_level_text"],
                 widgets["warming_level"],
-                width=300,
+                width=250,
             ),
         ),
     )
@@ -627,7 +626,7 @@ def _display_select(self):
         pn.Row(col_1_location, col_2_location),
         title="Location Options for the Selected Data",
         collapsible=False,
-        width=600,
+        width=615,
         styles={
             "header_background": "lightgrey",
             "border-radius": "5px",
