@@ -626,7 +626,7 @@ def _display_select(self):
         pn.Row(col_1_location, col_2_location),
         title="Location Options for the Selected Data",
         collapsible=False,
-        width=600,
+        width=615,
         styles={
             "header_background": "lightgrey",
             "border-radius": "5px",
