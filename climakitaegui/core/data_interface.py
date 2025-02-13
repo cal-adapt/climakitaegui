@@ -609,7 +609,7 @@ def _display_select(self):
         pn.Spacer(
             height=85
         ),  # Need to add empty space to make card larger to fit all the stations
-        width=300,
+        width=280,
     )
     col_2_location = pn.Column(
         pn.Spacer(height=10),
@@ -619,6 +619,7 @@ def _display_select(self):
         ),
         pn.widgets.CheckBoxGroup.from_param(self.param.stations, name=""),
         width=300,
+        margin=(0, 0, 0, 15),
     )
 
     # Combine panel elements to create the card for the location options
@@ -627,6 +628,7 @@ def _display_select(self):
         title="Location Options for the Selected Data",
         collapsible=False,
         width=635,
+        height=670,
         styles={
             "header_background": "lightgrey",
             "border-radius": "5px",
