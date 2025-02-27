@@ -32,7 +32,6 @@ dependencies:
   - xmip
   - pygeos
   - pip
-  - pip:
-    - dask-gateway
-    - dask-geopandas
-    - xclim
+  - dask-gateway
+  - dask-geopandas
+  - xclim
