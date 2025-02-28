@@ -777,7 +777,7 @@ def GCM_PostageStamps_STATS_compute(wl_viz):
                 )
 
                 # Create panel object: combine plot with shared colorbar
-                wl_plots = pn.Row(wl_plots, shared_colorbar, align="center")
+                wl_plots = pn.Row(wl_plots, shared_colorbar)
 
             warm_level_dict[warmlevel] = wl_plots
 
