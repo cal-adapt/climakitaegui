@@ -836,22 +836,23 @@ def warming_levels_visualize(wl_viz):
                 "from average over the 1981-2010 historical reference period."
                 "An empty plot indicates the warming level was never reached for that simulation."
             ),
-            width=1150,
+            width=950,
         ),
         wl_viz.GCM_PostageStamps_MAIN,
     )
 
-    postage_stamps_STATS = pn.Column(
-        pn.widgets.StaticText(
-            value=(
-                "Panels show the median, minimum, or maximum conditions"
-                " across all models. These statistics are computed from the data"
-                " in the first panel."
-            ),
-            width=1150,
-        ),
-        wl_viz.GCM_PostageStamps_STATS,
-    )
+    # postage_stamps_STATS = pn.Column(
+    #     pn.widgets.StaticText(
+    #         value=(
+    #             "Panels show the median, minimum, or maximum conditions"
+    #             " across all models. These statistics are computed from the data"
+    #             " in the first panel."
+    #         ),
+    #         width=950,
+    #     ),
+    #     wl_viz.GCM_PostageStamps_STATS,
+    # )
+    postage_stamps_STATS = wl_viz.GCM_PostageStamps_STATS
 
     map_tabs = pn.Card(
         pn.Row(
