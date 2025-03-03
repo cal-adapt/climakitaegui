@@ -623,7 +623,7 @@ def GCM_PostageStamps_MAIN_compute(wl_viz):
                     clabel=data_to_plot.name + " (" + data_to_plot.attrs["units"] + ")",
                     marker="s",
                     s=150,
-                    frame_width=1200,
+                    frame_width=450,
                     widget_location="bottom",
                 )
 
@@ -636,7 +636,7 @@ def GCM_PostageStamps_MAIN_compute(wl_viz):
                     cmap=cmap,
                     clabel=data_to_plot.name + " (" + data_to_plot.attrs["units"] + ")",
                     rasterize=True,
-                    frame_width=1200,
+                    frame_width=450,
                     widget_location="bottom",
                 )
 
@@ -740,7 +740,7 @@ def GCM_PostageStamps_STATS_compute(wl_viz):
                         colorbar=False,
                         shared_axis=True,
                         rasterize=True,  # set to True, otherwise hvplot has a bug where hovertool leaves a question mark
-                        frame_width=260,
+                        frame_width=600,
                     )
                     .layout()
                     .cols(2)
