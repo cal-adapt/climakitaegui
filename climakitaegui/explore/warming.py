@@ -777,7 +777,8 @@ def GCM_PostageStamps_STATS_compute(wl_viz):
                 )
 
                 # Create panel object: combine plot with shared colorbar
-                wl_plots = pn.Row(wl_plots, shared_colorbar)
+                #wl_plots = pn.Row(wl_plots, shared_colorbar)
+                wl_plots = pn.Row(wl_plots)
 
             warm_level_dict[warmlevel] = wl_plots
 
@@ -816,8 +817,8 @@ def warming_levels_visualize(wl_viz):
         ),
         title="When do different scenarios reach the warming level?",
         collapsible=False,
-        width=1200,
-        height=1200,
+        width=1000,
+        height=800,
         styles={
             "header_background": "lightgrey",
             "border-radius": "5px",
@@ -866,8 +867,8 @@ def warming_levels_visualize(wl_viz):
             ),
         ),
         title="Regional response at selected warming level",
-        width=1200,
-        height=1200,
+        width=1000,
+        height=800,
         collapsible=False,
         styles={
             "header_background": "lightgrey",
