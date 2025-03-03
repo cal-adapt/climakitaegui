@@ -623,7 +623,7 @@ def GCM_PostageStamps_MAIN_compute(wl_viz):
                     clabel=data_to_plot.name + " (" + data_to_plot.attrs["units"] + ")",
                     marker="s",
                     s=150,
-                    frame_width=450,
+                    frame_width=1200,
                     widget_location="bottom",
                 )
 
@@ -636,7 +636,7 @@ def GCM_PostageStamps_MAIN_compute(wl_viz):
                     cmap=cmap,
                     clabel=data_to_plot.name + " (" + data_to_plot.attrs["units"] + ")",
                     rasterize=True,
-                    frame_width=450,
+                    frame_width=1200,
                     widget_location="bottom",
                 )
 
