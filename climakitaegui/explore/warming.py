@@ -816,8 +816,8 @@ def warming_levels_visualize(wl_viz):
         ),
         title="When do different scenarios reach the warming level?",
         collapsible=False,
-        width=850,
-        height=600,
+        width=1200,
+        height=1200,
         styles={
             "header_background": "lightgrey",
             "border-radius": "5px",
@@ -835,7 +835,7 @@ def warming_levels_visualize(wl_viz):
                 "from average over the 1981-2010 historical reference period."
                 "An empty plot indicates the warming level was never reached for that simulation."
             ),
-            width=800,
+            width=1150,
         ),
         wl_viz.GCM_PostageStamps_MAIN,
     )
@@ -847,7 +847,7 @@ def warming_levels_visualize(wl_viz):
                 " across all models. These statistics are computed from the data"
                 " in the first panel."
             ),
-            width=800,
+            width=1150,
         ),
         wl_viz.GCM_PostageStamps_STATS,
     )
@@ -866,8 +866,8 @@ def warming_levels_visualize(wl_viz):
             ),
         ),
         title="Regional response at selected warming level",
-        width=850,
-        height=600,
+        width=1200,
+        height=1200,
         collapsible=False,
         styles={
             "header_background": "lightgrey",
