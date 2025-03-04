@@ -251,6 +251,9 @@ class WarmingLevelVisualize(param.Parameterized):
     ## Allows the user to toggle between several data options.
     ## Produces dynamically updating gwl snapshot maps.
 
+    main_stamps = None
+    stats_stamps = None
+
     # Read in GMT context plot data
     ssp119_data = read_csv_file(ssp119_file, index_col="Year")
     ssp126_data = read_csv_file(ssp126_file, index_col="Year")
