@@ -744,7 +744,7 @@ def GCM_PostageStamps_STATS_compute(wl_viz):
                         colorbar=False,
                         shared_axis=True,
                         rasterize=True,  # set to True, otherwise hvplot has a bug where hovertool leaves a question mark
-                        frame_width=600,
+                        frame_width=260,
                     )
                     .layout()
                     .cols(2)
@@ -821,8 +821,8 @@ def warming_levels_visualize(wl_viz):
         ),
         title="When do different scenarios reach the warming level?",
         collapsible=False,
-        width=1000,
-        height=800,
+        width=850,
+        height=600,
         styles={
             "header_background": "lightgrey",
             "border-radius": "5px",
@@ -840,23 +840,22 @@ def warming_levels_visualize(wl_viz):
                 "from average over the 1981-2010 historical reference period."
                 "An empty plot indicates the warming level was never reached for that simulation."
             ),
-            width=950,
+            width=850,
         ),
         wl_viz.GCM_PostageStamps_MAIN,
     )
 
-    # postage_stamps_STATS = pn.Column(
-    #     pn.widgets.StaticText(
-    #         value=(
-    #             "Panels show the median, minimum, or maximum conditions"
-    #             " across all models. These statistics are computed from the data"
-    #             " in the first panel."
-    #         ),
-    #         width=950,
-    #     ),
-    #     wl_viz.GCM_PostageStamps_STATS,
-    # )
-    postage_stamps_STATS = wl_viz.GCM_PostageStamps_STATS
+    postage_stamps_STATS = pn.Column(
+        pn.widgets.StaticText(
+            value=(
+                "Panels show the median, minimum, or maximum conditions"
+                " across all models. These statistics are computed from the data"
+                " in the first panel."
+            ),
+            width=850,
+        ),
+        wl_viz.GCM_PostageStamps_STATS,
+    )
 
     map_tabs = pn.Card(
         pn.Row(
@@ -872,8 +871,8 @@ def warming_levels_visualize(wl_viz):
             ),
         ),
         title="Regional response at selected warming level",
-        width=1000,
-        height=800,
+        width=850,
+        height=600,
         collapsible=False,
         styles={
             "header_background": "lightgrey",
