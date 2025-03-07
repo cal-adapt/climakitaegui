@@ -645,7 +645,7 @@ def GCM_PostageStamps_MAIN_compute(wl_viz):
                 )
 
             # Add to dictionary
-            warm_level_dict[warmlevel] = pn.Row(pn.panel.HoloViews(wl_plot, backend='matplotlib', format='svg'))
+            warm_level_dict[warmlevel] = pn.Row(pn.pane.HoloViews(wl_plot, backend='matplotlib', format='svg'))
 
     return warm_level_dict
 
