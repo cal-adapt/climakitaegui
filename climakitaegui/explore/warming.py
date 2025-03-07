@@ -609,7 +609,7 @@ def GCM_PostageStamps_MAIN_compute(wl_viz):
 
                 # Create panel object: combine plot with shared colorbar
                 #wl_plots = pn.Row(wl_plots, shared_colorbar, align="center")
-                wl_plots = pn.Row(pn.pane.HoloViews(wl_plots, backend='matplotlib', format='svg')
+                wl_plots = pn.Row(pn.pane.HoloViews(wl_plots, backend='matplotlib', format='svg'))
 
             # Add to dictionary
             warm_level_dict[warmlevel] = wl_plots
