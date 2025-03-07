@@ -882,7 +882,7 @@ def warming_levels_visualize(wl_viz):
         },
     )
 
-    warming_panel = pn.Column(GMT_plot, map_tabs)
+    warming_panel = pn.Row(GMT_plot, map_tabs)
     return warming_panel
 
 
