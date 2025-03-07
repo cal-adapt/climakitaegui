@@ -28,7 +28,7 @@ from climakitaegui.core.data_interface import (
     _selections_param_to_panel,
 )
 from climakitaegui.core.data_view import compute_vmin_vmax
-
+hv.extension("matplotlib")
 
 class WarmingLevels(BaseWarmingLevels):
     def __init__(self, **params):
@@ -645,7 +645,7 @@ def GCM_PostageStamps_MAIN_compute(wl_viz):
                 )
 
             # Add to dictionary
-            warm_level_dict[warmlevel] = pn.Row(wl_plot)
+            warm_level_dict[warmlevel] = pn.Row(pn.panel.HoloViews(wl_plot, backend='matplotlib', format='svg'))
 
     return warm_level_dict
 
@@ -782,7 +782,7 @@ def GCM_PostageStamps_STATS_compute(wl_viz):
 
                 # Create panel object: combine plot with shared colorbar
                 #wl_plots = pn.Row(wl_plots, shared_colorbar)
-                wl_plots = pn.Row(wl_plots)
+                wl_plots = pn.Row(pn.pane.HoloViews(wl_plots, backend='matplotlib', format='svg'))
 
             warm_level_dict[warmlevel] = wl_plots
 
@@ -872,7 +872,7 @@ def warming_levels_visualize(wl_viz):
         ),
         title="Regional response at selected warming level",
         width=850,
-        height=850,
+        height=800,
         collapsible=False,
         styles={
             "header_background": "lightgrey",
