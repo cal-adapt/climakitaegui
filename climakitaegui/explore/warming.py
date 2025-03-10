@@ -315,8 +315,8 @@ class WarmingLevelVisualize(param.Parameterized):
     def GMT_context_plot(self):
         """Display GMT plot using package data that updates whenever the warming level or SSP is changed by the user."""
         ## Plot dimensions
-        width = 575
-        height = 300
+        width = 430
+        height = 225
 
         ## Plot figure
         hist_t = np.arange(1950, 2015, 1)
