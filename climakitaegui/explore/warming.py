@@ -869,7 +869,7 @@ def warming_levels_visualize(wl_viz):
         ),
         title="Regional response at selected warming level",
         width=850,
-        height=600,
+        height=800,
         collapsible=False,
         styles={
             "header_background": "lightgrey",
