@@ -864,6 +864,7 @@ def warming_levels_visualize(wl_viz):
                 "Maps of cross-model statistics: median/max/min",
                 postage_stamps_STATS,
             ),
+            dynamic=True,
         ),
         title="Regional response at selected warming level",
         width=850,
