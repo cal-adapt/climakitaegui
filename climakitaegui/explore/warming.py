@@ -6,6 +6,7 @@ import hvplot.xarray
 import hvplot.pandas
 import holoviews as hv
 from holoviews import opts
+import holoviews.plotting.bokeh
 import matplotlib.pyplot as plt
 from scipy.stats import pearson3
 from climakitae.core.data_interface import DataInterface
@@ -28,7 +29,7 @@ from climakitaegui.core.data_interface import (
     _selections_param_to_panel,
 )
 from climakitaegui.core.data_view import compute_vmin_vmax
-
+hv.extension("bokeh")
 
 class WarmingLevels(BaseWarmingLevels):
     def __init__(self, **params):
