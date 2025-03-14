@@ -430,7 +430,7 @@ class WarmingLevelVisualize(param.Parameterized):
                     text=str(int(year_warmlevel_reached)),
                     rotation=90,
                     label=label1,
-                ).opts(opts.Text(font_size=8, color=ssp_color))
+                ).opts(opts.Text(fontsize=8, color=ssp_color))
                 to_plot *= ssp_int  # Add to plot
 
             if (np.argmax(ssp_selected["95%"] > self.warmlevel)) > 0 and (
