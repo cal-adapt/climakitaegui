@@ -419,17 +419,19 @@ class WarmingLevelVisualize(param.Parameterized):
                     .dropna()
                     .index[0]
                 )
+                opts.defaults(opts.Curve(color=ssp_color, line_dash="dashed", line_width=1))
                 ssp_int = hv.Curve(
                     [[year_warmlevel_reached, -2], [year_warmlevel_reached, 10]],
                     label=label1,
-                ).opts(color=ssp_color, line_dash="dashed", line_width=1)
+                )
+                opts.defaults(opts.Text(style=dict(text_font_size="8pt", color=ssp_color)))
                 ssp_int = ssp_int * hv.Text(
                     x=year_warmlevel_reached - 2,
                     y=4.5,
                     text=str(int(year_warmlevel_reached)),
                     rotation=90,
                     label=label1,
-                ).opts(style=dict(text_font_size="8pt", color=ssp_color))
+                )
                 to_plot *= ssp_int  # Add to plot
 
             if (np.argmax(ssp_selected["95%"] > self.warmlevel)) > 0 and (
@@ -437,16 +439,14 @@ class WarmingLevelVisualize(param.Parameterized):
             ) > 0:
                 # Make 95% CI line
                 x_95 = cmip_t[0] + np.argmax(ssp_selected["95%"] > self.warmlevel)
-                ssp_firstdate = hv.Curve([[x_95, -2], [x_95, 10]], label=ci_label).opts(
-                    color=ssp_color, line_width=1
-                )
+                opts.defaults(opts.Curve(color=ssp_color, line_width=1))
+                ssp_firstdate = hv.Curve([[x_95, -2], [x_95, 10]], label=ci_label)
                 to_plot *= ssp_firstdate
 
                 # Make 5% CI line
                 x_5 = cmip_t[0] + np.argmax(ssp_selected["5%"] > self.warmlevel)
-                ssp_lastdate = hv.Curve([[x_5, -2], [x_5, 10]], label=ci_label).opts(
-                    color=ssp_color, line_width=1
-                )
+                opts.default(opts.Curve(color=ssp_color, line_width=1))
+                ssp_lastdate = hv.Curve([[x_5, -2], [x_5, 10]], label=ci_label)
                 to_plot *= ssp_lastdate
 
                 ## Bar to connect firstdate and lastdate of threshold cross
@@ -456,15 +456,15 @@ class WarmingLevelVisualize(param.Parameterized):
                     ssp_selected["95%"] > self.warmlevel
                 )
                 if yr_rng > 0:
+                    opts.default(opts.Curve(color=ssp_color, line_width=1))
+                    opts.default(opts.Text(style=dict(text_font_size="8pt", color=ssp_color)))
                     interval = hv.Curve(
                         [[x_95, bar_y], [x_5, bar_y]], label=ci_label
-                    ).opts(color=ssp_color, line_width=1) * hv.Text(
+                    ) * hv.Text(
                         x=x_95 + 5,
                         y=bar_y + 0.25,
                         text=str(yr_rng) + "yrs",
                         label=ci_label,
-                    ).opts(
-                        style=dict(text_font_size="8pt", color=ssp_color)
                     )
 
                     to_plot *= interval
