@@ -311,7 +311,7 @@ class WarmingLevelVisualize(param.Parameterized):
     def GCM_PostageStamps_STATS(self):
         return self.stats_stamps[str(float(self.warmlevel))]
 
-    @param.depends("warmlevel", "ssp", watch=False)
+    @param.depends("warmlevel", "ssp", watch=True)
     def GMT_context_plot(self):
         """Display GMT plot using package data that updates whenever the warming level or SSP is changed by the user."""
         ## Plot dimensions
