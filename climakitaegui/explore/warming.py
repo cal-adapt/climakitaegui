@@ -29,7 +29,9 @@ from climakitaegui.core.data_interface import (
     _selections_param_to_panel,
 )
 from climakitaegui.core.data_view import compute_vmin_vmax
+
 hv.extension("bokeh")
+
 
 class WarmingLevels(BaseWarmingLevels):
     def __init__(self, **params):
@@ -419,7 +421,9 @@ class WarmingLevelVisualize(param.Parameterized):
                     .dropna()
                     .index[0]
                 )
-                opts.defaults(opts.Curve(color=ssp_color, line_dash="dashed", line_width=1))
+                opts.defaults(
+                    opts.Curve(color=ssp_color, line_dash="dashed", line_width=1)
+                )
                 ssp_int = hv.Curve(
                     [[year_warmlevel_reached, -2], [year_warmlevel_reached, 10]],
                     label=label1,
@@ -456,7 +460,9 @@ class WarmingLevelVisualize(param.Parameterized):
                 )
                 if yr_rng > 0:
                     opts.default(opts.Curve(color=ssp_color, line_width=1))
-                    opts.default(opts.Text(style=dict(text_font_size="8pt", color=ssp_color)))
+                    opts.default(
+                        opts.Text(style=dict(text_font_size="8pt", color=ssp_color))
+                    )
                     interval = hv.Curve(
                         [[x_95, bar_y], [x_5, bar_y]], label=ci_label
                     ) * hv.Text(
