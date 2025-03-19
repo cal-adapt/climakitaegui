@@ -655,6 +655,7 @@ def GCM_PostageStamps_STATS_compute(wl_viz):
     Compute helper for stats postage stamps.
     Returns dictionary of warming levels to stats visuals.
     """
+    import pdb; pdb.set_trace()
     # Get data to plot
     warm_level_dict = {}
     for warmlevel in wl_viz.warming_levels:
