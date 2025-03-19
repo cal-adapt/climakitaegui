@@ -655,7 +655,6 @@ def GCM_PostageStamps_STATS_compute(wl_viz):
     Compute helper for stats postage stamps.
     Returns dictionary of warming levels to stats visuals.
     """
-    import pdb; pdb.set_trace()
     # Get data to plot
     warm_level_dict = {}
     for warmlevel in wl_viz.warming_levels:
@@ -683,9 +682,11 @@ def GCM_PostageStamps_STATS_compute(wl_viz):
                 """
                 Returns the simulation closest to the median.
                 """
-                return data.loc[
-                    data == data.quantile(0.5, "all_sims", method="nearest")
-                ].all_sims.values.item()
+                return str(
+                    data.loc[
+                        data == data.quantile(0.5, "all_sims", method="nearest")
+                    ].all_sims.values[0]
+                )
 
             def find_sim(all_plot_data, area_avgs, stat_funcs, my_func):
                 if my_func == "Median":
