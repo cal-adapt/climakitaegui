@@ -6,6 +6,7 @@ import hvplot.xarray
 import hvplot.pandas
 import holoviews as hv
 from holoviews import opts
+import holoviews.plotting.bokeh
 import matplotlib.pyplot as plt
 from scipy.stats import pearson3
 from climakitae.core.data_interface import DataInterface
@@ -28,6 +29,8 @@ from climakitaegui.core.data_interface import (
     _selections_param_to_panel,
 )
 from climakitaegui.core.data_view import compute_vmin_vmax
+
+hv.extension("bokeh")
 
 
 class WarmingLevels(BaseWarmingLevels):
@@ -308,7 +311,7 @@ class WarmingLevelVisualize(param.Parameterized):
     def GCM_PostageStamps_STATS(self):
         return self.stats_stamps[str(float(self.warmlevel))]
 
-    @param.depends("warmlevel", "ssp", watch=False)
+    @param.depends("warmlevel", "ssp", watch=True)
     def GMT_context_plot(self):
         """Display GMT plot using package data that updates whenever the warming level or SSP is changed by the user."""
         ## Plot dimensions
@@ -418,17 +421,18 @@ class WarmingLevelVisualize(param.Parameterized):
                     .dropna()
                     .index[0]
                 )
+
                 ssp_int = hv.Curve(
                     [[year_warmlevel_reached, -2], [year_warmlevel_reached, 10]],
                     label=label1,
-                ).opts(color=ssp_color, line_dash="dashed", line_width=1)
+                ).opts(opts.Curve(color=ssp_color, line_dash="dashed", line_width=1))
                 ssp_int = ssp_int * hv.Text(
                     x=year_warmlevel_reached - 2,
                     y=4.5,
                     text=str(int(year_warmlevel_reached)),
                     rotation=90,
                     label=label1,
-                ).opts(style=dict(text_font_size="8pt", color=ssp_color))
+                ).opts(opts.Text(fontsize=8, color=ssp_color))
                 to_plot *= ssp_int  # Add to plot
 
             if (np.argmax(ssp_selected["95%"] > self.warmlevel)) > 0 and (
@@ -437,14 +441,14 @@ class WarmingLevelVisualize(param.Parameterized):
                 # Make 95% CI line
                 x_95 = cmip_t[0] + np.argmax(ssp_selected["95%"] > self.warmlevel)
                 ssp_firstdate = hv.Curve([[x_95, -2], [x_95, 10]], label=ci_label).opts(
-                    color=ssp_color, line_width=1
+                    opts.Curve(color=ssp_color, line_width=1)
                 )
                 to_plot *= ssp_firstdate
 
                 # Make 5% CI line
                 x_5 = cmip_t[0] + np.argmax(ssp_selected["5%"] > self.warmlevel)
                 ssp_lastdate = hv.Curve([[x_5, -2], [x_5, 10]], label=ci_label).opts(
-                    color=ssp_color, line_width=1
+                    opts.Curve(color=ssp_color, line_width=1)
                 )
                 to_plot *= ssp_lastdate
 
@@ -457,13 +461,13 @@ class WarmingLevelVisualize(param.Parameterized):
                 if yr_rng > 0:
                     interval = hv.Curve(
                         [[x_95, bar_y], [x_5, bar_y]], label=ci_label
-                    ).opts(color=ssp_color, line_width=1) * hv.Text(
+                    ).opts(opts.Curve(color=ssp_color, line_width=1)) * hv.Text(
                         x=x_95 + 5,
                         y=bar_y + 0.25,
                         text=str(yr_rng) + "yrs",
                         label=ci_label,
                     ).opts(
-                        style=dict(text_font_size="8pt", color=ssp_color)
+                        opts.Text(fontsize=8, color=ssp_color)
                     )
 
                     to_plot *= interval
@@ -605,7 +609,7 @@ def GCM_PostageStamps_MAIN_compute(wl_viz):
                 )
 
                 # Create panel object: combine plot with shared colorbar
-                wl_plots = pn.Row(wl_plots, shared_colorbar, align="center")
+                wl_plots = pn.Row(wl_plots + shared_colorbar)
 
             # Add to dictionary
             warm_level_dict[warmlevel] = wl_plots
@@ -678,9 +682,11 @@ def GCM_PostageStamps_STATS_compute(wl_viz):
                 """
                 Returns the simulation closest to the median.
                 """
-                return data.loc[
-                    data == data.quantile(0.5, "all_sims", method="nearest")
-                ].all_sims.values.item()
+                return str(
+                    data.loc[
+                        data == data.quantile(0.5, "all_sims", method="nearest")
+                    ].all_sims.values[0]
+                )
 
             def find_sim(all_plot_data, area_avgs, stat_funcs, my_func):
                 if my_func == "Median":
@@ -777,7 +783,7 @@ def GCM_PostageStamps_STATS_compute(wl_viz):
                 )
 
                 # Create panel object: combine plot with shared colorbar
-                wl_plots = pn.Row(wl_plots, shared_colorbar, align="center")
+                wl_plots = pn.Row(wl_plots + shared_colorbar)
 
             warm_level_dict[warmlevel] = wl_plots
 
@@ -864,10 +870,11 @@ def warming_levels_visualize(wl_viz):
                 "Maps of cross-model statistics: median/max/min",
                 postage_stamps_STATS,
             ),
+            dynamic=True,
         ),
         title="Regional response at selected warming level",
         width=850,
-        height=600,
+        height=800,
         collapsible=False,
         styles={
             "header_background": "lightgrey",
