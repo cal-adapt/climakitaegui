@@ -33,6 +33,8 @@ jobs:
       run: conda info
     - name: Install climakitae
       run: pip install -e git+https://github.com/cal-adapt/climakitae.git#egg=climakitae
+    - name: Install pip packages
+      run: pip install jinja2==3.1.6
     - name: Install climakitaegui
       run: pip install .
     - name: Output conda list
