@@ -463,6 +463,10 @@ def _selections_param_to_panel(self):
         value="e.g. 15 means a 30yr window",
         name="Years around Global Warming Level (+/-)",
     )
+    all_touched_text = pn.widgets.StaticText(
+        value="Include cells touching edge of the selection area",
+        name="",
+    )
     all_touched = pn.widgets.Checkbox.from_param(self.param.all_touched)
 
     widgets_dict = {
@@ -503,6 +507,7 @@ def _selections_param_to_panel(self):
         "variable_text": variable_text,
         "warming_level_text": warming_level_text,
         "warming_level_window_text": warming_level_window_text,
+        "all_touched_text": all_touched_text,
     }
 
     return widgets_dict | text_dict
@@ -608,6 +613,7 @@ def _display_select(self):
         widgets["longitude"],
         widgets["area_average_text"],
         widgets["area_average"],
+        widgets["all_touched_text"],
         widgets["all_touched"],
         pn.Spacer(
             height=85
