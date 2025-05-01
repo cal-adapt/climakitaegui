@@ -463,7 +463,7 @@ def _selections_param_to_panel(self):
         value="e.g. 15 means a 30yr window",
         name="Years around Global Warming Level (+/-)",
     )
-    all_touched = pn.widgets.RadioBoxGroup.from_param(self.param.all_touched, inline=True)
+    all_touched = pn.widgets.Checkbox.from_param(self.param.all_touched)
 
     widgets_dict = {
         "area_average": area_average,
