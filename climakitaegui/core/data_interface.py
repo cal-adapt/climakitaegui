@@ -463,6 +463,7 @@ def _selections_param_to_panel(self):
         value="e.g. 15 means a 30yr window",
         name="Years around Global Warming Level (+/-)",
     )
+    all_touched = pn.widgets.RadioBoxGroup.from_param(self.param.all_touched, name="Select Cells Touching", inline=False)
 
     widgets_dict = {
         "area_average": area_average,
@@ -487,6 +488,7 @@ def _selections_param_to_panel(self):
         "variable_type": variable_type,
         "warming_level": warming_level,
         "warming_level_window": warming_level_window,
+        "all_touched": all_touched,
     }
     text_dict = {
         "area_average_text": area_average_text,
@@ -606,6 +608,7 @@ def _display_select(self):
         widgets["longitude"],
         widgets["area_average_text"],
         widgets["area_average"],
+        widgets["all_touched"],
         pn.Spacer(
             height=85
         ),  # Need to add empty space to make card larger to fit all the stations
