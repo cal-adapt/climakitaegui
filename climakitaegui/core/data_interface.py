@@ -631,7 +631,7 @@ def _display_select(self):
         title="Location Options for the Selected Data",
         collapsible=False,
         width=635,
-        height=670,
+        height=725,
         styles={
             "header_background": "lightgrey",
             "border-radius": "5px",
@@ -652,7 +652,7 @@ def _display_select(self):
         title="Data Options in the Cal-Adapt Analytics Engine",
         collapsible=False,
         width=600,
-        height=670,
+        height=725,
         styles={
             "header_background": "lightgrey",
             "border-radius": "5px",
