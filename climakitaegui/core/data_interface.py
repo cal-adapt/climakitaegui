@@ -612,7 +612,7 @@ def _display_select(self):
         pn.Spacer(
             height=150
         ),  # Need to add empty space to make card larger to fit all the stations
-        width=280,
+        width=310,
     )
     col_2_location = pn.Column(
         pn.Spacer(height=10),
@@ -631,7 +631,7 @@ def _display_select(self):
         title="Location Options for the Selected Data",
         collapsible=False,
         width=635,
-        height=725,
+        height=775,
         styles={
             "header_background": "lightgrey",
             "border-radius": "5px",
@@ -651,8 +651,8 @@ def _display_select(self):
         time_approach,
         title="Data Options in the Cal-Adapt Analytics Engine",
         collapsible=False,
-        width=600,
-        height=725,
+        width=635,
+        height=775,
         styles={
             "header_background": "lightgrey",
             "border-radius": "5px",
