@@ -463,7 +463,9 @@ def _selections_param_to_panel(self):
         value="e.g. 15 means a 30yr window",
         name="Years around Global Warming Level (+/-)",
     )
-    all_touched = pn.widgets.Checkbox.from_param(self.param.all_touched, name="Include cells touching edge of the selection area")
+    all_touched = pn.widgets.Checkbox.from_param(
+        self.param.all_touched, name="Include cells touching edge of the selection area"
+    )
 
     widgets_dict = {
         "area_average": area_average,
