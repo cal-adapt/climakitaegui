@@ -467,15 +467,6 @@ def _selections_param_to_panel(self):
         self.param.all_touched, name="Include cells touching edge of the selection area"
     )
 
-    def all_touched_enable_disable(self):
-        if self.param.data_type == "Gridded":
-            all_touched.disabled = False
-        elif self.param.data_type == "Stations":
-            all_touched == False
-            all_touched.disabled = True
-
-    pn.bind(all_touched_enable_disable, data_type, watch=True)
-
     widgets_dict = {
         "area_average": area_average,
         "area_subset": area_subset,
