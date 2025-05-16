@@ -128,52 +128,55 @@ def _map_view(selections, stations_gdf):
     ax.set_extent(extent, crs=xy)
 
     # Set size of markers for stations depending on map boundaries
-    if extent == ca_extent:
-        scatter_size = 4.5
-    elif extent == us_extent:
-        scatter_size = 2.5
-    elif extent == na_extent:
-        scatter_size = 1.5
+    match extent:
+        case extent if extent == ca_extent:
+            scatter_size = 4.5
+        case extent if extent == us_extent:
+            scatter_size = 2.5
+        case extent if extent == na_extent:
+            scatter_size = 1.5
 
-    if selections.resolution == "45 km":
-        _add_res_to_ax(
-            poly=_wrf_bb["45 km"],
-            ax=ax,
-            color="green",
-            rotation=28,
-            xy=(-154, 33.8),
-            label="45 km",
-        )
-    elif selections.resolution == "9 km":
-        _add_res_to_ax(
-            poly=_wrf_bb["9 km"],
-            ax=ax,
-            color="red",
-            rotation=32,
-            xy=(-134, 42),
-            label="9 km",
-        )
-    elif selections.resolution == "3 km":
-        _add_res_to_ax(
-            poly=_wrf_bb["3 km"],
-            ax=ax,
-            color="darkorange",
-            rotation=32,
-            xy=(-127, 40),
-            label="3 km",
-        )
+    match selections.resolution:
+        case "45 km":
+            _add_res_to_ax(
+                poly=_wrf_bb["45 km"],
+                ax=ax,
+                color="green",
+                rotation=28,
+                xy=(-154, 33.8),
+                label="45 km",
+            )
+        case "9 km":
+            _add_res_to_ax(
+                poly=_wrf_bb["9 km"],
+                ax=ax,
+                color="red",
+                rotation=32,
+                xy=(-134, 42),
+                label="9 km",
+            )
+        case "3 km":
+            _add_res_to_ax(
+                poly=_wrf_bb["3 km"],
+                ax=ax,
+                color="darkorange",
+                rotation=32,
+                xy=(-127, 40),
+                label="3 km",
+            )
 
     # Add user-selected geometries
-    if selections.area_subset == "lat/lon":
-        ax.add_geometries(
-            subarea_gpd["geometry"].values,
-            crs=ccrs.PlateCarree(),
-            edgecolor="b",
-            facecolor="None",
-        )
-    elif selections.area_subset != "none":
-        subarea_gpd.to_crs(crs_proj4).plot(ax=ax, color="deepskyblue", zorder=2)
-        mpl_pane.param.trigger("object")
+    match selections.area_subset:
+        case "lat/lon":
+            ax.add_geometries(
+                subarea_gpd["geometry"].values,
+                crs=ccrs.PlateCarree(),
+                edgecolor="b",
+                facecolor="None",
+            )
+        case selections.area_subset if selections.area_subset != "none":
+            subarea_gpd.to_crs(crs_proj4).plot(ax=ax, color="deepskyblue", zorder=2)
+            mpl_pane.param.trigger("object")
 
     # Overlay the weather stations as points on the map
     if selections.data_type == "Station":
@@ -233,12 +236,15 @@ class DataParametersWithPanes(DataParameters):
 
         else:
             # Set time range of historical data
-            if self.downscaling_method == "Statistical":
-                historical_climate_range = self.historical_climate_range_loca
-            elif self.downscaling_method == "Dynamical+Statistical":
-                historical_climate_range = self.historical_climate_range_wrf_and_loca
-            else:
-                historical_climate_range = self.historical_climate_range_wrf
+            match self.downscaling_method:
+                case "Dynamical":
+                    historical_climate_range = self.historical_climate_range_wrf
+                case "Statistical":
+                    historical_climate_range = self.historical_climate_range_loca
+                case "Dynamical+Statistical":
+                    historical_climate_range = (
+                        self.historical_climate_range_wrf_and_loca
+                    )
             historical_central_year = sum(historical_climate_range) / 2
             historical_x_width = historical_central_year - historical_climate_range[0]
 

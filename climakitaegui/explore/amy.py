@@ -73,14 +73,15 @@ def meteo_yr_heatmap(
         (274, "Oct-01"),
         (335, "Dec-01"),
     ]
-    if len(meteo_yr_df) == 366:  # Leap year
-        idx = idx
-    elif len(meteo_yr_df) == 365:  # Normal year
-        idx = [(i - 1, mon) for i, mon in idx]
-    else:
-        raise ValueError(
-            "Length of dataframe is invalid. Must contain either 366 or 365 days."
-        )
+    match len(meteo_yr_df):
+        case 366:  # Leap year
+            idx = idx
+        case 365:  # Normal year
+            idx = [(i - 1, mon) for i, mon in idx]
+        case _:
+            raise ValueError(
+                "Length of dataframe is invalid. Must contain either 366 or 365 days."
+            )
 
     to_plot = meteo_yr_df.reset_index(drop=True)  # Remove day of year index
     fig = to_plot.hvplot.heatmap(
@@ -379,15 +380,15 @@ class AverageMetYearParameters(DataParametersWithPanes):
 
         self.downscaling_method = "Dynamical"
 
-        if self.computation_method == "Historical":
-            self.scenario_historical = ["Historical Climate"]
-            self.scenario_ssp = []
-            self.time_slice = (1981, 2010)
-
-        elif self.computation_method == "Warming Level Future":
-            self.scenario_ssp = ["SSP 3-7.0"]
-            self.scenario_historical = []
-            self.time_slice = self.warming_year_average_range[self.warmlevel]
+        match self.computation_method:
+            case "Historical":
+                self.scenario_historical = ["Historical Climate"]
+                self.scenario_ssp = []
+                self.time_slice = (1981, 2010)
+            case "Warming Level Future":
+                self.scenario_ssp = ["SSP 3-7.0"]
+                self.scenario_historical = []
+                self.time_slice = self.warming_year_average_range[self.warmlevel]
 
         self.simulation = ["ensmean"]
         self.append_historical = False
@@ -429,68 +430,79 @@ class AverageMetYearParameters(DataParametersWithPanes):
     @param.depends("reload_data", watch=False)
     def _tmy_hourly_heatmap(self):
         # update heatmap df and title with selections
-        if len(self.cached_area) == 1:
-            cached_area_str = self.cached_area[0]
-        elif len(self.cached_area) == 2:
-            if self.area_subset == "states":
-                cached_area_str = " ".join(self.cached_area)
-            elif self.area_subset == "CA counties":
-                names = [name.split(" County")[0] for name in self.cached_area]
-                cached_area_str = "{} and {} Counties".format(names[0], names[1])
-            elif self.area_subset == "CA watersheds":
-                cached_area_str = "{} and {} Watersheds".format(
-                    self.cached_area[0], self.cached_area[1]
-                )
-            else:
-                cached_area_str = " and ".join(self.cached_area)
-        else:
-            cached_area_str = "Selected {}".format(self.area_subset)
+        match len(self.cached_area):
+            case 1:
+                cached_area_str = self.cached_area[0]
+            case 2:
+                match self.area_subset:
+                    case "states":
+                        cached_area_str = " ".join(self.cached_area)
+                    case "CA counties":
+                        names = [name.split(" County")[0] for name in self.cached_area]
+                        cached_area_str = "{} and {} Counties".format(
+                            names[0], names[1]
+                        )
+                    case "CA watersheds":
+                        cached_area_str = "{} and {} Watersheds".format(
+                            self.cached_area[0], self.cached_area[1]
+                        )
+                    case _:
+                        cached_area_str = " and ".join(self.cached_area)
+            case _:
+                cached_area_str = "Selected {}".format(self.area_subset)
 
         # add new line if `cached_area_str` is too long
         if len(cached_area_str) > 40:
             cached_area_str = "\n" + cached_area_str
 
         days_in_year = 366
-        if self.amy_type == "Absolute":
-            if self.computation_method == "Historical":
-                df = compute_amy(self.historical_tmy_data, days_in_year=days_in_year)
-                title = "Average Meteorological Year: {}\nAbsolute {} Baseline".format(
-                    cached_area_str, self.computation_method
-                )
-                clabel = (
-                    self.variable + " (" + self.historical_tmy_data.attrs["units"] + ")"
-                )
-            else:
-                df = compute_amy(self.future_tmy_data, days_in_year=days_in_year)
-                title = "Average Meteorological Year: {}\nAbsolute {} at {}°C".format(
-                    cached_area_str, self.computation_method, self.warmlevel
-                )
-                clabel = self.variable + " (" + self.units + ")"
-        elif self.amy_type == "Difference":
-            cmap = read_ae_colormap("ae_diverging", cmap_hex=True)
-            if self.computation_method == "Warming Level Future":
-                df = compute_amy(
-                    self.future_tmy_data, days_in_year=days_in_year
-                ) - compute_amy(self.historical_tmy_data, days_in_year=days_in_year)
-                title = "Average Meteorological Year: {}\nDifference between {} at {}°C and Historical Baseline".format(
-                    cached_area_str, self.computation_method, self.warmlevel
-                )
-                clabel = self.variable + " (" + self.units + ")"
-            else:
-                df = compute_severe_yr(
-                    self.future_tmy_data, days_in_year=days_in_year
-                ) - compute_amy(self.historical_tmy_data, days_in_year=days_in_year)
-                title = "Severe Meteorological Year: {}\nDifference between {} at 90th percentile and Historical Baseline".format(
-                    cached_area_str, self.computation_method
-                )
-                clabel = self.variable + " (" + self.units + ")"
-        else:
-            title = "Average Meteorological Year for\n{}".format(cached_area_str)
+        match self.amy_type:
+            case "Absolute":
+                if self.computation_method == "Historical":
+                    df = compute_amy(
+                        self.historical_tmy_data, days_in_year=days_in_year
+                    )
+                    title = (
+                        "Average Meteorological Year: {}\nAbsolute {} Baseline".format(
+                            cached_area_str, self.computation_method
+                        )
+                    )
+                    clabel = (
+                        self.variable
+                        + " ("
+                        + self.historical_tmy_data.attrs["units"]
+                        + ")"
+                    )
+                else:
+                    df = compute_amy(self.future_tmy_data, days_in_year=days_in_year)
+                    title = (
+                        "Average Meteorological Year: {}\nAbsolute {} at {}°C".format(
+                            cached_area_str, self.computation_method, self.warmlevel
+                        )
+                    )
+                    clabel = self.variable + " (" + self.units + ")"
+            case "Difference":
+                cmap = read_ae_colormap("ae_diverging", cmap_hex=True)
+                if self.computation_method == "Warming Level Future":
+                    df = compute_amy(
+                        self.future_tmy_data, days_in_year=days_in_year
+                    ) - compute_amy(self.historical_tmy_data, days_in_year=days_in_year)
+                    title = "Average Meteorological Year: {}\nDifference between {} at {}°C and Historical Baseline".format(
+                        cached_area_str, self.computation_method, self.warmlevel
+                    )
+                    clabel = self.variable + " (" + self.units + ")"
+                else:
+                    df = compute_severe_yr(
+                        self.future_tmy_data, days_in_year=days_in_year
+                    ) - compute_amy(self.historical_tmy_data, days_in_year=days_in_year)
+                    title = "Severe Meteorological Year: {}\nDifference between {} at 90th percentile and Historical Baseline".format(
+                        cached_area_str, self.computation_method
+                    )
+                    clabel = self.variable + " (" + self.units + ")"
+            case _:
+                title = "Average Meteorological Year for\n{}".format(cached_area_str)
         heatmap = meteo_yr_heatmap(
-            meteo_yr_df=df,
-            title=title,
-            cmap=self.cmap,
-            clabel=self.variable + "(" + self.units + ")",
+            meteo_yr_df=df, title=title, cmap=cmap, clabel=clabel
         )
 
         return heatmap
