@@ -338,12 +338,13 @@ def plot_climate_response_WRF(var1, var2):
     )
 
     # Changing legend location depending on number of simulations
-    if len(merged_results.simulation) == 4:
-        legend_offset = (10, 128)
-    elif len(merged_results.simulation) == 8:
-        legend_offset = (10, 30)
-    else:
-        legend_offset = (10, 0)
+    match len(merged_results.simulation):
+        case 4:
+            legend_offset = (10, 128)
+        case 8:
+            legend_offset = (10, 30)
+        case _:
+            legend_offset = (10, 0)
 
     plot = plot.opts(
         legend_position="right", legend_offset=legend_offset, width=800, height=350
