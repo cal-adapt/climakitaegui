@@ -129,12 +129,14 @@ def _map_view(selections, stations_gdf):
 
     # Set size of markers for stations depending on map boundaries
     match extent:
-        case extent if extent == ca_extent:
+        case _ if extent == ca_extent:
             scatter_size = 4.5
-        case extent if extent == us_extent:
+        case _ if extent == us_extent:
             scatter_size = 2.5
-        case extent if extent == na_extent:
+        case _ if extent == na_extent:
             scatter_size = 1.5
+        case _:
+            raise ValueError("extent not set correctly")
 
     match selections.resolution:
         case "45 km":
