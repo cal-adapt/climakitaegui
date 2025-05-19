@@ -372,6 +372,10 @@ class WarmingLevelVisualize(param.Parameterized):
                 ipcc_data = ipcc_data * self.ssp585_data.hvplot(
                     y="Mean", color=c585, label="SSP5-8.5"
                 )
+            case _:
+                raise ValueError(
+                    'ssp needs to be one of "All", "SSP 1-1.9", "SSP 1-2.6", "SSP 2-4.5", "SSP 3-7.0", "SSP 5-8.5"'
+                )
 
         # SSP intersection lines
         cmip_t = np.arange(2015, 2101, 1)
