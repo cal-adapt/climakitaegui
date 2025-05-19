@@ -342,35 +342,40 @@ class WarmingLevelVisualize(param.Parameterized):
             ylim=[-1, 5],
             xlim=[1950, 2100],
         )
-        if self.ssp == "All":
-            ipcc_data = (
-                ipcc_data
-                * self.ssp119_data.hvplot(y="Mean", color=c119, label="SSP1-1.9")
-                * self.ssp126_data.hvplot(y="Mean", color=c126, label="SSP1-2.6")
-                * self.ssp245_data.hvplot(y="Mean", color=c245, label="SSP2-4.5")
-                * self.ssp370_data.hvplot(y="Mean", color=c370, label="SSP3-7.0")
-                * self.ssp585_data.hvplot(y="Mean", color=c585, label="SSP5-8.5")
-            )
-        elif self.ssp == "SSP 1-1.9":
-            ipcc_data = ipcc_data * self.ssp119_data.hvplot(
-                y="Mean", color=c119, label="SSP1-1.9"
-            )
-        elif self.ssp == "SSP 1-2.6":
-            ipcc_data = ipcc_data * self.ssp126_data.hvplot(
-                y="Mean", color=c126, label="SSP1-2.6"
-            )
-        elif self.ssp == "SSP 2-4.5":
-            ipcc_data = ipcc_data * self.ssp245_data.hvplot(
-                y="Mean", color=c245, label="SSP2-4.5"
-            )
-        elif self.ssp == "SSP 3-7.0":
-            ipcc_data = ipcc_data * self.ssp370_data.hvplot(
-                y="Mean", color=c370, label="SSP3-7.0"
-            )
-        elif self.ssp == "SSP 5-8.5":
-            ipcc_data = ipcc_data * self.ssp585_data.hvplot(
-                y="Mean", color=c585, label="SSP5-8.5"
-            )
+        match self.ssp:
+            case "All":
+                ipcc_data = (
+                    ipcc_data
+                    * self.ssp119_data.hvplot(y="Mean", color=c119, label="SSP1-1.9")
+                    * self.ssp126_data.hvplot(y="Mean", color=c126, label="SSP1-2.6")
+                    * self.ssp245_data.hvplot(y="Mean", color=c245, label="SSP2-4.5")
+                    * self.ssp370_data.hvplot(y="Mean", color=c370, label="SSP3-7.0")
+                    * self.ssp585_data.hvplot(y="Mean", color=c585, label="SSP5-8.5")
+                )
+            case "SSP 1-1.9":
+                ipcc_data = ipcc_data * self.ssp119_data.hvplot(
+                    y="Mean", color=c119, label="SSP1-1.9"
+                )
+            case "SSP 1-2.6":
+                ipcc_data = ipcc_data * self.ssp126_data.hvplot(
+                    y="Mean", color=c126, label="SSP1-2.6"
+                )
+            case "SSP 2-4.5":
+                ipcc_data = ipcc_data * self.ssp245_data.hvplot(
+                    y="Mean", color=c245, label="SSP2-4.5"
+                )
+            case "SSP 3-7.0":
+                ipcc_data = ipcc_data * self.ssp370_data.hvplot(
+                    y="Mean", color=c370, label="SSP3-7.0"
+                )
+            case "SSP 5-8.5":
+                ipcc_data = ipcc_data * self.ssp585_data.hvplot(
+                    y="Mean", color=c585, label="SSP5-8.5"
+                )
+            case _:
+                raise ValueError(
+                    'ssp needs to be one of "All", "SSP 1-1.9", "SSP 1-2.6", "SSP 2-4.5", "SSP 3-7.0", "SSP 5-8.5"'
+                )
 
         # SSP intersection lines
         cmip_t = np.arange(2015, 2101, 1)

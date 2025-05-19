@@ -195,18 +195,19 @@ def _exceedance_visualize(choices, option=1):
     exploring exceedance.
     """
 
-    if option == 1:
-        plot_card = choices.view
-    elif option == 2:
-        # For show: potential option to display multiple tabs if we want to
-        # build this out as a broader GUI app for all threshold tools
-        plot_card = pn.Tabs(
-            ("Event counts", choices.view),
-            ("Return values", pn.Row()),
-            ("Return periods", pn.Row()),
-        )
-    else:
-        raise ValueError("Unknown option")
+    match option:
+        case 1:
+            plot_card = choices.view
+        case 2:
+            # For show: potential option to display multiple tabs if we want to
+            # build this out as a broader GUI app for all threshold tools
+            plot_card = pn.Tabs(
+                ("Event counts", choices.view),
+                ("Return values", pn.Row()),
+                ("Return periods", pn.Row()),
+            )
+        case _:
+            raise ValueError("Unknown option")
 
     options_card = pn.Card(
         # Threshold value and direction
