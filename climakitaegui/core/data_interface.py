@@ -164,6 +164,8 @@ def _map_view(selections, stations_gdf):
                 xy=(-127, 40),
                 label="3 km",
             )
+        case _:
+            raise ValueError('resolution needs to be "45 km", "9 km", "3 km"')
 
     # Add user-selected geometries
     match selections.area_subset:
@@ -244,6 +246,10 @@ class DataParametersWithPanes(DataParameters):
                 case "Dynamical+Statistical":
                     historical_climate_range = (
                         self.historical_climate_range_wrf_and_loca
+                    )
+                case _:
+                    raise ValueError(
+                        'downscaling_method needs to be "Dynamical", "Statistical", or "Dynamical+Statistical"'
                     )
             historical_central_year = sum(historical_climate_range) / 2
             historical_x_width = historical_central_year - historical_climate_range[0]
