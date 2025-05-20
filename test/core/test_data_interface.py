@@ -339,6 +339,7 @@ class TestSelectionsParamToPanel:
             latitude = param.Number()
             longitude = param.Number()
             stations = param.List()
+            all_touched = param.Boolean(default=False)
 
         # Create a mock with real param object
         mock_self = MagicMock()
@@ -461,6 +462,7 @@ class TestDisplaySelect:
             "variable_text": MagicMock(),
             "warming_level_text": MagicMock(),
             "warming_level_window_text": MagicMock(),
+            "all_touched": MagicMock(),
         }
         mock_selections_param.return_value = mock_widgets
 
