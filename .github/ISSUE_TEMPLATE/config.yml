@@ -1,8 +1,0 @@
-blank_issues_enabled: true
-contact_links:
-  - name: "Climakitae Documentation"
-    url: "https://climakitaegui.readthedocs.io/en/latest/"
-    about: "Documentation for the Cal-Adapt Analytics Engine"
-  - name: "Climakitae Contribution Guidelines"
-    url: "https://climakitae.readthedocs.io/en/latest/contribute.html"
-    about: "Guidelines for contributing to the Cal-Adapt Analytics Engine"
