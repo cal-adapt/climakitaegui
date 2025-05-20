@@ -463,6 +463,9 @@ def _selections_param_to_panel(self):
         value="e.g. 15 means a 30yr window",
         name="Years around Global Warming Level (+/-)",
     )
+    all_touched = pn.widgets.Checkbox.from_param(
+        self.param.all_touched, name="Include cells touching edge of the selection area"
+    )
 
     widgets_dict = {
         "area_average": area_average,
@@ -487,6 +490,7 @@ def _selections_param_to_panel(self):
         "variable_type": variable_type,
         "warming_level": warming_level,
         "warming_level_window": warming_level_window,
+        "all_touched": all_touched,
     }
     text_dict = {
         "area_average_text": area_average_text,
@@ -606,10 +610,11 @@ def _display_select(self):
         widgets["longitude"],
         widgets["area_average_text"],
         widgets["area_average"],
+        widgets["all_touched"],
         pn.Spacer(
-            height=85
+            height=150
         ),  # Need to add empty space to make card larger to fit all the stations
-        width=280,
+        width=310,
     )
     col_2_location = pn.Column(
         pn.Spacer(height=10),
@@ -628,7 +633,7 @@ def _display_select(self):
         title="Location Options for the Selected Data",
         collapsible=False,
         width=635,
-        height=670,
+        height=775,
         styles={
             "header_background": "lightgrey",
             "border-radius": "5px",
@@ -648,7 +653,8 @@ def _display_select(self):
         time_approach,
         title="Data Options in the Cal-Adapt Analytics Engine",
         collapsible=False,
-        width=600,
+        width=635,
+        height=775,
         styles={
             "header_background": "lightgrey",
             "border-radius": "5px",
