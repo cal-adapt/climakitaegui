@@ -32,7 +32,7 @@ jobs:
           environment-file: conda-linux-64.lock
           use-only-tar-bz2: true
     - name: Install climakitae
-      run: pip install -e git+https://github.com/cal-adapt/climakitae.git#egg=climakitae
+      run: pip install climakitae
     - name: Install climakitaegui
       run: pip install .
     - name: Output conda info
@@ -40,4 +40,4 @@ jobs:
     - name: Output conda list
       run: conda list
     - name: Test with pytest
-      run: pytest src/climakitaegui/tests --no-header -vv
+      run: pytest --no-header -vv
