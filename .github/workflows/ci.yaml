@@ -40,4 +40,4 @@ jobs:
     - name: Output conda list
       run: conda list
     - name: Test with pytest
-      run: pytest --no-header -vv
+      run: pytest src/climakitaegui/tests --no-header -vv
