@@ -1,13 +1,11 @@
-# Workflow file for continuous integration on non-main branches
+# Workflow file for continuous integration on main branch
 
-name: ci
+name: ci-main
 
 on: 
   push:
     branches:
-      - '*'
-      - '!main'
-  pull_request:
+      - main
 
 jobs:
   lint:
