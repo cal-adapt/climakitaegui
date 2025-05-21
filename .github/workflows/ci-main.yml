@@ -1,13 +1,11 @@
-# Workflow file for continuous integration on non-main branches
+# Workflow file for continuous integration on main branch
 
-name: ci
+name: ci-main
 
 on: 
   push:
     branches:
-      - '*'
-      - '!main'
-  pull_request:
+      - main
 
 jobs:
   lint:
@@ -40,4 +38,4 @@ jobs:
     - name: Output conda list
       run: conda list
     - name: Test with pytest
-      run: pytest src/climakitaegui/tests --no-header -vv
+      run: pytest src/climakitegui/tests --no-header -vv
