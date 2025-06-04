@@ -1,12 +1,14 @@
-# Workflow file for continuous integration on non-main branches
+# Workflow file for continuous integration
+# Based on code from: https://github.com/epassaro/cache-conda-envs/blob/main/.github/workflows/ci.yml
+# Based on code from: https://github.com/marketplace/actions/setup-miniconda
+# Runs on all branches except main (see ci-main.yml)
 
-name: ci
+name: ci-not-main
 
 on: 
   push:
-    branches:
-      - '*'
-      - '!main'
+    branches-ignore:
+      - main
   pull_request:
 
 jobs:
@@ -28,7 +30,7 @@ jobs:
       uses: conda-incubator/setup-miniconda@v2
       with:
           auto-activate-base: false
-          activate-environment: climakitae-tests
+          activate-environment: climakitaegui-tests
           environment-file: conda-linux-64.lock
           use-only-tar-bz2: true
     - name: Install climakitae
