@@ -1,4 +1,4 @@
-climakitae
+https://github.com/cal-adapt/climakitae/archive/main.zip #climakitae
 geoviews
 holoviews
 hvplot
