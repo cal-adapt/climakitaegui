@@ -1,5 +1,6 @@
 import panel as pn
 import param
+from geopandas import GeoDataFrame
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 import matplotlib.ticker as ticker
@@ -49,7 +50,7 @@ def _add_res_to_ax(
     )
 
 
-def _map_view(selections, stations_gdf):
+def _map_view(selections: DataParameters, stations_gdf: GeoDataFrame) -> pn.Pane:
     """View the current location selections on a map
     Updates dynamically
 
@@ -57,8 +58,8 @@ def _map_view(selections, stations_gdf):
     ----------
     selections: DataParameters
         User data selections
-    stations_gpd: gpd.DataFrame
-        DataFrame with station coordinates
+    stations_gdf: GeoDataFrame
+        GeoDataFrame with station coordinates
 
     Returns
     -------
