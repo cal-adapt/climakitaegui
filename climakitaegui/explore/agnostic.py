@@ -1,9 +1,13 @@
-import xarray as xr
-import numpy as np
-import seaborn as sns
+from matplotlib.axes import Axes
+from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
+import numpy as np
+import pandas as pd
 import panel as pn
+import seaborn as sns
+from typing import Tuple
+import xarray as xr
 from climakitae.explore.agnostic import (
     warm_level_to_month,
     year_to_warm_levels,
@@ -19,7 +23,7 @@ def create_conversion_function(lookup_tables):
 
     Parameters
     ----------
-    lookup_tables : dict of pandas.DataFrame
+    lookup_tables: dict of pandas.DataFrame
         Lookup tables for the conversions as output from the
         `create_lookup_tables` function. It is a dictionary with a "time
         lookup table" and a "warming level lookup table".
@@ -41,7 +45,12 @@ def create_conversion_function(lookup_tables):
     )
 
 
-def find_wl_or_time(lookup_tables, scenario="ssp370", warming_level=None, year=None):
+def find_wl_or_time(
+    lookup_tables: dict[pd.DataFrame],
+    scenario: str = "ssp370",
+    warming_level: str = None,
+    year: int = None,
+) -> str | None:
     """
     Given either a warming level or a time, find information about the other.
 
@@ -61,20 +70,20 @@ def find_wl_or_time(lookup_tables, scenario="ssp370", warming_level=None, year=N
 
     Parameters
     ----------
-    lookup_tables : dict of pandas.DataFrame
+    lookup_tables: dict[pd.DataFrame]
         Lookup tables as output from the `create_lookup_tables` function. It
         is a dictionary with a "time lookup table" and a "warming level lookup
         table".
-    scenario : str, optional
+    scenario: str, optional
         The scenario to consider. The default is "ssp370".
-    warming_level : str, optional
+    warming_level: str, optional
         The warming level to analyze ("1.5", "2.0", "3.0"). The default is None.
-    year : int, optional
+    year: int, optional
         The year to analyze. Must be between 2021 and 2089. The default is None.
 
     Returns
     -------
-    str or None
+    str | None
         Given a warming level, returns a string representing the median month.
         Given a year, returns None.
         None is also returned if neither warming level nor year is given, or
@@ -142,7 +151,7 @@ def find_wl_or_time(lookup_tables, scenario="ssp370", warming_level=None, year=N
                 )
 
 
-def _warm_level_to_years_plot(time_df, scenario, warming_level):
+def _warm_level_to_years_plot(time_df: pd.DataFrame, scenario: str, warming_level: str):
     """Given warming level, plot histogram of years and label median year."""
     datetimes = time_df[time_df["scenario"] == scenario][warming_level].astype(
         "datetime64[ns]"
@@ -155,7 +164,7 @@ def _warm_level_to_years_plot(time_df, scenario, warming_level):
     _plot_years(ax, years, med_year, warming_level)
 
 
-def _plot_years(ax, years, med_year, warming_level):
+def _plot_years(ax: Axes, years: int, med_year: int, warming_level: str) -> Axes:
     """Plot histogram of years and label median year, on axis."""
     n = len(years)
     sns.histplot(ax=ax, data=years)
@@ -172,7 +181,7 @@ def _plot_years(ax, years, med_year, warming_level):
     return ax
 
 
-def _plot_warm_levels(fig, ax, levels, year):
+def _plot_warm_levels(fig: Figure, ax: Axes, levels: np.ndarray, year: int) -> Axes:
     """Plot histogram of warming levels, on axis."""
     n = len(levels)
     sns.histplot(ax=ax, data=levels, binwidth=0.25)
@@ -182,7 +191,7 @@ def _plot_warm_levels(fig, ax, levels, year):
     return ax
 
 
-def plot_WRF(sim_vals, agg_func, years):
+def plot_WRF(sim_vals: xr.DataArray, agg_func, years: Tuple[int, int]):
     """
     Visualizes a barplot of WRF simulations that are aggregated from `agg_lat_lon_sims` or `agg_area_subset_sims`.
     Used with `results_gridcell` or `results_area` as inputs, as well as the aggregated function and time slice, all predefined within `agnostic_tools.ipynb`.
@@ -193,7 +202,7 @@ def plot_WRF(sim_vals, agg_func, years):
         DataArray of the aggregated results of a climate variable.
     agg_func: Function
         Function that takes in a series of values and returns a statistic, like np.mean
-    time_slice: tuple
+    time_slice: Tuple[int, int]
         Years of interest
 
     Returns
@@ -233,7 +242,9 @@ def plot_WRF(sim_vals, agg_func, years):
     plt.show()
 
 
-def plot_LOCA(sim_vals, agg_func, time_slice, stats):
+def plot_LOCA(
+    sim_vals: xr.DataArray, agg_func, time_slice: Tuple[int, int], stats: dict
+):
     """
     Visualizes a histogram of LOCA simulations that are aggregated from `agg_lat_lon_sims` or `agg_area_subset_sims`.
     Used with `results_gridcell` or `results_area` as inputs, as well as the aggregated function, time slice, and
@@ -305,7 +316,7 @@ def plot_LOCA(sim_vals, agg_func, time_slice, stats):
     plt.legend(fontsize=9.5)
 
 
-def plot_climate_response_WRF(var1, var2):
+def plot_climate_response_WRF(var1: xr.DataArray, var2: xr.DataArray):
     """
     Visualizes a scatterplot of two aggregated WRF climate variables from `agg_lat_lon_sims` or `agg_area_subset_sims`.
     Used with `results_gridcell` or `results_area` as inputs, as seen within `agnostic_tools.ipynb`.
@@ -319,7 +330,7 @@ def plot_climate_response_WRF(var1, var2):
 
     Returns
     -------
-    None
+    pn.Panel
     """
     # Make sure that the two variables are the same length and have the same simulation names
     if (len(var1) != len(var2)) & (
@@ -352,7 +363,7 @@ def plot_climate_response_WRF(var1, var2):
     return pn.panel(plot)
 
 
-def plot_climate_response_LOCA(var1, var2):
+def plot_climate_response_LOCA(var1: xr.DataArray, var2: xr.DataArray):
     """
     Visualizes a scatterplot of two aggregated LOCA climate variables from `agg_lat_lon_sims` or `agg_area_subset_sims`.
     Used with `results_gridcell` or `results_area` as inputs, as seen within `agnostic_tools.ipynb`.
