@@ -1,12 +1,14 @@
 import warnings
 import numpy as np
 import hvplot.xarray
+from typing import Tuple
+import xarray as xr
 from climakitae.util.colormap import read_ae_colormap
 from climakitae.util.utils import reproject_data
 from climakitae.core.data_interface import VariableDescriptions
 
 
-def compute_vmin_vmax(da_min, da_max):
+def compute_vmin_vmax(da_min: xr.Dataset, da_max: xr.Dataset) -> Tuple[int, int, bool]:
     """Compute min, max, and center for plotting
 
     Parameters
