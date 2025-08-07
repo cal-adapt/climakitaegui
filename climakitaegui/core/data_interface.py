@@ -238,7 +238,7 @@ class DataParametersWithPanes(DataParameters):
         "approach",
         watch=False,
     )
-    def scenario_view(self):
+    def scenario_view(self) -> pn.Pane:
         """
         Displays a timeline to help the user visualize the time ranges
         available, and the subset of time slice selected.
@@ -377,7 +377,7 @@ class DataParametersWithPanes(DataParameters):
         "stations",
         watch=False,
     )
-    def map_view(self):
+    def map_view(self) -> pn.Pane:
         """Create a map of the location selections"""
         return _map_view(selections=self, stations_gdf=self._stations_gdf)
 
