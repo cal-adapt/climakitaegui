@@ -1,6 +1,8 @@
 import warnings
 import numpy as np
+import holoviews as hv
 import hvplot.xarray
+from matplotlib.figure import Figure
 from typing import Tuple
 import xarray as xr
 from climakitae.util.colormap import read_ae_colormap
@@ -38,7 +40,13 @@ def compute_vmin_vmax(da_min: xr.Dataset, da_max: xr.Dataset) -> Tuple[int, int,
     return vmin, vmax, sopt
 
 
-def view(data, lat_lon=True, width=None, height=None, cmap=None):
+def view(
+    data: xr.DataArray,
+    lat_lon: bool = True,
+    width: int = None,
+    height: int = None,
+    cmap: str = None,
+) -> hv.DynamicMap | Figure:
     """Create a generic visualization of the data
 
     Visualization will depend on the shape of the input data.
