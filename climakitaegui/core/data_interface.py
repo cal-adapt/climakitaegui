@@ -1,5 +1,6 @@
 import panel as pn
 import param
+from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 import matplotlib.ticker as ticker
 import cartopy.feature as cfeature
@@ -9,19 +10,32 @@ from climakitae.core.data_interface import _get_subarea, DataParameters
 
 
 def _add_res_to_ax(
-    poly, ax, rotation, xy, label, color="black", crs=ccrs.PlateCarree()
+    poly: Polygon,
+    ax: Axes,
+    rotation: int,
+    xy: tuple[float, float],
+    label: str,
+    color: str = "black",
+    crs: ccrs = ccrs.PlateCarree(),
 ):
     """Add resolution line and label to axis
 
     Parameters
     ----------
-    poly: geometry to plot
-    ax: matplotlib axis
-    color: matplotlib color
+    poly: Polygon
+        geometry to plot
+    ax: Axes
+        matplotlib axis
     rotation: int
-    xy: tuple
+        annotation rotation angle
+    xy: tuple[float, float]
+        longitude, latitude tuple of annotation location
     label: str
-    crs: projection
+        annonation text
+    color: str
+        matplotlib color
+    crs: ccrs
+        projection
     """
     ax.add_geometries(
         [poly], crs=ccrs.PlateCarree(), edgecolor=color, facecolor="white"
