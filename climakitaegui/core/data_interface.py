@@ -388,13 +388,13 @@ class Select(DataParametersWithPanes):
     the parameters.
     """
 
-    def show(self):
+    def show(self) -> pn.Card:
         # Show panel visually
         select_panel = _display_select(self)
         return select_panel
 
 
-def _selections_param_to_panel(self):
+def _selections_param_to_panel(self) -> dict:
     """For the Select object, get parameters and parameter
     descriptions formatted as panel widgets
 
@@ -539,7 +539,7 @@ def _selections_param_to_panel(self):
     return widgets_dict | text_dict
 
 
-def _display_select(self):
+def _display_select(self) -> pn.Card:
     """
     Called by Select at the beginning of the workflow, to capture user
     selections. Displays panel of widgets from which to make selections.
