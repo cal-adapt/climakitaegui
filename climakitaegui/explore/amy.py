@@ -31,11 +31,11 @@ param.parameterized.docstring_signature = False
 
 def meteo_yr_heatmap(
     meteo_yr_df: pd.DataFrame,
-    title: str="Meteorological Year",
-    cmap: str="ae_orange",
-    clabel: str=None,
-    width: int=500,
-    height: int=250,
+    title: str = "Meteorological Year",
+    cmap: str = "ae_orange",
+    clabel: str = None,
+    width: int = 500,
+    height: int = 250,
 ) -> hv.HeatMap:
     """Create interactive (hvplot) meteorological year heatmap.
 
@@ -100,7 +100,10 @@ def meteo_yr_heatmap(
 
 
 def meteo_yr_heatmap_static(
-    meteo_yr_df: pd.DataFrame, title: str="Meteorological Year", cmap: str="ae_orange", clabel: str=None
+    meteo_yr_df: pd.DataFrame,
+    title: str = "Meteorological Year",
+    cmap: str = "ae_orange",
+    clabel: str = None,
 ) -> Figure:
     """Create static (matplotlib) meteorological year heatmap
 
@@ -159,10 +162,10 @@ def meteo_yr_heatmap_static(
 
 def lineplot_from_amy_data(
     amy_data: pd.DataFrame,
-    computation_method: str=None,
-    location_subset: str=None,
-    warmlevel: str=None,
-    variable: str=None,
+    computation_method: str = None,
+    location_subset: str = None,
+    warmlevel: str = None,
+    variable: str = None,
 ) -> Figure:
     """Generate a lineplot of meteorological year data, with mon-day-hr on the x-axis
 
@@ -250,7 +253,7 @@ def lineplot_from_amy_data(
 
 class AverageMetYearParameters(DataParametersWithPanes):
     """An object that holds the data options parameters for the explore.tmy panel.
-    
+
     Attributes
     ----------
     amy_type: str

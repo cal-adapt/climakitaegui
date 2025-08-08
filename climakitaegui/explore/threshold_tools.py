@@ -1,13 +1,15 @@
+import cartopy.crs as ccrs
 import geoviews as gv
 from holoviews import opts
+from holoviews.core.overlay import Overlay
 import hvplot.pandas
 import hvplot.xarray
 import panel as pn
-import cartopy.crs as ccrs
+import xarray as xr
 from climakitae.util.colormap import read_ae_colormap
 
 
-def plot_exceedance_count(exceedance_count):
+def plot_exceedance_count(exceedance_count: xr.DataArray) -> pn.Column:
     """Create panel column object with embedded plots
 
     Plots each simulation as a different color line.
@@ -16,11 +18,11 @@ def plot_exceedance_count(exceedance_count):
 
     Parameters
     ----------
-    exceedance_count: xarray.DataArray
+    exceedance_count: xr.DataArray
 
     Returns
     -------
-    panel.Column
+    pn.Column
     """
     plot_obj = exceedance_count.hvplot.line(
         x="time",
@@ -35,15 +37,15 @@ def plot_exceedance_count(exceedance_count):
 
 
 def get_geospatial_plot(
-    ds,
-    data_variable,
-    bar_min=None,
-    bar_max=None,
-    border_color="black",
-    line_width=0.5,
-    cmap="ae_orange",
-    hover_fill_color="blue",
-):
+    ds: xr.Dataset,
+    data_variable: str,
+    bar_min: float = None,
+    bar_max: float = None,
+    border_color: str = "black",
+    line_width: float = 0.5,
+    cmap: str = "ae_orange",
+    hover_fill_color: str = "blue",
+) -> Overlay:
     """Returns an interactive map from inputed dataset and selected data variable.
 
     Parameters
@@ -60,8 +62,10 @@ def get_geospatial_plot(
     border_color: str, optional
         Color for state lines and international borders
         Default to black
-    cmap: matplotlib colormap name or AE colormap names, optional
-        Colormap to apply to data
+    line_width: float, optional
+        Line width for state lines and international borders
+    cmap: str, optional
+        Colormap colormap name or AE colormap name to apply to data
         Default to "ae_orange" for mapped data or color-blind friendly "categorical_cb" for timeseries data.
     hover_fill_color: str, optional
         Default to "blue"
