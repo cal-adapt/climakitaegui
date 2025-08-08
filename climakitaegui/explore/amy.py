@@ -2,6 +2,8 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import hvplot.pandas
+import holoviews as hv
+from matplotlib.figure import Figure
 from matplotlib.ticker import MaxNLocator
 import datetime
 import param
@@ -28,13 +30,13 @@ param.parameterized.docstring_signature = False
 
 
 def meteo_yr_heatmap(
-    meteo_yr_df,
-    title="Meteorological Year",
-    cmap="ae_orange",
-    clabel=None,
-    width=500,
-    height=250,
-):
+    meteo_yr_df: pd.DataFrame,
+    title: str="Meteorological Year",
+    cmap: str="ae_orange",
+    clabel: str=None,
+    width: int=500,
+    height: int=250,
+) -> hv.HeatMap:
     """Create interactive (hvplot) meteorological year heatmap.
 
     Parameters
@@ -98,8 +100,8 @@ def meteo_yr_heatmap(
 
 
 def meteo_yr_heatmap_static(
-    meteo_yr_df, title="Meteorological Year", cmap="ae_orange", clabel=None
-):
+    meteo_yr_df: pd.DataFrame, title: str="Meteorological Year", cmap: str="ae_orange", clabel: str=None
+) -> Figure:
     """Create static (matplotlib) meteorological year heatmap
 
     Parameters
@@ -156,12 +158,12 @@ def meteo_yr_heatmap_static(
 
 
 def lineplot_from_amy_data(
-    amy_data,
-    computation_method=None,
-    location_subset=None,
-    warmlevel=None,
-    variable=None,
-):
+    amy_data: pd.DataFrame,
+    computation_method: str=None,
+    location_subset: str=None,
+    warmlevel: str=None,
+    variable: str=None,
+) -> Figure:
     """Generate a lineplot of meteorological year data, with mon-day-hr on the x-axis
 
     Parameters
@@ -247,7 +249,17 @@ def lineplot_from_amy_data(
 
 
 class AverageMetYearParameters(DataParametersWithPanes):
-    """An object that holds the data options parameters for the explore.tmy panel."""
+    """An object that holds the data options parameters for the explore.tmy panel.
+    
+    Attributes
+    ----------
+    amy_type: str
+        TMY type
+    computation_method: str
+    tmy_computation_description: str
+    cmap: str
+    warmlevel: float
+    """
 
     # Create dictionary of TMY advanced options depending on TMY type
     tmy_advanced_options_dict = {
