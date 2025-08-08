@@ -5,10 +5,12 @@ import hvplot.xarray
 from climakitae.explore.timeseries import TimeSeriesParameters, TimeSeries
 
 
-def timeseries_visualize(choices):
+def timeseries_visualize(choices: TimeSeriesParameters):
     """
     Uses holoviz 'panel' library to display the parameters and view defined in
-    an instance of _TimeSeriesParams.
+    an instance of TimeSeriesParameters.
+
+    choices: TimeSeriesParameters
     """
     smooth_text = "Smoothing applies a running mean to remove noise from the data."
     resample_text = "The resample window and period define the length of time over which to calculate the extreme."

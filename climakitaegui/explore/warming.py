@@ -1,14 +1,15 @@
-import param
-import panel as pn
-import xarray as xr
-import numpy as np
 import hvplot.xarray
 import hvplot.pandas
 import holoviews as hv
 from holoviews import opts
 import holoviews.plotting.bokeh
 import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import panel as pn
+import param
 from scipy.stats import pearson3
+import xarray as xr
 from climakitae.core.data_interface import DataInterface
 from climakitae.core.data_load import load
 from climakitae.core.paths import (
@@ -53,7 +54,7 @@ class WarmingLevels(BaseWarmingLevels):
         return warming_levels_visualize(self.wl_viz)
 
 
-def _get_cmap(variable, variable_descriptions, vmin):
+def _get_cmap(variable: str, variable_descriptions: pd.DataFrame, vmin: float) -> list:
     """Set colormap depending on variable and minimum value in data
     See read_ae_colormap function for more info on function output
 
@@ -70,7 +71,6 @@ def _get_cmap(variable, variable_descriptions, vmin):
     -------
     cmap: list
         Colormap
-
     """
 
     # Moisture/precip-related variables
@@ -125,9 +125,18 @@ def _select_one_gwl(one_gwl, snapshots):
     return all_plot_data
 
 
-def _check_single_spatial_dims(da):
+def _check_single_spatial_dims(da: xr.DataArray):
     """
     This checks needs to happen to determine whether or not the plots in postage stamps should be image plots or bar plots, depending on whether or not one of the spatial dimensions is <= a length of 1.
+
+    Parameters
+    ----------
+    da: xr.DataArray
+        Input data
+
+    Returns
+    -------
+    bool
     """
     if set(["lat", "lon"]).issubset(set(da.dims)):
         if len(da.lat) <= 1 or len(da.lon) <= 1:
@@ -156,9 +165,17 @@ def _select_one_gwl(one_gwl, snapshots):
     return all_plot_data
 
 
-def _check_single_spatial_dims(da):
+def _check_single_spatial_dims(da: xr.DataArray) -> bool:
     """
     This checks needs to happen to determine whether or not the plots in postage stamps should be image plots or bar plots, depending on whether or not one of the spatial dimensions is <= a length of 1.
+
+    Parameters
+    ----------
+    da: xr.DataArray
+
+    Returns
+    -------
+    bool
     """
     if set(["lat", "lon"]).issubset(set(da.dims)):
         if len(da.lat) <= 1 or len(da.lon) <= 1:
@@ -169,7 +186,7 @@ def _check_single_spatial_dims(da):
     return False
 
 
-def warming_levels_select(self):
+def warming_levels_select(self) -> pn.Card:
     """
     An initial pared-down version of the Select panel, with fewer options exposed,
     to help the user select a variable and location for further warming level steps.
@@ -248,7 +265,13 @@ def warming_levels_select(self):
 
 
 class WarmingLevelVisualize(param.Parameterized):
-    """Create Warming Levels panel GUI"""
+    """Create Warming Levels panel GUI
+
+    Attributes
+    ----------
+    warmlevel: float
+    ssp: str
+    """
 
     ## Intended to be accessed through WarmingLevels class.
     ## Allows the user to toggle between several data options.
@@ -487,7 +510,7 @@ class WarmingLevelVisualize(param.Parameterized):
         return to_plot
 
 
-def GCM_PostageStamps_MAIN_compute(wl_viz):
+def GCM_PostageStamps_MAIN_compute(wl_viz: WarmingLevelVisualize) -> dict:
     # Make plots by warming level. Add to dictionary
     warm_level_dict = {}
     for warmlevel in wl_viz.warming_levels:
@@ -655,7 +678,7 @@ def GCM_PostageStamps_MAIN_compute(wl_viz):
     return warm_level_dict
 
 
-def GCM_PostageStamps_STATS_compute(wl_viz):
+def GCM_PostageStamps_STATS_compute(wl_viz: WarmingLevelVisualize) -> dict:
     """
     Compute helper for stats postage stamps.
     Returns dictionary of warming levels to stats visuals.
@@ -809,7 +832,7 @@ def GCM_PostageStamps_STATS_compute(wl_viz):
     return warm_level_dict
 
 
-def warming_levels_visualize(wl_viz):
+def warming_levels_visualize(wl_viz: WarmingLevelVisualize) -> pn.Column:
     # Create panel doodad!
     GMT_plot = pn.Card(
         pn.Column(
@@ -893,8 +916,33 @@ def warming_levels_visualize(wl_viz):
     return warming_panel
 
 
-def _make_hvplot(data, clabel, clim, cmap, sopt, title, width=225, height=210):
-    """Make single map"""
+def _make_hvplot(
+    data: xr.DataArray,
+    clabel: str,
+    clim: tuple[int, int],
+    cmap: str,
+    sopt: bool,
+    title: str,
+    width: int = 225,
+    height: int = 210,
+) -> holoviews.element.Image | holoviews.element.Scatter:
+    """Make single map
+
+    Parameters
+    ----------
+    data: xr.DataArray
+    clabel: str
+    clim: tuple[int, int]
+    cmap: str
+    sopt: bool
+    title: str
+    width: int
+    height: int
+
+    Returns
+    -------
+    holoviews.element.Image | holoviews.element.Scatter
+    """
     if len(data.x) > 1 and len(data.y) > 1:
         # If data has more than one grid cell, make a pretty map
         _plot = data.hvplot.image(
@@ -932,7 +980,9 @@ def _make_hvplot(data, clabel, clim, cmap, sopt, title, width=225, height=210):
     return _plot
 
 
-def fit_models_and_plots(new_data, trad_data, dist_name):
+def fit_models_and_plots(
+    new_data: xr.DataArray, trad_data: xr.DataArray, dist_name: str
+):
     """
     Given a xr.DataArray and a distribution name, fit the distribution to the data, and generate
     a plot denoting a histogram of the data and the fitted distribution to the data.
