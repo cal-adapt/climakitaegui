@@ -50,7 +50,7 @@ def _add_res_to_ax(
     )
 
 
-def _map_view(selections: DataParameters, stations_gdf: GeoDataFrame) -> pn.Pane:
+def _map_view(selections: DataParameters, stations_gdf: GeoDataFrame) -> pn.pane:
     """View the current location selections on a map
     Updates dynamically
 
