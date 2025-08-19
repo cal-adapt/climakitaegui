@@ -25,18 +25,19 @@ class ThresholdParameters(DataParametersWithPanes):
 
     Attributes
     ----------
-    threshold_direction: str
-    threshold_value: float
-    duration1_length: int
-    duration1_type: str
-    period_length: int
-    period_type: str
-    group_length: int
-    group_type: str
-    duration2_length: int
-    duration2_type: str
-    smoothing: str
-    num_timesteps: int
+    threshold_direction : str
+    threshold_value : float
+    duration1_length : int
+    duration1_type : str
+    period_length : int
+    period_type : str
+    group_length : int
+    group_type : str
+    duration2_length : int
+    duration2_type : str
+    smoothing : str
+    num_timesteps : int
+
     """
 
     # Define the params (before __init__ so that we can access them during __init__)
@@ -206,18 +207,18 @@ class ThresholdParameters(DataParametersWithPanes):
 
 
 def _exceedance_visualize(choices: ThresholdParameters, option: int = 1) -> pn.Column:
-    """
-    Uses holoviz 'panel' library to display the parameters and view defined for
+    """Uses holoviz 'panel' library to display the parameters and view defined for
     exploring exceedance.
 
     Parameters
     ----------
-    choices: ThresholdParameters
-    option: int
+    choices : ThresholdParameters
+    option : int
 
     Returns
     -------
     pn.Column
+
     """
 
     match option:
@@ -288,16 +289,16 @@ def _exceedance_visualize(choices: ThresholdParameters, option: int = 1) -> pn.C
 
 
 def thresholds_visualize(self, option: int = 1) -> pn.Column:
-    """
-    Function for constructing and displaying the explore.thresholds() panel.
+    """Function for constructing and displaying the explore.thresholds() panel.
 
     Parameters
     ----------
-    option: int
+    option : int
 
     Returns
     -------
     pn.Column
+
     """
     _first_row_height = 350
 
