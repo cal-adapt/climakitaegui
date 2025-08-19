@@ -23,20 +23,21 @@ def _add_res_to_ax(
 
     Parameters
     ----------
-    poly: Polygon
+    poly : Polygon
         geometry to plot
-    ax: Axes
+    ax : Axes
         matplotlib axis
-    rotation: int
+    rotation : int
         annotation rotation angle
-    xy: tuple[float, float]
+    xy : tuple[float, float]
         longitude, latitude tuple of annotation location
-    label: str
+    label : str
         annonation text
-    color: str
+    color : str
         matplotlib color
-    crs: ccrs
+    crs : ccrs
         projection
+
     """
     ax.add_geometries(
         [poly], crs=ccrs.PlateCarree(), edgecolor=color, facecolor="white"
@@ -56,14 +57,15 @@ def _map_view(selections: DataParameters, stations_gdf: GeoDataFrame) -> pn.pane
 
     Parameters
     ----------
-    selections: DataParameters
+    selections : DataParameters
         User data selections
-    stations_gdf: GeoDataFrame
+    stations_gdf : GeoDataFrame
         GeoDataFrame with station coordinates
 
     Returns
     -------
-    mpl_pane: pn.pane
+    mpl_pane : pn.pane
+
     """
 
     _wrf_bb = {
@@ -239,9 +241,9 @@ class DataParametersWithPanes(DataParameters):
         watch=False,
     )
     def scenario_view(self) -> pn.pane:
-        """
-        Displays a timeline to help the user visualize the time ranges
+        """Displays a timeline to help the user visualize the time ranges
         available, and the subset of time slice selected.
+
         """
 
         fig0 = Figure(figsize=(2, 2))
@@ -386,6 +388,7 @@ class Select(DataParametersWithPanes):
     """Class for storing and displaying data retrieval parameters interactively.
     DataParameters class can be used instead if you don't need to visually show
     the parameters.
+
     """
 
     def show(self) -> pn.Card:
@@ -401,6 +404,7 @@ def _selections_param_to_panel(self) -> dict:
     Returns
     -------
     dict
+
     """
     area_subset = pn.widgets.Select.from_param(
         self.param.area_subset, name="Subset the data by...", width=225
@@ -540,8 +544,7 @@ def _selections_param_to_panel(self) -> dict:
 
 
 def _display_select(self) -> pn.Card:
-    """
-    Called by Select at the beginning of the workflow, to capture user
+    """Called by Select at the beginning of the workflow, to capture user
     selections. Displays panel of widgets from which to make selections.
     Modifies DataParameters object, which is used by retrieve() to build an
     appropriate xarray Dataset.
@@ -549,6 +552,7 @@ def _display_select(self) -> pn.Card:
     Returns
     -------
     pn.Card
+
     """
     # Get formatted panel widgets for each parameter
     widgets = _selections_param_to_panel(self)
