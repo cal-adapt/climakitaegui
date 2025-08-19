@@ -18,11 +18,12 @@ def plot_exceedance_count(exceedance_count: xr.DataArray) -> pn.Column:
 
     Parameters
     ----------
-    exceedance_count: xr.DataArray
+    exceedance_count : xr.DataArray
 
     Returns
     -------
     pn.Column
+
     """
     plot_obj = exceedance_count.hvplot.line(
         x="time",
@@ -50,30 +51,31 @@ def get_geospatial_plot(
 
     Parameters
     ----------
-    ds: xr.Dataset
+    ds : xr.Dataset
         Data to plot
-    data_variable: str
+    data_variable : str
         Valid variable option in input dataset
         Valid options: "d_statistic","p_value","return_value","return_prob","return_period"
-    bar_min: float, optional
+    bar_min : float, optional
         Colorbar minimum value
-    bar_max: float, optional
+    bar_max : float, optional
         Colorbar maximum value
-    border_color: str, optional
+    border_color : str, optional
         Color for state lines and international borders
         Default to black
-    line_width: float, optional
+    line_width : float, optional
         Line width for state lines and international borders
-    cmap: str, optional
+    cmap : str, optional
         Colormap colormap name or AE colormap name to apply to data
         Default to "ae_orange" for mapped data or color-blind friendly "categorical_cb" for timeseries data.
-    hover_fill_color: str, optional
+    hover_fill_color : str, optional
         Default to "blue"
 
     Returns
     -------
     holoviews.core.overlay.Overlay
         Map of input data
+
     """
 
     if cmap in [
