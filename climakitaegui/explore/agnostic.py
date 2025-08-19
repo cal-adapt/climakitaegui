@@ -18,12 +18,11 @@ sns.set_style("whitegrid")
 
 
 def create_conversion_function(lookup_tables):
-    """
-    Create a function that converts between warming level and time.
+    """Create a function that converts between warming level and time.
 
     Parameters
     ----------
-    lookup_tables: dict of pandas.DataFrame
+    lookup_tables : dict of pandas.DataFrame
         Lookup tables for the conversions as output from the
         `create_lookup_tables` function. It is a dictionary with a "time
         lookup table" and a "warming level lookup table".
@@ -39,6 +38,7 @@ def create_conversion_function(lookup_tables):
     Notes
     -----
     This saves time otherwise needed to remake the lookup tables for each call.
+
     """
     return lambda scenario="ssp370", warming_level=None, year=None: find_wl_or_time(
         lookup_tables, scenario, warming_level, year
@@ -51,8 +51,7 @@ def find_wl_or_time(
     warming_level: str = None,
     year: int = None,
 ) -> str | None:
-    """
-    Given either a warming level or a time, find information about the other.
+    """Given either a warming level or a time, find information about the other.
 
     If given a `warming_level`, the function looks up the times when simulations
     under the specified `scenario` reach the warming level. It returns the
@@ -70,15 +69,15 @@ def find_wl_or_time(
 
     Parameters
     ----------
-    lookup_tables: dict[pd.DataFrame]
+    lookup_tables : dict[pd.DataFrame]
         Lookup tables as output from the `create_lookup_tables` function. It
         is a dictionary with a "time lookup table" and a "warming level lookup
         table".
-    scenario: str, optional
+    scenario : str, optional
         The scenario to consider. The default is "ssp370".
-    warming_level: str, optional
+    warming_level : str, optional
         The warming level to analyze ("1.5", "2.0", "3.0"). The default is None.
-    year: int, optional
+    year : int, optional
         The year to analyze. Must be between 2021 and 2089. The default is None.
 
     Returns
@@ -88,6 +87,7 @@ def find_wl_or_time(
         Given a year, returns None.
         None is also returned if neither warming level nor year is given, or
         if both are given.
+
     """
     if not warming_level and not year:
         print("Pass in either a warming level or a year.")
@@ -192,22 +192,22 @@ def _plot_warm_levels(fig: Figure, ax: Axes, levels: np.ndarray, year: int) -> A
 
 
 def plot_WRF(sim_vals: xr.DataArray, agg_func, years: Tuple[int, int]):
-    """
-    Visualizes a barplot of WRF simulations that are aggregated from `agg_lat_lon_sims` or `agg_area_subset_sims`.
+    """Visualizes a barplot of WRF simulations that are aggregated from `agg_lat_lon_sims` or `agg_area_subset_sims`.
     Used with `results_gridcell` or `results_area` as inputs, as well as the aggregated function and time slice, all predefined within `agnostic_tools.ipynb`.
 
     Parameters
     ----------
-    sim_vals: xr.DataArray
+    sim_vals : xr.DataArray
         DataArray of the aggregated results of a climate variable.
-    agg_func: Function
+    agg_func : Function
         Function that takes in a series of values and returns a statistic, like np.mean
-    time_slice: Tuple[int, int]
+    time_slice : Tuple[int, int]
         Years of interest
 
     Returns
     -------
     None
+
     """
     sims = [name.split(",")[0] for name in list(sim_vals.simulation.values)]
     sims = [name[4:] for name in sims]
@@ -245,25 +245,25 @@ def plot_WRF(sim_vals: xr.DataArray, agg_func, years: Tuple[int, int]):
 def plot_LOCA(
     sim_vals: xr.DataArray, agg_func, time_slice: Tuple[int, int], stats: dict
 ):
-    """
-    Visualizes a histogram of LOCA simulations that are aggregated from `agg_lat_lon_sims` or `agg_area_subset_sims`.
+    """Visualizes a histogram of LOCA simulations that are aggregated from `agg_lat_lon_sims` or `agg_area_subset_sims`.
     Used with `results_gridcell` or `results_area` as inputs, as well as the aggregated function, time slice, and
     simulation stats all predefined within `agnostic_tools.ipynb`.
 
     Parameters
     ----------
-    sim_vals: xr.DataArray
+    sim_vals : xr.DataArray
         DataArray of the aggregated results of a climate variable.
-    agg_func: Function
+    agg_func : Function
         Function that takes in a series of values and returns a statistic, like np.mean
-    time_slice: tuple
+    time_slice : tuple
         Years of interest
-    stats: dict
+    stats : dict
         Statistics that are returned from `single_stats_gridcell` or `single_stats_area` in `agnostic_tools.ipynb`
 
     Returns
     -------
     None
+
     """
     # Finding the proper title for the plot
     area_text = ""
@@ -317,20 +317,20 @@ def plot_LOCA(
 
 
 def plot_climate_response_WRF(var1: xr.DataArray, var2: xr.DataArray):
-    """
-    Visualizes a scatterplot of two aggregated WRF climate variables from `agg_lat_lon_sims` or `agg_area_subset_sims`.
+    """Visualizes a scatterplot of two aggregated WRF climate variables from `agg_lat_lon_sims` or `agg_area_subset_sims`.
     Used with `results_gridcell` or `results_area` as inputs, as seen within `agnostic_tools.ipynb`.
 
     Parameters
     ----------
-    var1: xr.DataArray
+    var1 : xr.DataArray
         DataArray of the first climate variable, with simulation, name, and units attributes.
-    var2: xr.DataArray
+    var2 : xr.DataArray
         DataArray of the second climate variable, with simulation, name, and units attributes.
 
     Returns
     -------
     pn.Panel
+
     """
     # Make sure that the two variables are the same length and have the same simulation names
     if (len(var1) != len(var2)) & (
@@ -364,20 +364,20 @@ def plot_climate_response_WRF(var1: xr.DataArray, var2: xr.DataArray):
 
 
 def plot_climate_response_LOCA(var1: xr.DataArray, var2: xr.DataArray):
-    """
-    Visualizes a scatterplot of two aggregated LOCA climate variables from `agg_lat_lon_sims` or `agg_area_subset_sims`.
+    """Visualizes a scatterplot of two aggregated LOCA climate variables from `agg_lat_lon_sims` or `agg_area_subset_sims`.
     Used with `results_gridcell` or `results_area` as inputs, as seen within `agnostic_tools.ipynb`.
 
     Parameters
     ----------
-    var1: xr.DataArray
+    var1 : xr.DataArray
         DataArray of the first climate variable, with simulation, name, and units attributes.
-    var2: xr.DataArray
+    var2 : xr.DataArray
         DataArray of the second climate variable, with simulation, name, and units attributes.
 
     Returns
     -------
     None
+
     """
     # Make sure that the two variables are the same length and have the same simulation names
     if (len(var1) != len(var2)) & (
