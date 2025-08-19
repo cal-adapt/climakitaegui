@@ -60,17 +60,18 @@ def _get_cmap(variable: str, variable_descriptions: pd.DataFrame, vmin: float) -
 
     Parameters
     ----------
-    variable: str
+    variable : str
         Display name of variable
-    variable_descriptions: pd.DataFrame
+    variable_descriptions : pd.DataFrame
         climakitae package data with variable descriptions and corresponding colormaps
-    vmin: float
+    vmin : float
         minimum value of data
 
     Returns
     -------
-    cmap: list
+    cmap : list
         Colormap
+
     """
 
     # Moisture/precip-related variables
@@ -113,12 +114,12 @@ def _get_cmap(variable: str, variable_descriptions: pd.DataFrame, vmin: float) -
 
 
 def _select_one_gwl(one_gwl, snapshots):
-    """
-    This needs to happen in two places. You have to drop the sims
+    """This needs to happen in two places. You have to drop the sims
     which are nan because they don't reach that warming level, else the
     plotting functions and cross-sim statistics will get confused.
     But it's important that you drop it from a copy, or it may modify the
     original data.
+
     """
     all_plot_data = snapshots.sel(warming_level=one_gwl).copy()
     all_plot_data = all_plot_data.dropna("all_sims", how="all")
@@ -126,17 +127,17 @@ def _select_one_gwl(one_gwl, snapshots):
 
 
 def _check_single_spatial_dims(da: xr.DataArray):
-    """
-    This checks needs to happen to determine whether or not the plots in postage stamps should be image plots or bar plots, depending on whether or not one of the spatial dimensions is <= a length of 1.
+    """This checks needs to happen to determine whether or not the plots in postage stamps should be image plots or bar plots, depending on whether or not one of the spatial dimensions is <= a length of 1.
 
     Parameters
     ----------
-    da: xr.DataArray
+    da : xr.DataArray
         Input data
 
     Returns
     -------
     bool
+
     """
     if set(["lat", "lon"]).issubset(set(da.dims)):
         if len(da.lat) <= 1 or len(da.lon) <= 1:
@@ -153,12 +154,12 @@ class WarmingLevelChoose(BaseWarmingLevelChoose, DataParametersWithPanes):
 
 
 def _select_one_gwl(one_gwl, snapshots):
-    """
-    This needs to happen in two places. You have to drop the sims
+    """This needs to happen in two places. You have to drop the sims
     which are nan because they don't reach that warming level, else the
     plotting functions and cross-sim statistics will get confused.
     But it's important that you drop it from a copy, or it may modify the
     original data.
+
     """
     all_plot_data = snapshots.sel(warming_level=one_gwl).copy()
     all_plot_data = all_plot_data.dropna("all_sims", how="all")
@@ -166,16 +167,17 @@ def _select_one_gwl(one_gwl, snapshots):
 
 
 def _check_single_spatial_dims(da: xr.DataArray) -> bool:
-    """
-    This checks needs to happen to determine whether or not the plots in postage stamps should be image plots or bar plots, depending on whether or not one of the spatial dimensions is <= a length of 1.
+    """This checks needs to happen to determine whether or not the plots in postage stamps should be image plots
+    or bar plots, depending on whether or not one of the spatial dimensions is <= a length of 1.
 
     Parameters
     ----------
-    da: xr.DataArray
+    da : xr.DataArray
 
     Returns
     -------
     bool
+
     """
     if set(["lat", "lon"]).issubset(set(da.dims)):
         if len(da.lat) <= 1 or len(da.lon) <= 1:
@@ -187,9 +189,9 @@ def _check_single_spatial_dims(da: xr.DataArray) -> bool:
 
 
 def warming_levels_select(self) -> pn.Card:
-    """
-    An initial pared-down version of the Select panel, with fewer options exposed,
+    """An initial pared-down version of the Select panel, with fewer options exposed,
     to help the user select a variable and location for further warming level steps.
+
     """
     widgets = _selections_param_to_panel(self)
 
@@ -269,8 +271,9 @@ class WarmingLevelVisualize(param.Parameterized):
 
     Attributes
     ----------
-    warmlevel: float
-    ssp: str
+    warmlevel : float
+    ssp : str
+
     """
 
     ## Intended to be accessed through WarmingLevels class.
@@ -302,11 +305,15 @@ class WarmingLevelVisualize(param.Parameterized):
     )
 
     def __init__(self, gwl_snapshots, wl_params, warming_levels):
-        """
-        Two things are passed in where this is initialized, and come in through
+        """Two things are passed in where this is initialized, and come in through
         *args, and **params
-            wl_params: an instance of WarmingLevelParameters
-            gwl_snapshots: xarray DataArray -- anomalies at each warming level
+
+        Parameters
+        ----------
+        wl_params : WarmingLevelParameters
+        gwl_snapshots : xr.DataArray
+            anomalies at each warming level
+
         """
         # super().__init__(*args, **params)
         super().__init__()
@@ -511,7 +518,17 @@ class WarmingLevelVisualize(param.Parameterized):
 
 
 def GCM_PostageStamps_MAIN_compute(wl_viz: WarmingLevelVisualize) -> dict:
-    # Make plots by warming level. Add to dictionary
+    """Make plots by warming level. Add to dictionary
+
+    Parameters
+    ----------
+    wl_viz : WarmingLevelVisualize
+
+    Returns
+    -------
+    dict
+
+    """
     warm_level_dict = {}
     for warmlevel in wl_viz.warming_levels:
 
@@ -679,9 +696,17 @@ def GCM_PostageStamps_MAIN_compute(wl_viz: WarmingLevelVisualize) -> dict:
 
 
 def GCM_PostageStamps_STATS_compute(wl_viz: WarmingLevelVisualize) -> dict:
-    """
-    Compute helper for stats postage stamps.
+    """Compute helper for stats postage stamps.
     Returns dictionary of warming levels to stats visuals.
+
+    Parameters
+    ----------
+    wl_viz : WarmingLevelVisualize
+
+    Returns
+    -------
+    dict
+
     """
     # Get data to plot
     warm_level_dict = {}
@@ -833,7 +858,17 @@ def GCM_PostageStamps_STATS_compute(wl_viz: WarmingLevelVisualize) -> dict:
 
 
 def warming_levels_visualize(wl_viz: WarmingLevelVisualize) -> pn.Column:
-    # Create panel doodad!
+    """Create panel doodad!
+
+    Parameters
+    ----------
+    wl_viz : WarmingLevelVisualize
+
+    Returns
+    -------
+    pn.Column
+
+    """
     GMT_plot = pn.Card(
         pn.Column(
             (
@@ -930,18 +965,19 @@ def _make_hvplot(
 
     Parameters
     ----------
-    data: xr.DataArray
-    clabel: str
-    clim: tuple[int, int]
-    cmap: str
-    sopt: bool
-    title: str
-    width: int
-    height: int
+    data : xr.DataArray
+    clabel : str
+    clim : tuple[int, int]
+    cmap : str
+    sopt : bool
+    title : str
+    width : int
+    height : int
 
     Returns
     -------
     holoviews.element.Image | holoviews.element.Scatter
+
     """
     if len(data.x) > 1 and len(data.y) > 1:
         # If data has more than one grid cell, make a pretty map
@@ -983,9 +1019,15 @@ def _make_hvplot(
 def fit_models_and_plots(
     new_data: xr.DataArray, trad_data: xr.DataArray, dist_name: str
 ):
-    """
-    Given a xr.DataArray and a distribution name, fit the distribution to the data, and generate
+    """Given a xr.DataArray and a distribution name, fit the distribution to the data, and generate
     a plot denoting a histogram of the data and the fitted distribution to the data.
+
+    Parameters
+    ----------
+    new_data : xr.DataArray
+    trad_data : xr.DataArray
+    dist_name : str
+
     """
     plt.figure(figsize=(10, 5))
 
