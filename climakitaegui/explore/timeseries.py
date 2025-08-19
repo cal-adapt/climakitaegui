@@ -6,11 +6,13 @@ from climakitae.explore.timeseries import TimeSeriesParameters, TimeSeries
 
 
 def timeseries_visualize(choices: TimeSeriesParameters):
-    """
-    Uses holoviz 'panel' library to display the parameters and view defined in
+    """Uses holoviz 'panel' library to display the parameters and view defined in
     an instance of TimeSeriesParameters.
 
+    Parameters
+    ----------
     choices: TimeSeriesParameters
+
     """
     smooth_text = "Smoothing applies a running mean to remove noise from the data."
     resample_text = "The resample window and period define the length of time over which to calculate the extreme."
@@ -79,9 +81,9 @@ class TimeSeriesParameters(TimeSeriesParameters):
         watch=False,
     )
     def view(self):
-        """
-        Does the main work of timeseries.explore(). Updating a plot in real-time
+        """Does the main work of timeseries.explore(). Updating a plot in real-time
         to enable the user to preview the results of any timeseries transforms.
+
         """
         to_plot = self.transform_data()
 
@@ -212,7 +214,8 @@ class TimeSeries(TimeSeries):
         self.choices = TimeSeriesParameters(data)
 
     def explore(self):
-        """Create an interactive visualization of the timeseries data, dependant on the attributes set in previous steps. Allows user to directly modify the data in the GUI. Only works in a jupyter notebook environment.
+        """Create an interactive visualization of the timeseries data, dependant on the attributes set in previous steps.
+        Allows user to directly modify the data in the GUI. Only works in a jupyter notebook environment.
 
         Returns
         -------
