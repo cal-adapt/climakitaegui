@@ -1,5 +1,7 @@
 import panel as pn
 import param
+from geopandas import GeoDataFrame
+from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 import matplotlib.ticker as ticker
 import cartopy.feature as cfeature
@@ -9,19 +11,33 @@ from climakitae.core.data_interface import _get_subarea, DataParameters
 
 
 def _add_res_to_ax(
-    poly, ax, rotation, xy, label, color="black", crs=ccrs.PlateCarree()
+    poly: Polygon,
+    ax: Axes,
+    rotation: int,
+    xy: tuple[float, float],
+    label: str,
+    color: str = "black",
+    crs: ccrs = ccrs.PlateCarree(),
 ):
     """Add resolution line and label to axis
 
     Parameters
     ----------
-    poly: geometry to plot
-    ax: matplotlib axis
-    color: matplotlib color
-    rotation: int
-    xy: tuple
-    label: str
-    crs: projection
+    poly : Polygon
+        geometry to plot
+    ax : Axes
+        matplotlib axis
+    rotation : int
+        annotation rotation angle
+    xy : tuple[float, float]
+        longitude, latitude tuple of annotation location
+    label : str
+        annonation text
+    color : str
+        matplotlib color
+    crs : ccrs
+        projection
+
     """
     ax.add_geometries(
         [poly], crs=ccrs.PlateCarree(), edgecolor=color, facecolor="white"
@@ -35,20 +51,21 @@ def _add_res_to_ax(
     )
 
 
-def _map_view(selections, stations_gdf):
+def _map_view(selections: DataParameters, stations_gdf: GeoDataFrame) -> pn.pane:
     """View the current location selections on a map
     Updates dynamically
 
     Parameters
     ----------
-    selections: DataParameters
+    selections : DataParameters
         User data selections
-    stations_gpd: gpd.DataFrame
-        DataFrame with station coordinates
+    stations_gdf : GeoDataFrame
+        GeoDataFrame with station coordinates
 
     Returns
     -------
-    mpl_pane: pn.Pane
+    mpl_pane : pn.pane
+
     """
 
     _wrf_bb = {
@@ -223,10 +240,10 @@ class DataParametersWithPanes(DataParameters):
         "approach",
         watch=False,
     )
-    def scenario_view(self):
-        """
-        Displays a timeline to help the user visualize the time ranges
+    def scenario_view(self) -> pn.pane:
+        """Displays a timeline to help the user visualize the time ranges
         available, and the subset of time slice selected.
+
         """
 
         fig0 = Figure(figsize=(2, 2))
@@ -362,7 +379,7 @@ class DataParametersWithPanes(DataParameters):
         "stations",
         watch=False,
     )
-    def map_view(self):
+    def map_view(self) -> pn.pane:
         """Create a map of the location selections"""
         return _map_view(selections=self, stations_gdf=self._stations_gdf)
 
@@ -371,21 +388,23 @@ class Select(DataParametersWithPanes):
     """Class for storing and displaying data retrieval parameters interactively.
     DataParameters class can be used instead if you don't need to visually show
     the parameters.
+
     """
 
-    def show(self):
+    def show(self) -> pn.Card:
         # Show panel visually
         select_panel = _display_select(self)
         return select_panel
 
 
-def _selections_param_to_panel(self):
+def _selections_param_to_panel(self) -> dict:
     """For the Select object, get parameters and parameter
     descriptions formatted as panel widgets
 
     Returns
     -------
     dict
+
     """
     area_subset = pn.widgets.Select.from_param(
         self.param.area_subset, name="Subset the data by...", width=225
@@ -524,9 +543,8 @@ def _selections_param_to_panel(self):
     return widgets_dict | text_dict
 
 
-def _display_select(self):
-    """
-    Called by Select at the beginning of the workflow, to capture user
+def _display_select(self) -> pn.Card:
+    """Called by Select at the beginning of the workflow, to capture user
     selections. Displays panel of widgets from which to make selections.
     Modifies DataParameters object, which is used by retrieve() to build an
     appropriate xarray Dataset.
@@ -534,6 +552,7 @@ def _display_select(self):
     Returns
     -------
     pn.Card
+
     """
     # Get formatted panel widgets for each parameter
     widgets = _selections_param_to_panel(self)

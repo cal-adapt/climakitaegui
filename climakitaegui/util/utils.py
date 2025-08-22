@@ -3,13 +3,14 @@ def hdd_cdd_lineplot(annual_data, trendline, title="title"):
 
     Parameters
     ----------
-    annual_data: xr.DataArray
-    trendline: xr.Dataset
-    title: str
+    annual_data : xr.DataArray
+    trendline : xr.Dataset
+    title : str
 
     Returns
     -------
-    data: hvplot.line
+    data : hvplot.line
+
     """
     return annual_data.hvplot.line(
         x="year",
@@ -28,11 +29,12 @@ def hdh_cdh_lineplot(data):
 
     Parameters
     ----------
-    data: xr.DataArray
+    data : xr.DataArray
 
     Returns
     -------
-    data: hvplot.line
+    data : hvplot.line
+
     """
     return data.hvplot.line(
         x="time", by="simulation", title=data.name, ylabel=data.name + " (degF)"

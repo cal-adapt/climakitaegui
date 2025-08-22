@@ -2,6 +2,8 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import hvplot.pandas
+import holoviews as hv
+from matplotlib.figure import Figure
 from matplotlib.ticker import MaxNLocator
 import datetime
 import param
@@ -28,36 +30,37 @@ param.parameterized.docstring_signature = False
 
 
 def meteo_yr_heatmap(
-    meteo_yr_df,
-    title="Meteorological Year",
-    cmap="ae_orange",
-    clabel=None,
-    width=500,
-    height=250,
-):
+    meteo_yr_df: pd.DataFrame,
+    title: str = "Meteorological Year",
+    cmap: str = "ae_orange",
+    clabel: str = None,
+    width: int = 500,
+    height: int = 250,
+) -> hv.HeatMap:
     """Create interactive (hvplot) meteorological year heatmap.
 
     Parameters
     ----------
-    meteo_yr_df: pd.DataFrame
+    meteo_yr_df : pd.DataFrame
         Meteorological year dataframe, with hour of day as columns and day of year as index
         Output of either compute_severe_yr or compute_meteo_yr
-    title: str, optional
+    title : str, optional
         Title to give heatmap. Default to "Meteorological Year"
-    cmap: matplotlib colormap name or AE colormap names, optional
+    cmap : matplotlib colormap name or AE colormap names, optional
         Colormap to apply to heatmap. Default to "ae_orange"
-    clabel: str, optional
+    clabel : str, optional
         Name of variable being plotted. Default to None.
         Will be applied to label of colorbar.
-    width: int, optional
+    width : int, optional
         Width of heatmap. Default to 500
-    height: int, optional
+    height : int, optional
         Height of heatmap. Default to 250.
 
     Returns
     -------
     holoviews.element.raster.HeatMap
         Interactive heatmap
+
     """
     # Set colormap if it's an ae colormap
     # If using hvplot, set cmap_hex = True
@@ -98,20 +101,23 @@ def meteo_yr_heatmap(
 
 
 def meteo_yr_heatmap_static(
-    meteo_yr_df, title="Meteorological Year", cmap="ae_orange", clabel=None
-):
+    meteo_yr_df: pd.DataFrame,
+    title: str = "Meteorological Year",
+    cmap: str = "ae_orange",
+    clabel: str = None,
+) -> Figure:
     """Create static (matplotlib) meteorological year heatmap
 
     Parameters
     ----------
-    meteo_yr_df: pd.DataFrame
+    meteo_yr_df : pd.DataFrame
         Meteorological year dataframe, with hour of day as columns and day of year as index
         Output of either compute_severe_yr or compute_meteo_yr
-    title: str, optional
+    title : str, optional
         Title to give heatmap. Default to "Meteorological Year"
-    cmap: matplotlib colormap name or AE colormap names, optional
+    cmap : matplotlib colormap name or AE colormap names, optional
         Colormap to apply to heatmap. Default to "ae_orange"
-    clabel: str, optional
+    clabel : str, optional
         Name of variable being plotted. Default to None.
         Will be applied to label of colorbar.
 
@@ -119,6 +125,7 @@ def meteo_yr_heatmap_static(
     -------
     matplotlib.figure.Figure
         Static heatmap
+
     """
     # Set colormap if it's an ae colormap
     # If using hvplot, set cmap_hex = True
@@ -156,29 +163,29 @@ def meteo_yr_heatmap_static(
 
 
 def lineplot_from_amy_data(
-    amy_data,
-    computation_method=None,
-    location_subset=None,
-    warmlevel=None,
-    variable=None,
-):
+    amy_data: pd.DataFrame,
+    computation_method: str = None,
+    location_subset: str = None,
+    warmlevel: str = None,
+    variable: str = None,
+) -> Figure:
     """Generate a lineplot of meteorological year data, with mon-day-hr on the x-axis
 
     Parameters
     ----------
-    amy_data: pd.DataFrame
+    amy_data : pd.DataFrame
         Meteorological year dataframe, with hour of day as columns and day of year as index
         Output of either compute_severe_yr or compute_meteo_yr
-    computation_method: str, optional
+    computation_method : str, optional
         Method used to compute the meteorological year.
         Used to add descriptive information to the plot title.
-    location_subset: str, optional
+    location_subset : str, optional
         Location subset of data.
         Used to add descriptive information to the plot title.
-    warmlevel: str, optional
+    warmlevel : str, optional
         Warming level used to generate data.
         Used to add descriptive information to the plot title.
-    variable: str, optional
+    variable : str, optional
         Name of data variable.
         Used to add descriptive information to the plot title.
 
@@ -247,7 +254,18 @@ def lineplot_from_amy_data(
 
 
 class AverageMetYearParameters(DataParametersWithPanes):
-    """An object that holds the data options parameters for the explore.tmy panel."""
+    """An object that holds the data options parameters for the explore.tmy panel.
+
+    Attributes
+    ----------
+    amy_type : str
+        TMY type
+    computation_method : str
+    tmy_computation_description : str
+    cmap : str
+    warmlevel : float
+
+    """
 
     # Create dictionary of TMY advanced options depending on TMY type
     tmy_advanced_options_dict = {
@@ -512,9 +530,7 @@ class AverageMetYearParameters(DataParametersWithPanes):
 
 
 def amy_visualize(self):
-    """
-    Creates a new AMY focus panel object to display user selections
-    """
+    """Creates a new AMY focus panel object to display user selections"""
     user_options = pn.Card(
         pn.Row(
             pn.Column(

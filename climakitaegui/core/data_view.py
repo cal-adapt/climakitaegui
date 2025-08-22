@@ -1,29 +1,34 @@
 import warnings
 import numpy as np
+import holoviews as hv
 import hvplot.xarray
+from matplotlib.figure import Figure
+from typing import Tuple
+import xarray as xr
 from climakitae.util.colormap import read_ae_colormap
 from climakitae.util.utils import reproject_data
 from climakitae.core.data_interface import VariableDescriptions
 
 
-def compute_vmin_vmax(da_min, da_max):
+def compute_vmin_vmax(da_min: xr.Dataset, da_max: xr.Dataset) -> Tuple[int, int, bool]:
     """Compute min, max, and center for plotting
 
     Parameters
     ----------
-    da_min: xr.Dataset
+    da_min : xr.Dataset
         data input to calculate the minimum
-    da_max: xr.Dataset
+    da_max : xr.Dataset
         data input to calculate the maximum
 
     Returns
     -------
-    vmin: int
+    vmin : int
         minimum value
-    vmax: int
+    vmax : int
         maximum value
-    sopt: bool
+    sopt : bool
         indicates symmetry if vmin and vmax have opposite signs
+
     """
     vmin = np.nanpercentile(da_min, 1)
     vmax = np.nanpercentile(da_max, 99)
@@ -36,7 +41,13 @@ def compute_vmin_vmax(da_min, da_max):
     return vmin, vmax, sopt
 
 
-def view(data, lat_lon=True, width=None, height=None, cmap=None):
+def view(
+    data: xr.DataArray,
+    lat_lon: bool = True,
+    width: int = None,
+    height: int = None,
+    cmap: str = None,
+) -> hv.DynamicMap | Figure:
     """Create a generic visualization of the data
 
     Visualization will depend on the shape of the input data.
@@ -44,18 +55,18 @@ def view(data, lat_lon=True, width=None, height=None, cmap=None):
 
     Parameters
     ----------
-    data: xr.DataArray
+    data : xr.DataArray
         Input data
-    lat_lon: bool, optional
+    lat_lon : bool, optional
         Reproject to lat/lon coords?
         Default to True.
-    width: int, optional
+    width : int, optional
         Width of plot
         Default to hvplot default
-    height: int, optional
+    height : int, optional
         Height of plot
         Default to hvplot.image default
-    cmap: matplotlib colormap name or AE colormap names
+    cmap : matplotlib colormap name or AE colormap names
         Colormap to apply to data
         Default to "ae_orange" for mapped data or color-blind friendly "categorical_cb" for timeseries data.
 
@@ -71,6 +82,7 @@ def view(data, lat_lon=True, width=None, height=None, cmap=None):
     ------
     UserWarning
         Warn user that the function will be slow if data has not been loaded into memory
+
     """
 
     var_desc = VariableDescriptions()
