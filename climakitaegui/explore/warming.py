@@ -13,12 +13,12 @@ import xarray as xr
 from climakitae.core.data_interface import DataInterface
 from climakitae.core.data_load import load
 from climakitae.core.paths import (
-    ssp119_file,
-    ssp126_file,
-    ssp245_file,
-    ssp370_file,
-    ssp585_file,
-    hist_file,
+    SSP119_FILE,
+    SSP126_FILE,
+    SSP245_FILE,
+    SSP370_FILE,
+    SSP585_FILE,
+    HIST_FILE,
 )
 from climakitae.explore.threshold_tools import _get_distr_func, _get_fitted_distr
 from climakitae.explore.warming import WarmingLevels as BaseWarmingLevels
@@ -281,12 +281,12 @@ class WarmingLevelVisualize(param.Parameterized):
     ## Produces dynamically updating gwl snapshot maps.
 
     # Read in GMT context plot data
-    ssp119_data = read_csv_file(ssp119_file, index_col="Year")
-    ssp126_data = read_csv_file(ssp126_file, index_col="Year")
-    ssp245_data = read_csv_file(ssp245_file, index_col="Year")
-    ssp370_data = read_csv_file(ssp370_file, index_col="Year")
-    ssp585_data = read_csv_file(ssp585_file, index_col="Year")
-    hist_data = read_csv_file(hist_file, index_col="Year")
+    ssp119_data = read_csv_file(SSP119_FILE, index_col="Year")
+    ssp126_data = read_csv_file(SSP126_FILE, index_col="Year")
+    ssp245_data = read_csv_file(SSP245_FILE, index_col="Year")
+    ssp370_data = read_csv_file(SSP370_FILE, index_col="Year")
+    ssp585_data = read_csv_file(SSP585_FILE, index_col="Year")
+    hist_data = read_csv_file(HIST_FILE, index_col="Year")
 
     warmlevel = param.Selector(
         default=1.5, objects=[1.5, 2, 3, 4], doc="Warming level in degrees Celcius."
