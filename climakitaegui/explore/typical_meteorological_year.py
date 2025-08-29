@@ -1,5 +1,5 @@
-import xarray as xr
 import panel
+import xarray as xr
 
 
 def plot_one_var_cdf(cdf_da: xr.Dataset, var: str) -> panel.layout.base.Column:
