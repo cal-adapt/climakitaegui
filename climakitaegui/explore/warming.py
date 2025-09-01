@@ -288,6 +288,12 @@ class WarmingLevelVisualize(param.Parameterized):
     ssp585_data = read_csv_file(SSP585_FILE, index_col="Year")
     hist_data = read_csv_file(HIST_FILE, index_col="Year")
 
+    # Get the variable descriptions table if needed for plotting
+    try:
+        variable_descriptions = DataInterface().variable_descriptions
+    except:
+        variable_descriptions = None
+
     warmlevel = param.Selector(
         default=1.5, objects=[1.5, 2, 3, 4], doc="Warming level in degrees Celcius."
     )
@@ -304,42 +310,51 @@ class WarmingLevelVisualize(param.Parameterized):
         doc="Shared Socioeconomic Pathway.",
     )
 
-    def __init__(self, gwl_snapshots, wl_params, warming_levels):
-        """Two things are passed in where this is initialized, and come in through
-        *args, and **params
+    def __init__(self, gwl_snapshots=None, wl_params=None, warming_levels=None):
+        """Initialize with optional parameters.
 
         Parameters
         ----------
-        wl_params : WarmingLevelParameters
-        gwl_snapshots : xr.DataArray
+        wl_params : WarmingLevelParameters, optional
+            Parameters for warming levels
+        gwl_snapshots : xr.DataArray, optional
             anomalies at each warming level
+        warming_levels : list, optional
+            List of warming levels to analyze
 
         """
-        # super().__init__(*args, **params)
         super().__init__()
         self.gwl_snapshots = gwl_snapshots
         self.wl_params = wl_params
-        self.warming_levels = warming_levels
-        some_dims = self.gwl_snapshots.dims  # different names depending on WRF/LOCA
-        some_dims = list(some_dims)
-        some_dims.remove("warming_level")
-        self.mins = self.gwl_snapshots.min(some_dims).compute()
-        self.maxs = self.gwl_snapshots.max(some_dims).compute()
+        self.warming_levels = warming_levels or [1.5, 2, 3, 4]
 
-        # Need the DataInterface class to get the variable descriptions table
-        self.variable_descriptions = DataInterface().variable_descriptions
+        # Only compute these if we have gwl_snapshots
+        if gwl_snapshots is not None:
+            some_dims = self.gwl_snapshots.dims  # different names depending on WRF/LOCA
+            some_dims = list(some_dims)
+            some_dims.remove("warming_level")
+            self.mins = self.gwl_snapshots.min(some_dims).compute()
+            self.maxs = self.gwl_snapshots.max(some_dims).compute()
+
+            # Need the DataInterface class to get the variable descriptions table
+            self.variable_descriptions = DataInterface().variable_descriptions
 
     def compute_stamps(self):
-        self.main_stamps = GCM_PostageStamps_MAIN_compute(self)
-        self.stats_stamps = GCM_PostageStamps_STATS_compute(self)
+        if self.gwl_snapshots is not None:
+            self.main_stamps = GCM_PostageStamps_MAIN_compute(self)
+            self.stats_stamps = GCM_PostageStamps_STATS_compute(self)
 
     @param.depends("warmlevel", watch=True)
     def GCM_PostageStamps_MAIN(self):
-        return self.main_stamps[str(float(self.warmlevel))]
+        if hasattr(self, 'main_stamps'):
+            return self.main_stamps[str(float(self.warmlevel))]
+        return None
 
     @param.depends("warmlevel", watch=True)
     def GCM_PostageStamps_STATS(self):
-        return self.stats_stamps[str(float(self.warmlevel))]
+        if hasattr(self, 'stats_stamps'):
+            return self.stats_stamps[str(float(self.warmlevel))]
+        return None
 
     @param.depends("warmlevel", "ssp", watch=True)
     def GMT_context_plot(self):
@@ -1088,3 +1103,60 @@ def fit_models_and_plots(
     plt.show()
 
     return new_params, trad_params
+
+
+
+
+
+
+class IPCCVisualize(param.Parameterized):
+    """Standalone IPCC warming trajectories visualization"""
+    warmlevel = param.Selector(
+        default=1.5, objects=[1.5, 2, 3, 4], 
+        doc="Warming level in degrees Celcius."
+    )
+    ssp = param.Selector(
+        default="All",
+        objects=["All", "SSP 1-1.9", "SSP 1-2.6", "SSP 2-4.5", "SSP 3-7.0", "SSP 5-8.5"],
+        doc="Shared Socioeconomic Pathway."
+    )
+
+    def __init__(self, **params):
+        super().__init__(**params)
+        # Create a minimal WarmingLevelVisualize instance with just what we need
+        self.viz = WarmingLevelVisualize(None, None, [1.5, 2, 3, 4])
+        
+    @param.depends('warmlevel', 'ssp', watch=True)
+    def view(self):
+        """Create interactive visualization of warming trajectories"""
+        # Update the warming level and SSP in the visualization object
+        self.viz.warmlevel = self.warmlevel
+        self.viz.ssp = self.ssp
+        
+        return pn.Card(
+            pn.Column(
+                (
+                    "Shading around selected global emissions scenario shows the 90% interval"
+                    " across different simulations. Dotted line indicates when the multi-model"
+                    " ensemble reaches the selected warming level, while solid vertical lines"
+                    " indicate when the earliest and latest simulations of that scenario reach"
+                    " the warming level. Figure and data are reproduced from the"
+                    " [IPCC AR6 Summary for Policymakers Fig 8]"
+                    "(https://www.ipcc.ch/report/ar6/wg1/figures/summary-for-policymakers/figure-spm-8/)."
+                ),
+                pn.widgets.Select.from_param(self.param.ssp, name="Scenario", width=250),
+                pn.widgets.RadioButtonGroup.from_param(self.param.warmlevel, 
+                                                     name="Warming level (°C)"),
+                self.viz.GMT_context_plot(),
+            ),
+            title="When do different scenarios reach the warming level?",
+            collapsible=False,
+            width=850,
+            height=600,
+            styles={
+                "header_background": "lightgrey",
+                "border-radius": "5px",
+                "border": "2px solid black",
+                "margin": "10px",
+            },
+        )
