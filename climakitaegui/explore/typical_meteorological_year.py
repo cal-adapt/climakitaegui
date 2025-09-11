@@ -12,7 +12,7 @@ def plot_one_var_cdf(cdf_da: xr.Dataset, var: str) -> panel.layout.base.Column:
 
     Parameters
     -----------
-    cdf: xr.DataArray
+    cdf: xr.Dataset
        Cumulative density function for a single variable
 
     Returns
@@ -33,7 +33,7 @@ def plot_one_var_cdf(cdf_da: xr.Dataset, var: str) -> panel.layout.base.Column:
         by="simulation",  # Simulations should all be displayed together
         widget_location="bottom",
         grid=True,
-        xlabel="{0} ({1})".format(var, cdf_da.attrs["units"]),
+        xlabel=f"{var} ({cdf_da.attrs["units"]})",
         xlim=(
             bins_da.min().item(),
             bins_da.max().item(),
