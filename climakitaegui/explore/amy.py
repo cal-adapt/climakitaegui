@@ -1,12 +1,14 @@
+import logging  # Silence warnings
+
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import holoviews as hv
 from matplotlib.figure import Figure
 import param
+
 from climakitae.util.colormap import read_ae_colormap
 
-import logging  # Silence warnings
 
 logging.getLogger("param").setLevel(logging.CRITICAL)
 # Remove param's parameter descriptions from docstring because
