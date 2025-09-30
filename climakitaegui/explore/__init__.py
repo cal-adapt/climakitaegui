@@ -1,23 +1,8 @@
-from climakitaegui.explore.amy import (
-    AverageMetYearParameters,
-    amy_visualize,
-)
 from climakitaegui.explore.thresholds import (
     ThresholdParameters,
     thresholds_visualize,
 )
 from climakitaegui.explore.warming import WarmingLevels
-
-
-class AverageMetYear(AverageMetYearParameters):
-    """Display AMY panel."""
-
-    def show(self):
-        return amy_visualize(self)
-
-
-def amy():
-    return AverageMetYear()
 
 
 class Thresholds(ThresholdParameters):
