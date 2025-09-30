@@ -26,9 +26,6 @@ param.parameterized.docstring_describe_params = False
 param.parameterized.docstring_signature = False
 
 
-# =========================== HELPER FUNCTIONS: AMY/TMY PLOTTING ==============================
-
-
 def meteo_yr_heatmap(
     meteo_yr_df: pd.DataFrame,
     title: str = "Meteorological Year",
