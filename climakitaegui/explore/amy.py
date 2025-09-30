@@ -1,20 +1,10 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import hvplot.pandas
 import holoviews as hv
 from matplotlib.figure import Figure
-from matplotlib.ticker import MaxNLocator
-import datetime
 import param
-import panel as pn
-from climakitaegui.core.data_interface import DataParametersWithPanes
 from climakitae.util.colormap import read_ae_colormap
-from climakitae.explore.amy import (
-    retrieve_meteo_yr_data,
-    compute_amy,
-    compute_severe_yr,
-)
 
 import logging  # Silence warnings
 
