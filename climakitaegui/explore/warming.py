@@ -1092,7 +1092,7 @@ def fit_models_and_plots(
 
 class IPCCVisualize:
     """Class for visualizing IPCC warming trajectories"""
-    
+
     def __init__(self):
         # Read in GMT context plot data
         self.ssp119_data = read_csv_file(SSP119_FILE, index_col="Year")
@@ -1101,31 +1101,33 @@ class IPCCVisualize:
         self.ssp370_data = read_csv_file(SSP370_FILE, index_col="Year")
         self.ssp585_data = read_csv_file(SSP585_FILE, index_col="Year")
         self.hist_data = read_csv_file(HIST_FILE, index_col="Year")
-        
+
         # Define SSP mapping
         self.ssp_mapping = {
             "SSP 1-1.9": (self.ssp119_data, "#00a9cf", "SSP1-1.9"),
             "SSP 1-2.6": (self.ssp126_data, "#003466", "SSP1-2.6"),
             "SSP 2-4.5": (self.ssp245_data, "#f69320", "SSP2-4.5"),
             "SSP 3-7.0": (self.ssp370_data, "#df0000", "SSP3-7.0"),
-            "SSP 5-8.5": (self.ssp585_data, "#980002", "SSP5-8.5")
+            "SSP 5-8.5": (self.ssp585_data, "#980002", "SSP5-8.5"),
         }
-        
-    def plot_warming_trajectories(self, warming_level=1.5, ssp="All", width=575, height=300):
+
+    def plot_warming_trajectories(
+        self, warming_level=1.5, ssp="All", width=575, height=300
+    ):
         """Create visualization of warming trajectories
-        
+
         Parameters
         ----------
         warming_level : float
             Warming level in degrees Celsius (1.5, 2, 3, or 4)
         ssp : str
-            Scenario to plot. One of "All", "SSP 1-1.9", "SSP 1-2.6", "SSP 2-4.5", 
+            Scenario to plot. One of "All", "SSP 1-1.9", "SSP 1-2.6", "SSP 2-4.5",
             "SSP 3-7.0", "SSP 5-8.5"
         width : int
             Plot width in pixels
         height : int
             Plot height in pixels
-            
+
         Returns
         -------
         holoviews.core.overlay.Overlay
@@ -1133,12 +1135,12 @@ class IPCCVisualize:
         """
         # Plot historical data
         plot = self.hist_data.hvplot(
-            x="Year", 
-            y="Mean", 
-            color="k", 
-            label="Historical", 
-            width=width, 
-            height=height
+            x="Year",
+            y="Mean",
+            color="k",
+            label="Historical",
+            width=width,
+            height=height,
         ) * self.hist_data.hvplot.area(
             x="Year",
             y="5%",
@@ -1155,23 +1157,19 @@ class IPCCVisualize:
         if ssp == "All":
             # Plot all scenarios without uncertainty
             for data, color, label in self.ssp_mapping.values():
-                plot *= data.hvplot(
-                    x="Year", y="Mean", color=color, label=label
-                )
+                plot *= data.hvplot(x="Year", y="Mean", color=color, label=label)
         elif ssp in self.ssp_mapping:
             # Plot single scenario with details
             data, color, label = self.ssp_mapping[ssp]
-            
+
             # First add the uncertainty shading
             plot *= data.hvplot.area(
-                x="Year", y="5%", y2="95%", 
-                alpha=0.2, color=color, label="90% interval"
+                x="Year", y="5%", y2="95%", alpha=0.2, color=color, label="90% interval"
             )
-            
+
             # Then plot mean line on top
             plot *= data.hvplot(
-                x="Year", y="Mean", color=color, label=label,
-                line_width=2
+                x="Year", y="Mean", color=color, label=label, line_width=2
             )
 
             # Add intersection lines if scenario crosses warming level
@@ -1184,27 +1182,23 @@ class IPCCVisualize:
                 )
                 # Add year text
                 plot *= hv.Text(
-                    year_warmlevel_reached - 2,
-                    4.5,
-                    str(int(year_warmlevel_reached))
-                ).opts(text_font_size='8pt', color=color)
+                    year_warmlevel_reached - 2, 4.5, str(int(year_warmlevel_reached))
+                ).opts(text_font_size="8pt", color=color)
 
             # Add uncertainty range lines
             years_95 = data.index[data["95%"] > warming_level]
             years_5 = data.index[data["5%"] > warming_level]
-            
+
             if len(years_95) > 0 and len(years_5) > 0:
                 x_95 = years_95[0]
                 x_5 = years_5[0]
-                
+
                 # Add vertical lines
                 plot *= hv.VLine(x_95).opts(
                     color=color, line_width=1, line_dash="solid"
                 )
-                plot *= hv.VLine(x_5).opts(
-                    color=color, line_width=1, line_dash="solid"
-                )
-                
+                plot *= hv.VLine(x_5).opts(color=color, line_width=1, line_dash="solid")
+
                 # Add horizontal bar and year range
                 yr_rng = x_5 - x_95
                 if yr_rng > 0:
@@ -1213,25 +1207,21 @@ class IPCCVisualize:
                         color=color, line_width=1
                     )
                     # Add year range label
-                    plot *= hv.Text(
-                        x_95 + yr_rng/2, -0.25, f"{int(yr_rng)}yrs"
-                    ).opts(text_font_size='8pt', color=color)
+                    plot *= hv.Text(x_95 + yr_rng / 2, -0.25, f"{int(yr_rng)}yrs").opts(
+                        text_font_size="8pt", color=color
+                    )
 
         # Add warming level line
-        plot *= hv.HLine(warming_level).opts(
-            color="black", line_width=1.0
-        )
+        plot *= hv.HLine(warming_level).opts(color="black", line_width=1.0)
         plot *= hv.Text(
-            1964,
-            warming_level + 0.25,
-            f"{warming_level}°C warming level"
-        ).opts(text_font_size='8pt')
+            1964, warming_level + 0.25, f"{warming_level}°C warming level"
+        ).opts(text_font_size="8pt")
 
         # Style the plot
         plot.opts(
             title="Global mean surface temperature change relative to 1850-1900",
-            fontsize={'title': 12},
-            legend_position="bottom"
+            fontsize={"title": 12},
+            legend_position="bottom",
         )
-        
+
         return plot
