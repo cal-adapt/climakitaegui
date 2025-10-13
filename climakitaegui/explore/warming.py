@@ -1182,8 +1182,8 @@ class IPCCVisualize:
                 )
                 # Add year text
                 plot *= hv.Text(
-                    year_warmlevel_reached - 2, 4.5, str(int(year_warmlevel_reached))
-                ).opts(text_font_size="8pt", color=color)
+                    year_warmlevel_reached + 4, 4.5, str(int(year_warmlevel_reached))
+                ).opts(text_font_size="8pt", color=color, text_font_style="bold")
 
             # Add uncertainty range lines
             years_95 = data.index[data["95%"] > warming_level]
@@ -1214,7 +1214,7 @@ class IPCCVisualize:
         # Add warming level line
         plot *= hv.HLine(warming_level).opts(color="black", line_width=1.0)
         plot *= hv.Text(
-            1964, warming_level + 0.25, f"{warming_level}°C warming level"
+            1968, warming_level + 0.25, f"{warming_level}°C warming level"
         ).opts(text_font_size="8pt")
 
         # Style the plot
