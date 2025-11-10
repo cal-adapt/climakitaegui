@@ -1091,10 +1091,18 @@ def fit_models_and_plots(
 
 
 class IPCCVisualize:
-    """Class for visualizing IPCC warming trajectories"""
+    """Class for standalone visualization of IPCC warming trajectories
+
+    Attributes
+    ----------
+    none
+
+    """
 
     def __init__(self):
-        # Read in GMT context plot data
+        """
+        Read in data for warming trajectory plots 
+        """
         self.ssp119_data = read_csv_file(SSP119_FILE, index_col="Year")
         self.ssp126_data = read_csv_file(SSP126_FILE, index_col="Year")
         self.ssp245_data = read_csv_file(SSP245_FILE, index_col="Year")
@@ -1112,7 +1120,7 @@ class IPCCVisualize:
         }
 
     def plot_warming_trajectories(
-        self, warming_level=1.5, ssp="All", width=575, height=300
+        self, warming_level: float = 1.5, ssp: str = "All", width: int = 575, height: int = 300
     ):
         """Create visualization of warming trajectories
 
