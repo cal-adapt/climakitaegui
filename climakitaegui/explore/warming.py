@@ -1230,6 +1230,7 @@ class IPCCVisualize:
             title="Global mean surface temperature change relative to 1850-1900",
             fontsize={"title": 12},
             legend_position="bottom",
+            tools=[]
         )
 
         return plot
