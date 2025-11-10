@@ -1101,7 +1101,7 @@ class IPCCVisualize:
 
     def __init__(self):
         """
-        Read in data for warming trajectory plots 
+        Read in data for warming trajectory plots
         """
         self.ssp119_data = read_csv_file(SSP119_FILE, index_col="Year")
         self.ssp126_data = read_csv_file(SSP126_FILE, index_col="Year")
@@ -1120,7 +1120,11 @@ class IPCCVisualize:
         }
 
     def plot_warming_trajectories(
-        self, warming_level: float = 1.5, ssp: str = "All", width: int = 575, height: int = 300
+        self,
+        warming_level: float = 1.5,
+        ssp: str = "All",
+        width: int = 575,
+        height: int = 300,
     ):
         """Create visualization of warming trajectories
 
@@ -1159,6 +1163,8 @@ class IPCCVisualize:
             xlabel="",
             ylim=[-1, 5],
             xlim=[1950, 2100],
+        ).opts(
+            tools=["pan", "wheel_zoom"]
         )
 
         # Plot scenarios
@@ -1186,12 +1192,14 @@ class IPCCVisualize:
                 year_warmlevel_reached = year_crosses[0]
                 # Add dashed line at crossing point
                 plot *= hv.VLine(year_warmlevel_reached).opts(
-                    color=color, line_dash="dashed", line_width=1
+                    color=color, line_dash="dashed", line_width=1, tools=[]
                 )
                 # Add year text
                 plot *= hv.Text(
                     year_warmlevel_reached + 4, 4.5, str(int(year_warmlevel_reached))
-                ).opts(text_font_size="8pt", color=color, text_font_style="bold")
+                ).opts(
+                    text_font_size="8pt", color=color, text_font_style="bold", tools=[]
+                )
 
             # Add uncertainty range lines
             years_95 = data.index[data["95%"] > warming_level]
@@ -1203,34 +1211,36 @@ class IPCCVisualize:
 
                 # Add vertical lines
                 plot *= hv.VLine(x_95).opts(
-                    color=color, line_width=1, line_dash="solid"
+                    color=color, line_width=1, line_dash="solid", tools=[]
                 )
-                plot *= hv.VLine(x_5).opts(color=color, line_width=1, line_dash="solid")
+                plot *= hv.VLine(x_5).opts(
+                    color=color, line_width=1, line_dash="solid", tools=[]
+                )
 
                 # Add horizontal bar and year range
                 yr_rng = x_5 - x_95
                 if yr_rng > 0:
                     # Add connecting line
                     plot *= hv.Curve([(x_95, -0.5), (x_5, -0.5)]).opts(
-                        color=color, line_width=1
+                        color=color, line_width=1, tools=[]
                     )
                     # Add year range label
                     plot *= hv.Text(x_95 + yr_rng / 2, -0.25, f"{int(yr_rng)}yrs").opts(
-                        text_font_size="8pt", color=color
+                        text_font_size="8pt", color=color, tools=[]
                     )
 
         # Add warming level line
-        plot *= hv.HLine(warming_level).opts(color="black", line_width=1.0)
+        plot *= hv.HLine(warming_level).opts(color="black", line_width=1.0, tools=[])
         plot *= hv.Text(
             1968, warming_level + 0.25, f"{warming_level}°C warming level"
-        ).opts(text_font_size="8pt")
+        ).opts(text_font_size="8pt", tools=[])
 
         # Style the plot
         plot.opts(
             title="Global mean surface temperature change relative to 1850-1900",
             fontsize={"title": 12},
             legend_position="bottom",
-            tools=[]
+            default_tools=[],
         )
 
         return plot
