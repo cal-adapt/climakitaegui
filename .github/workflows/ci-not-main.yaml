@@ -39,10 +39,10 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install -r climakitae/requirements.txt
+        pip install climakitae/.
         pip install -r requirements.txt
         pip install pytest cftime
     - name: Install climakitaegui
       run: pip install . --no-deps
     - name: Test with pytest
-      run: pytest --no-header -vv
+      run: python -m pytest --no-header -vv
