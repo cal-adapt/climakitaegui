@@ -1,4 +1,4 @@
-https://github.com/cal-adapt/climakitae/archive/main.zip #climakitae
+git+https://github.com/cal-adapt/climakitae.git@main#egg=climakitae
 geoviews==1.14.0
 holoviews==1.20.2
 hvplot==0.11.3
