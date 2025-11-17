@@ -5,7 +5,7 @@
 
 name: ci-not-main
 
-on: 
+on:
   push:
     branches-ignore:
       - main
@@ -24,25 +24,25 @@ jobs:
       run:
         shell: bash -l {0}
     steps:
-    - name: Checkout project
-      uses: actions/checkout@v4
-    - name: Checkout climakitae
-      uses: actions/checkout@v4
-      with:
-        repository: cal-adapt/climakitae
-        path: climakitae
-        sparse-checkout: .
-    - name: Setup Python 3.12
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.12'
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r climakitae/requirements.txt
-        pip install -r requirements.txt
-        pip install pytest cftime
-    - name: Install climakitaegui
-      run: pip install . --no-deps
-    - name: Test with pytest
-      run: pytest --no-header -vv
+      - name: Checkout project
+        uses: actions/checkout@v4
+      - name: Checkout climakitae
+        uses: actions/checkout@v4
+        with:
+          repository: cal-adapt/climakitae
+          path: climakitae
+          sparse-checkout: .
+      - name: Setup Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install climakitae/.
+          pip install -r requirements.txt
+          pip install pytest cftime
+      - name: Install climakitaegui
+        run: pip install . --no-deps
+      - name: Test with pytest
+        run: pytest --no-header -vv
