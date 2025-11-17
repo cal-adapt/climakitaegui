@@ -1,30 +1,28 @@
-import hvplot.xarray
-import hvplot.pandas
 import holoviews as hv
-from holoviews import opts
-import holoviews.plotting.bokeh
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import panel as pn
 import param
-from scipy.stats import pearson3
 import xarray as xr
 from climakitae.core.data_interface import DataInterface
 from climakitae.core.data_load import load
 from climakitae.core.paths import (
+    HIST_FILE,
     SSP119_FILE,
     SSP126_FILE,
     SSP245_FILE,
     SSP370_FILE,
     SSP585_FILE,
-    HIST_FILE,
 )
 from climakitae.explore.threshold_tools import _get_distr_func, _get_fitted_distr
-from climakitae.explore.warming import WarmingLevels as BaseWarmingLevels
 from climakitae.explore.warming import WarmingLevelChoose as BaseWarmingLevelChoose
+from climakitae.explore.warming import WarmingLevels as BaseWarmingLevels
 from climakitae.util.colormap import read_ae_colormap
-from climakitae.util.utils import read_csv_file, area_average
+from climakitae.util.utils import area_average, read_csv_file
+from holoviews import opts
+from scipy.stats import pearson3
+
 from climakitaegui.core.data_interface import (
     DataParametersWithPanes,
     _selections_param_to_panel,
@@ -960,7 +958,7 @@ def _make_hvplot(
     title: str,
     width: int = 225,
     height: int = 210,
-) -> holoviews.element.Image | holoviews.element.Scatter:
+) -> hv.element.Image | hv.element.Scatter:
     """Make single map
 
     Parameters
@@ -1088,3 +1086,219 @@ def fit_models_and_plots(
     plt.show()
 
     return new_params, trad_params
+
+
+class IPCCVisualize:
+    """Class for standalone visualization of IPCC warming trajectories.
+
+    This class provides functionality to create interactive visualizations of global
+    mean surface temperature changes under different Shared Socioeconomic Pathways (SSPs)
+    from IPCC AR6, including historical data and projections through 2100.
+
+    Attributes
+    ----------
+    ssp119_data : pd.DataFrame
+        SSP1-1.9 scenario temperature data with columns for Mean, 5%, and 95% percentiles.
+        Index is Year.
+    ssp126_data : pd.DataFrame
+        SSP1-2.6 scenario temperature data with columns for Mean, 5%, and 95% percentiles.
+        Index is Year.
+    ssp245_data : pd.DataFrame
+        SSP2-4.5 scenario temperature data with columns for Mean, 5%, and 95% percentiles.
+        Index is Year.
+    ssp370_data : pd.DataFrame
+        SSP3-7.0 scenario temperature data with columns for Mean, 5%, and 95% percentiles.
+        Index is Year.
+    ssp585_data : pd.DataFrame
+        SSP5-8.5 scenario temperature data with columns for Mean, 5%, and 95% percentiles.
+        Index is Year.
+    hist_data : pd.DataFrame
+        Historical temperature data with columns for Mean, 5%, and 95% percentiles.
+        Index is Year.
+    ssp_mapping : dict
+        Dictionary mapping SSP scenario names to tuples of (data, color, label).
+        Keys are "SSP 1-1.9", "SSP 1-2.6", "SSP 2-4.5", "SSP 3-7.0", "SSP 5-8.5".
+
+    Methods
+    -------
+    plot_warming_trajectories(warming_level=1.5, ssp="All", width=575, height=300)
+        Create interactive visualization of warming trajectories for specified scenarios.
+
+    Examples
+    --------
+    >>> ipcc_viz = IPCCVisualize()
+    >>> plot = ipcc_viz.plot_warming_trajectories(warming_level=2.0, ssp="SSP 2-4.5")
+    >>> plot  # Display in Jupyter notebook
+
+    >>> # Plot all scenarios
+    >>> plot_all = ipcc_viz.plot_warming_trajectories(warming_level=1.5, ssp="All")
+
+    Notes
+    -----
+    Temperature changes are relative to the 1850-1900 baseline period. Data is
+    reproduced from IPCC AR6 Working Group I Summary for Policymakers Figure 8.
+
+    The SSP scenarios represent different future pathways of societal development:
+    - SSP1-1.9: Very low emissions, limiting warming to 1.5°C
+    - SSP1-2.6: Low emissions
+    - SSP2-4.5: Intermediate emissions
+    - SSP3-7.0: High emissions
+    - SSP5-8.5: Very high emissions
+    """
+
+    def __init__(self):
+        """
+        Read in data for warming trajectory plots
+        """
+        self.ssp119_data = read_csv_file(SSP119_FILE, index_col="Year")
+        self.ssp126_data = read_csv_file(SSP126_FILE, index_col="Year")
+        self.ssp245_data = read_csv_file(SSP245_FILE, index_col="Year")
+        self.ssp370_data = read_csv_file(SSP370_FILE, index_col="Year")
+        self.ssp585_data = read_csv_file(SSP585_FILE, index_col="Year")
+        self.hist_data = read_csv_file(HIST_FILE, index_col="Year")
+
+        # Define SSP mapping
+        self.ssp_mapping = {
+            "SSP 1-1.9": (self.ssp119_data, "#00a9cf", "SSP1-1.9"),
+            "SSP 1-2.6": (self.ssp126_data, "#003466", "SSP1-2.6"),
+            "SSP 2-4.5": (self.ssp245_data, "#f69320", "SSP2-4.5"),
+            "SSP 3-7.0": (self.ssp370_data, "#df0000", "SSP3-7.0"),
+            "SSP 5-8.5": (self.ssp585_data, "#980002", "SSP5-8.5"),
+        }
+
+    def plot_warming_trajectories(
+        self,
+        warming_level: float = 1.5,
+        ssp: str | None = None,
+        width: int = 575,
+        height: int = 300,
+    ) -> hv.core.overlay.Overlay:
+        """Create visualization of warming trajectories
+
+        Parameters
+        ----------
+        warming_level : float
+            Warming level in degrees Celsius (1.5, 2, 3, or 4)
+        ssp : str | None
+            Scenario to plot. One of None, "SSP 1-1.9", "SSP 1-2.6", "SSP 2-4.5",
+            "SSP 3-7.0", "SSP 5-8.5". If None, plots all scenarios.
+        width : int
+            Plot width in pixels
+        height : int
+            Plot height in pixels
+
+        Returns
+        -------
+        holoviews.core.overlay.Overlay
+            Plot object that can be displayed in notebook
+        """
+        # Default to "All" if None is passed
+        if ssp is None:
+            ssp = "All"
+
+        # Plot historical data
+        plot = self.hist_data.hvplot(
+            x="Year",
+            y="Mean",
+            color="k",
+            label="Historical",
+            width=width,
+            height=height,
+        ) * self.hist_data.hvplot.area(
+            x="Year",
+            y="5%",
+            y2="95%",
+            alpha=0.1,
+            color="k",
+            ylabel="°C",
+            xlabel="",
+            ylim=[-1, 5],
+            xlim=[1950, 2100],
+        ).opts(
+            tools=["pan", "wheel_zoom"]
+        )
+
+        # Plot scenarios
+        if ssp in self.ssp_mapping:
+            # Plot single scenario with details
+            data, color, label = self.ssp_mapping[ssp]
+
+            # First add the uncertainty shading
+            plot *= data.hvplot.area(
+                x="Year", y="5%", y2="95%", alpha=0.2, color=color, label="90% interval"
+            )
+
+            # Then plot mean line on top
+            plot *= data.hvplot(
+                x="Year", y="Mean", color=color, label=label, line_width=2
+            )
+
+            # Add intersection lines if scenario crosses warming level
+            year_crosses = data.index[data["Mean"] > warming_level]
+            if len(year_crosses) > 0:
+                year_warmlevel_reached = year_crosses[0]
+                # Add dashed line at crossing point
+                plot *= hv.VLine(year_warmlevel_reached).opts(
+                    color=color, line_dash="dashed", line_width=1, tools=[]
+                )
+                # Add year text
+                plot *= hv.Text(
+                    year_warmlevel_reached + 4, 4.5, str(int(year_warmlevel_reached))
+                ).opts(
+                    text_font_size="8pt", color=color, text_font_style="bold", tools=[]
+                )
+
+            # Add uncertainty range lines
+            years_95 = data.index[data["95%"] > warming_level]
+            years_5 = data.index[data["5%"] > warming_level]
+
+            if len(years_95) > 0 and len(years_5) > 0:
+                x_95 = years_95[0]
+                x_5 = years_5[0]
+
+                # Add vertical lines
+                plot *= hv.VLine(x_95).opts(
+                    color=color, line_width=1, line_dash="solid", tools=[]
+                )
+                plot *= hv.VLine(x_5).opts(
+                    color=color, line_width=1, line_dash="solid", tools=[]
+                )
+
+                # Add horizontal bar and year range
+                yr_rng = x_5 - x_95
+                if yr_rng > 0:
+                    # Add connecting line
+                    plot *= hv.Curve([(x_95, -0.5), (x_5, -0.5)]).opts(
+                        color=color, line_width=1, tools=[]
+                    )
+                    # Add year range label
+                    plot *= hv.Text(x_95 + yr_rng / 2, -0.25, f"{int(yr_rng)}yrs").opts(
+                        text_font_size="8pt", color=color, tools=[]
+                    )
+
+        elif ssp != "All":
+            # warn the user that the ssp input is invalid
+            raise ValueError(
+                f"Invalid ssp value: {ssp}. Must be one of {list(self.ssp_mapping.keys())} or 'All'."
+            )
+
+        else:
+            # Plot all scenarios without uncertainty
+            for data, color, label in self.ssp_mapping.values():
+                plot *= data.hvplot(x="Year", y="Mean", color=color, label=label)
+
+        # Add warming level line
+        plot *= hv.HLine(warming_level).opts(color="black", line_width=1.0, tools=[])
+        plot *= hv.Text(
+            1968, warming_level + 0.25, f"{warming_level}°C warming level"
+        ).opts(text_font_size="8pt", tools=[])
+
+        # Style the plot
+        plot.opts(
+            title="Global mean surface temperature change relative to 1850-1900",
+            fontsize={"title": 12},
+            legend_position="bottom",
+            default_tools=[],
+        )
+
+        return plot
