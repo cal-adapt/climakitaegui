@@ -1091,12 +1091,61 @@ def fit_models_and_plots(
 
 
 class IPCCVisualize:
-    """Class for standalone visualization of IPCC warming trajectories
+    """Class for standalone visualization of IPCC warming trajectories.
+    
+    This class provides functionality to create interactive visualizations of global 
+    mean surface temperature changes under different Shared Socioeconomic Pathways (SSPs) 
+    from IPCC AR6, including historical data and projections through 2100.
 
     Attributes
     ----------
-    none
+    ssp119_data : pd.DataFrame
+        SSP1-1.9 scenario temperature data with columns for Mean, 5%, and 95% percentiles.
+        Index is Year.
+    ssp126_data : pd.DataFrame
+        SSP1-2.6 scenario temperature data with columns for Mean, 5%, and 95% percentiles.
+        Index is Year.
+    ssp245_data : pd.DataFrame
+        SSP2-4.5 scenario temperature data with columns for Mean, 5%, and 95% percentiles.
+        Index is Year.
+    ssp370_data : pd.DataFrame
+        SSP3-7.0 scenario temperature data with columns for Mean, 5%, and 95% percentiles.
+        Index is Year.
+    ssp585_data : pd.DataFrame
+        SSP5-8.5 scenario temperature data with columns for Mean, 5%, and 95% percentiles.
+        Index is Year.
+    hist_data : pd.DataFrame
+        Historical temperature data with columns for Mean, 5%, and 95% percentiles.
+        Index is Year.
+    ssp_mapping : dict
+        Dictionary mapping SSP scenario names to tuples of (data, color, label).
+        Keys are "SSP 1-1.9", "SSP 1-2.6", "SSP 2-4.5", "SSP 3-7.0", "SSP 5-8.5".
 
+    Methods
+    -------
+    plot_warming_trajectories(warming_level=1.5, ssp="All", width=575, height=300)
+        Create interactive visualization of warming trajectories for specified scenarios.
+
+    Examples
+    --------
+    >>> ipcc_viz = IPCCVisualize()
+    >>> plot = ipcc_viz.plot_warming_trajectories(warming_level=2.0, ssp="SSP 2-4.5")
+    >>> plot  # Display in Jupyter notebook
+    
+    >>> # Plot all scenarios
+    >>> plot_all = ipcc_viz.plot_warming_trajectories(warming_level=1.5, ssp="All")
+
+    Notes
+    -----
+    Temperature changes are relative to the 1850-1900 baseline period. Data is 
+    reproduced from IPCC AR6 Working Group I Summary for Policymakers Figure 8.
+    
+    The SSP scenarios represent different future pathways of societal development:
+    - SSP1-1.9: Very low emissions, limiting warming to 1.5°C
+    - SSP1-2.6: Low emissions
+    - SSP2-4.5: Intermediate emissions
+    - SSP3-7.0: High emissions
+    - SSP5-8.5: Very high emissions
     """
 
     def __init__(self):
