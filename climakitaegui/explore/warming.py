@@ -1,30 +1,28 @@
-import hvplot.xarray
-import hvplot.pandas
 import holoviews as hv
-from holoviews import opts
-import holoviews.plotting.bokeh
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import panel as pn
 import param
-from scipy.stats import pearson3
 import xarray as xr
 from climakitae.core.data_interface import DataInterface
 from climakitae.core.data_load import load
 from climakitae.core.paths import (
+    HIST_FILE,
     SSP119_FILE,
     SSP126_FILE,
     SSP245_FILE,
     SSP370_FILE,
     SSP585_FILE,
-    HIST_FILE,
 )
 from climakitae.explore.threshold_tools import _get_distr_func, _get_fitted_distr
-from climakitae.explore.warming import WarmingLevels as BaseWarmingLevels
 from climakitae.explore.warming import WarmingLevelChoose as BaseWarmingLevelChoose
+from climakitae.explore.warming import WarmingLevels as BaseWarmingLevels
 from climakitae.util.colormap import read_ae_colormap
-from climakitae.util.utils import read_csv_file, area_average
+from climakitae.util.utils import area_average, read_csv_file
+from holoviews import opts
+from scipy.stats import pearson3
+
 from climakitaegui.core.data_interface import (
     DataParametersWithPanes,
     _selections_param_to_panel,
@@ -960,7 +958,7 @@ def _make_hvplot(
     title: str,
     width: int = 225,
     height: int = 210,
-) -> holoviews.element.Image | holoviews.element.Scatter:
+) -> hv.element.Image | hv.element.Scatter:
     """Make single map
 
     Parameters
@@ -1092,9 +1090,9 @@ def fit_models_and_plots(
 
 class IPCCVisualize:
     """Class for standalone visualization of IPCC warming trajectories.
-    
-    This class provides functionality to create interactive visualizations of global 
-    mean surface temperature changes under different Shared Socioeconomic Pathways (SSPs) 
+
+    This class provides functionality to create interactive visualizations of global
+    mean surface temperature changes under different Shared Socioeconomic Pathways (SSPs)
     from IPCC AR6, including historical data and projections through 2100.
 
     Attributes
@@ -1131,15 +1129,15 @@ class IPCCVisualize:
     >>> ipcc_viz = IPCCVisualize()
     >>> plot = ipcc_viz.plot_warming_trajectories(warming_level=2.0, ssp="SSP 2-4.5")
     >>> plot  # Display in Jupyter notebook
-    
+
     >>> # Plot all scenarios
     >>> plot_all = ipcc_viz.plot_warming_trajectories(warming_level=1.5, ssp="All")
 
     Notes
     -----
-    Temperature changes are relative to the 1850-1900 baseline period. Data is 
+    Temperature changes are relative to the 1850-1900 baseline period. Data is
     reproduced from IPCC AR6 Working Group I Summary for Policymakers Figure 8.
-    
+
     The SSP scenarios represent different future pathways of societal development:
     - SSP1-1.9: Very low emissions, limiting warming to 1.5°C
     - SSP1-2.6: Low emissions
@@ -1171,19 +1169,19 @@ class IPCCVisualize:
     def plot_warming_trajectories(
         self,
         warming_level: float = 1.5,
-        ssp: str = "All",
+        ssp: str | None = None,
         width: int = 575,
         height: int = 300,
-    ):
+    ) -> hv.core.overlay.Overlay:
         """Create visualization of warming trajectories
 
         Parameters
         ----------
         warming_level : float
             Warming level in degrees Celsius (1.5, 2, 3, or 4)
-        ssp : str
-            Scenario to plot. One of "All", "SSP 1-1.9", "SSP 1-2.6", "SSP 2-4.5",
-            "SSP 3-7.0", "SSP 5-8.5"
+        ssp : str | None
+            Scenario to plot. One of None, "SSP 1-1.9", "SSP 1-2.6", "SSP 2-4.5",
+            "SSP 3-7.0", "SSP 5-8.5". If None, plots all scenarios.
         width : int
             Plot width in pixels
         height : int
@@ -1194,6 +1192,10 @@ class IPCCVisualize:
         holoviews.core.overlay.Overlay
             Plot object that can be displayed in notebook
         """
+        # Default to "All" if None is passed
+        if ssp is None:
+            ssp = "All"
+
         # Plot historical data
         plot = self.hist_data.hvplot(
             x="Year",
@@ -1217,11 +1219,7 @@ class IPCCVisualize:
         )
 
         # Plot scenarios
-        if ssp == "All":
-            # Plot all scenarios without uncertainty
-            for data, color, label in self.ssp_mapping.values():
-                plot *= data.hvplot(x="Year", y="Mean", color=color, label=label)
-        elif ssp in self.ssp_mapping:
+        if ssp in self.ssp_mapping:
             # Plot single scenario with details
             data, color, label = self.ssp_mapping[ssp]
 
@@ -1277,6 +1275,17 @@ class IPCCVisualize:
                     plot *= hv.Text(x_95 + yr_rng / 2, -0.25, f"{int(yr_rng)}yrs").opts(
                         text_font_size="8pt", color=color, tools=[]
                     )
+
+        elif ssp != "All":
+            # warn the user that the ssp input is invalid
+            raise ValueError(
+                f"Invalid ssp value: {ssp}. Must be one of {list(self.ssp_mapping.keys())} or 'All'."
+            )
+
+        else:
+            # Plot all scenarios without uncertainty
+            for data, color, label in self.ssp_mapping.values():
+                plot *= data.hvplot(x="Year", y="Mean", color=color, label=label)
 
         # Add warming level line
         plot *= hv.HLine(warming_level).opts(color="black", line_width=1.0, tools=[])
