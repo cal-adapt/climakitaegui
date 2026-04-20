@@ -14,7 +14,7 @@ def hdd_cdd_lineplot(annual_data, trendline, title="title"):
     """
     return annual_data.hvplot.line(
         x="year",
-        by="simulation",
+        by="sim",
         width=800,
         height=350,
         title=title,
@@ -37,5 +37,5 @@ def hdh_cdh_lineplot(data):
 
     """
     return data.hvplot.line(
-        x="time", by="simulation", title=data.name, ylabel=data.name + " (degF)"
+        x="time", by="sim", title=data.name, ylabel=data.name + " (degF)"
     )
